@@ -3,9 +3,9 @@ package com.yourname.studyroom.web.admin.controller.apartment;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.model.entity.FacilityInfo;
+import com.yourname.studyroom.model.entity.SeatFacility;
 import com.yourname.studyroom.model.enums.ItemType;
-import com.yourname.studyroom.web.admin.service.FacilityInfoService;
+import com.yourname.studyroom.web.admin.service.SeatFacilityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +20,20 @@ import java.util.List;
 public class FacilityController {
 
     @Autowired
-    FacilityInfoService facilityInfoService;
+    SeatFacilityService facilityInfoService;
 
     /**
      * [根据类型]查询配套信息列表
      *
      * @param type
-     * @return Result<List<FacilityInfo>>
+     * @return Result<List<SeatFacility>>
      */
     @Operation(summary = "[根据类型]查询配套信息列表")
     @GetMapping("list")
-    public Result<List<FacilityInfo>> listFacility(@RequestParam(required = false) ItemType type) {
-        LambdaQueryWrapper<FacilityInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(type != null, FacilityInfo::getType, type);
-        List<FacilityInfo> facilityInfos = facilityInfoService.list(queryWrapper);
+    public Result<List<SeatFacility>> listFacility(@RequestParam(required = false) ItemType type) {
+        LambdaQueryWrapper<SeatFacility> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(type != null, SeatFacility::getType, type);
+        List<SeatFacility> facilityInfos = facilityInfoService.list(queryWrapper);
         return Result.ok(facilityInfos);
     }
 
@@ -45,7 +45,7 @@ public class FacilityController {
      */
     @Operation(summary = "新增或修改配套信息")
     @PostMapping("saveOrUpdate")
-    public Result saveOrUpdate(@RequestBody FacilityInfo facilityInfo) {
+    public Result saveOrUpdate(@RequestBody SeatFacility facilityInfo) {
         facilityInfoService.saveOrUpdate(facilityInfo);
         return Result.ok();
     }

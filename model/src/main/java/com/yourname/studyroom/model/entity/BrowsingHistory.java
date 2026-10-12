@@ -25,7 +25,7 @@ public class BrowsingHistory extends BaseEntity {
     @TableField("user_id")
     private Long userId;
 
-    @Schema(description = "房间id")
+    @Schema(description = "座位id")
     @TableField("room_id")
     private Long roomId;
 

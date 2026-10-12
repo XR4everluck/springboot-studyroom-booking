@@ -11,10 +11,10 @@ import java.util.List;
 
 @Schema(description = "房间信息")
 @Data
-public class RoomDetailVo extends RoomInfo {
+public class RoomDetailVo extends Seat {
 
     @Schema(description = "所属自习室门店信息")
-    private ApartmentInfo apartmentInfo;
+    private StudyStore apartmentInfo;
 
     @Schema(description = "图片列表")
     private List<GraphVo> graphVoList;
@@ -23,10 +23,10 @@ public class RoomDetailVo extends RoomInfo {
     private List<AttrValueVo> attrValueVoList;
 
     @Schema(description = "配套信息列表")
-    private List<FacilityInfo> facilityInfoList;
+    private List<SeatFacility> facilityInfoList;
 
     @Schema(description = "标签信息列表")
-    private List<LabelInfo> labelInfoList;
+    private List<StoreLabel> labelInfoList;
 
     @Schema(description = "支付方式列表")
     private List<PaymentType> paymentTypeList;

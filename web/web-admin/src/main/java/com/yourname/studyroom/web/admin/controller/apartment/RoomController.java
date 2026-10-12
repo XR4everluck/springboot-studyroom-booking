@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.model.entity.RoomInfo;
+import com.yourname.studyroom.model.entity.Seat;
 import com.yourname.studyroom.model.enums.ReleaseStatus;
-import com.yourname.studyroom.web.admin.service.RoomInfoService;
+import com.yourname.studyroom.web.admin.service.SeatService;
 import com.yourname.studyroom.web.admin.vo.room.RoomDetailVo;
 import com.yourname.studyroom.web.admin.vo.room.RoomItemVo;
 import com.yourname.studyroom.web.admin.vo.room.RoomQueryVo;
@@ -26,7 +26,7 @@ import java.util.List;
 public class RoomController {
 
     @Autowired
-    RoomInfoService roomInfoService;
+    SeatService roomInfoService;
 
     /**
      * 保存或更新房间信息
@@ -93,9 +93,9 @@ public class RoomController {
     @Operation(summary = "根据id修改房间发布状态")
     @PostMapping("updateReleaseStatusById")
     public Result updateReleaseStatusById(Long id, ReleaseStatus status) {
-        LambdaUpdateWrapper<RoomInfo> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(RoomInfo::getId, id);
-        updateWrapper.set(RoomInfo::getIsRelease, status);
+        LambdaUpdateWrapper<Seat> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Seat::getId, id);
+        updateWrapper.set(Seat::getIsRelease, status);
         roomInfoService.update(updateWrapper);
         return Result.ok();
     }
@@ -108,11 +108,11 @@ public class RoomController {
      */
     @GetMapping("listBasicByApartmentId")
     @Operation(summary = "根据自习室门店id查询房间列表")
-    public Result<List<RoomInfo>> listBasicByApartmentId(Long id) {
-        LambdaQueryWrapper<RoomInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(RoomInfo::getApartmentId, id);
-        queryWrapper.eq(RoomInfo::getIsRelease, ReleaseStatus.RELEASED);
-        List<RoomInfo> roomInfoList = roomInfoService.list(queryWrapper);
+    public Result<List<Seat>> listBasicByApartmentId(Long id) {
+        LambdaQueryWrapper<Seat> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Seat::getStoreId, id);
+        queryWrapper.eq(Seat::getIsRelease, ReleaseStatus.RELEASED);
+        List<Seat> roomInfoList = roomInfoService.list(queryWrapper);
         return Result.ok(roomInfoList);
     }
 

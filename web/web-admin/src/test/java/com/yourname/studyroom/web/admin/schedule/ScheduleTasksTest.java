@@ -19,6 +19,6 @@ class ScheduleTasksTest {
 
     @Test
     public void test(){
-        scheduleTasks.checkLeaseStatus();
+        scheduleTasks.checkBookingStatus();
     }
 }

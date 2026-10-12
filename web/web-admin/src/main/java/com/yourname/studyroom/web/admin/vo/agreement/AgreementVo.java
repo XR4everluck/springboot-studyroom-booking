@@ -6,13 +6,13 @@ import lombok.Data;
 
 @Data
 @Schema(description = "租约信息")
-public class AgreementVo extends LeaseAgreement {
+public class AgreementVo extends BookingOrder {
 
     @Schema(description = "签约自习室门店信息")
-    private ApartmentInfo apartmentInfo;
+    private StudyStore apartmentInfo;
 
     @Schema(description = "签约房间信息")
-    private RoomInfo roomInfo;
+    private Seat roomInfo;
 
     @Schema(description = "支付方式")
     private PaymentType paymentType;

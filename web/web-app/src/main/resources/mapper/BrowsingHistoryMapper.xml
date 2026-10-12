@@ -15,15 +15,15 @@
                bh.user_id,
                bh.room_id,
                bh.browse_time,
-               ri.room_number,
-               ri.rent,
+               ri.seat_code,
+               ri.price,
                ai.name apartment_name,
                ai.district_name,
                ai.city_name,
                ai.province_name
         from browsing_history bh
-                 left join room_info ri on bh.room_id = ri.id and ri.is_deleted = 0
-                 left join apartment_info ai on ri.apartment_id = ai.id and ai.is_deleted = 0
+                 left join seat ri on bh.room_id = ri.id and ri.is_deleted = 0
+                 left join study_store ai on ri.store_id = ai.id and ai.is_deleted = 0
         where bh.is_deleted = 0
           and bh.user_id = #{userId}
         order by bh.browse_time desc

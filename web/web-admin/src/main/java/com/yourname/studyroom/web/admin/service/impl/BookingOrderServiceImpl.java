@@ -1,0 +1,64 @@
+package com.yourname.studyroom.web.admin.service.impl;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.yourname.studyroom.model.entity.*;
+import com.yourname.studyroom.web.admin.mapper.*;
+import com.yourname.studyroom.web.admin.service.BookingOrderService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yourname.studyroom.web.admin.vo.agreement.AgreementQueryVo;
+import com.yourname.studyroom.web.admin.vo.agreement.AgreementVo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * @author liubo
+ * @description 针对表【booking_order(预订订单信息表)】的数据库操作Service实现
+ * @createDate 2023-07-24 15:48:00
+ */
+@Service
+public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, BookingOrder>
+        implements BookingOrderService {
+
+    @Autowired
+    BookingOrderMapper leaseAgreementMapper;
+
+    @Autowired
+    StudyStoreMapper apartmentInfoMapper;
+
+    @Autowired
+    SeatMapper roomInfoMapper;
+
+    @Autowired
+    PaymentTypeMapper paymentTypeMapper;
+
+    @Autowired
+    LeaseTermMapper leaseTermMapper;
+
+    @Override
+    public AgreementVo getAgreementById(Long id) {
+        BookingOrder leaseAgreement = leaseAgreementMapper.selectById(id);
+        StudyStore apartmentInfo = apartmentInfoMapper.selectById(leaseAgreement.getStoreId());
+        Seat roomInfo = roomInfoMapper.selectById(leaseAgreement.getSeatId());
+        PaymentType paymentType = paymentTypeMapper.selectById(leaseAgreement.getPaymentTypeId());
+        LeaseTerm leaseTerm = leaseTermMapper.selectById(leaseAgreement.getLeaseTermId());
+
+        AgreementVo agreementVo = new AgreementVo();
+        BeanUtils.copyProperties(leaseAgreement,agreementVo);
+        agreementVo.setStudyStore(apartmentInfo);
+        agreementVo.setSeat(roomInfo);
+        agreementVo.setPaymentType(paymentType);
+        agreementVo.setLeaseTerm(leaseTerm);
+
+        return agreementVo;
+    }
+
+    @Override
+    public IPage<AgreementVo> pageAgreementByQuery(IPage<AgreementVo> page, AgreementQueryVo queryVo) {
+        return leaseAgreementMapper.pageAgreementByQuery(page, queryVo);
+    }
+}
+
+
+
+

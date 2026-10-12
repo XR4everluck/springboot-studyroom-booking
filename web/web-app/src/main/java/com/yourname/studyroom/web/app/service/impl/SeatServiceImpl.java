@@ -1,0 +1,133 @@
+package com.yourname.studyroom.web.app.service.impl;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.yourname.studyroom.common.constant.RedisConstant;
+import com.yourname.studyroom.common.login.LoginUserHolder;
+import com.yourname.studyroom.model.entity.*;
+import com.yourname.studyroom.model.enums.ItemType;
+import com.yourname.studyroom.web.app.mapper.*;
+import com.yourname.studyroom.web.app.service.StudyStoreService;
+import com.yourname.studyroom.web.app.service.BrowsingHistoryService;
+import com.yourname.studyroom.web.app.service.SeatService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yourname.studyroom.web.app.vo.apartment.ApartmentItemVo;
+import com.yourname.studyroom.web.app.vo.attr.AttrValueVo;
+import com.yourname.studyroom.web.app.vo.fee.FeeValueVo;
+import com.yourname.studyroom.web.app.vo.graph.GraphVo;
+import com.yourname.studyroom.web.app.vo.room.RoomDetailVo;
+import com.yourname.studyroom.web.app.vo.room.RoomItemVo;
+import com.yourname.studyroom.web.app.vo.room.RoomQueryVo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * @author liubo
+ * @description 针对表【seat(座位信息表)】的数据库操作Service实现
+ * @createDate 2023-07-26 11:12:39
+ */
+@Service
+@Slf4j
+public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
+        implements SeatService {
+
+    @Autowired
+    SeatMapper roomInfoMapper;
+
+    @Autowired
+    GraphInfoMapper graphInfoMapper;
+
+    @Autowired
+    LeaseTermMapper leaseTermMapper;
+
+    @Autowired
+    SeatFacilityMapper facilityInfoMapper;
+
+    @Autowired
+    StoreLabelMapper labelInfoMapper;
+
+    @Autowired
+    PaymentTypeMapper paymentTypeMapper;
+
+    @Autowired
+    AttrValueMapper attrValueMapper;
+
+    @Autowired
+    FeeValueMapper feeValueMapper;
+
+    @Autowired
+    StudyStoreService apartmentInfoService;
+
+    @Autowired
+    BrowsingHistoryService browsingHistoryService;
+
+    @Autowired
+    RedisTemplate<String,Object> redisTemplate;
+
+    @Override
+    public IPage<RoomItemVo> pageItem(IPage<RoomItemVo> page, RoomQueryVo queryVo) {
+        return roomInfoMapper.pageItem(page,queryVo);
+    }
+
+    @Override
+    public RoomDetailVo getDetailById(Long id) {
+        //查询缓存
+        String key = RedisConstant.APP_ROOM_PREFIX + id;
+        RoomDetailVo roomDetailVo = (RoomDetailVo) redisTemplate.opsForValue().get(key);
+
+        if (roomDetailVo == null){
+            //1.查询房间信息
+            Seat roomInfo = roomInfoMapper.selectById(id);
+            if (roomInfo == null) {
+                return null;
+            }
+            //2.查询图片
+            List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, id);
+            //3.查询租期
+            List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
+            //4.查询配套
+            List<SeatFacility> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
+            //5.查询标签
+            List<StoreLabel> labelInfoList = labelInfoMapper.selectListByRoomId(id);
+            //6.查询支付方式
+            List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
+            //7.查询基本属性
+            List<AttrValueVo> attrValueVoList = attrValueMapper.selectListByRoomId(id);
+            //8.查询杂费信息
+            List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(roomInfo.getStoreId());
+            //9.查询自习室门店信息
+            ApartmentItemVo apartmentItemVo = apartmentInfoService.selectApartmentItemVoById(roomInfo.getStoreId());
+
+            roomDetailVo = new RoomDetailVo();
+            BeanUtils.copyProperties(roomInfo, roomDetailVo);
+
+            roomDetailVo.setApartmentItemVo(apartmentItemVo);
+            roomDetailVo.setGraphVoList(graphVoList);
+            roomDetailVo.setAttrValueVoList(attrValueVoList);
+            roomDetailVo.setSeatFacilityList(facilityInfoList);
+            roomDetailVo.setStoreLabelList(labelInfoList);
+            roomDetailVo.setPaymentTypeList(paymentTypeList);
+            roomDetailVo.setFeeValueVoList(feeValueVoList);
+            roomDetailVo.setLeaseTermList(leaseTermList);
+            //加入缓存
+            redisTemplate.opsForValue().set(key,roomDetailVo);
+        }
+        //异步 保存浏览历史
+        browsingHistoryService.saveHistory(LoginUserHolder.getLoginUser().getUserId(),id);
+
+        return roomDetailVo;
+    }
+
+    @Override
+    public IPage<RoomItemVo> pageItemByApartmentId(IPage<RoomItemVo> page, Long id) {
+        return roomInfoMapper.pageItemByApartmentId(page, id);
+    }
+}
+
+
+
+

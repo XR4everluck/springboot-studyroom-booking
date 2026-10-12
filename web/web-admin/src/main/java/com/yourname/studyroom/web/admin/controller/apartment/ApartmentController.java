@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.model.entity.ApartmentInfo;
+import com.yourname.studyroom.model.entity.StudyStore;
 import com.yourname.studyroom.model.enums.ReleaseStatus;
-import com.yourname.studyroom.web.admin.service.ApartmentInfoService;
+import com.yourname.studyroom.web.admin.service.StudyStoreService;
 import com.yourname.studyroom.web.admin.vo.apartment.ApartmentDetailVo;
 import com.yourname.studyroom.web.admin.vo.apartment.ApartmentItemVo;
 import com.yourname.studyroom.web.admin.vo.apartment.ApartmentQueryVo;
@@ -26,11 +26,11 @@ import java.util.List;
 public class ApartmentController {
 
     @Autowired
-    ApartmentInfoService apartmentInfoService;
+    StudyStoreService apartmentInfoService;
     /**
      * 保存或更新自习室门店信息
      * <p/>
-     * 根据前端传递的自习室门店提交信息（ApartmentSubmitVo），调用自习室门店信息服务（ApartmentInfoService）中的保存或更新方法，
+     * 根据前端传递的自习室门店提交信息（ApartmentSubmitVo），调用自习室门店信息服务（StudyStoreService）中的保存或更新方法，
      * 更新或新增自习室门店信息。操作成功后，返回一个成功的Result对象。
      *
      * @param apartmentSubmitVo 自习室门店提交信息对象，包含自习室门店的详细信息
@@ -95,9 +95,9 @@ public class ApartmentController {
     @Operation(summary = "根据id修改自习室门店发布状态")
     @PostMapping("updateReleaseStatusById")
     public Result updateReleaseStatusById(@RequestParam Long id, @RequestParam ReleaseStatus status) {
-        LambdaUpdateWrapper<ApartmentInfo> apartmentInfoUpdateWrapper = new LambdaUpdateWrapper<>();
-        apartmentInfoUpdateWrapper.eq(ApartmentInfo::getId,id);
-        apartmentInfoUpdateWrapper.set(ApartmentInfo::getIsRelease,status);
+        LambdaUpdateWrapper<StudyStore> apartmentInfoUpdateWrapper = new LambdaUpdateWrapper<>();
+        apartmentInfoUpdateWrapper.eq(StudyStore::getId,id);
+        apartmentInfoUpdateWrapper.set(StudyStore::getIsRelease,status);
         apartmentInfoService.update(apartmentInfoUpdateWrapper);
         return Result.ok();
     }
@@ -110,10 +110,10 @@ public class ApartmentController {
      */
     @Operation(summary = "根据区县id查询自习室门店信息列表")
     @GetMapping("listInfoByDistrictId")
-    public Result<List<ApartmentInfo>> listInfoByDistrictId(@RequestParam Long id) {
-        LambdaQueryWrapper<ApartmentInfo> apartmentInfoQueryWrapper = new LambdaQueryWrapper<>();
-        apartmentInfoQueryWrapper.eq(ApartmentInfo::getDistrictId,id);
-        List<ApartmentInfo> list = apartmentInfoService.list(apartmentInfoQueryWrapper);
+    public Result<List<StudyStore>> listInfoByDistrictId(@RequestParam Long id) {
+        LambdaQueryWrapper<StudyStore> apartmentInfoQueryWrapper = new LambdaQueryWrapper<>();
+        apartmentInfoQueryWrapper.eq(StudyStore::getDistrictId,id);
+        List<StudyStore> list = apartmentInfoService.list(apartmentInfoQueryWrapper);
         return Result.ok(list);
     }
 }

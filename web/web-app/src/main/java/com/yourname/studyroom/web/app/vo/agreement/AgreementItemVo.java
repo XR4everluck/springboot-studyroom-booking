@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.vo.agreement;
 
 import com.yourname.studyroom.model.enums.LeaseSourceType;
-import com.yourname.studyroom.model.enums.LeaseStatus;
+import com.yourname.studyroom.model.enums.BookingStatus;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +28,7 @@ public class AgreementItemVo {
     private String roomNumber;
 
     @Schema(description = "租约状态")
-    private LeaseStatus leaseStatus;
+    private BookingStatus leaseStatus;
 
     @Schema(description = "租约开始日期")
     @JsonFormat(pattern = "yyyy-MM-dd")

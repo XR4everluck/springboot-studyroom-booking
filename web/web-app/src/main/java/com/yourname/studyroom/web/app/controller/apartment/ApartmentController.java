@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.controller.apartment;
 
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.web.app.service.ApartmentInfoService;
+import com.yourname.studyroom.web.app.service.StudyStoreService;
 import com.yourname.studyroom.web.app.vo.apartment.ApartmentDetailVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApartmentController {
 
     @Autowired
-    ApartmentInfoService apartmentInfoService;
+    StudyStoreService apartmentInfoService;
 
     @Operation(summary = "根据id获取自习室门店信息")
     @GetMapping("getDetailById")

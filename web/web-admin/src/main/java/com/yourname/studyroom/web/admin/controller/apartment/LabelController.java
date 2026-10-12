@@ -4,9 +4,9 @@ package com.yourname.studyroom.web.admin.controller.apartment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.model.entity.LabelInfo;
+import com.yourname.studyroom.model.entity.StoreLabel;
 import com.yourname.studyroom.model.enums.ItemType;
-import com.yourname.studyroom.web.admin.service.LabelInfoService;
+import com.yourname.studyroom.web.admin.service.StoreLabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +20,21 @@ import java.util.List;
 public class LabelController {
 
     @Autowired
-    LabelInfoService labelInfoService;
+    StoreLabelService labelInfoService;
 
     /**
      * （根据类型）查询标签列表
      *
      * @param type
-     * @return Result<List < LabelInfo>>
+     * @return Result<List < StoreLabel>>
      */
     @Operation(summary = "（根据类型）查询标签列表")
     @GetMapping("list")
-    public Result<List<LabelInfo>> labelList(@RequestParam(required = false) ItemType type) {
+    public Result<List<StoreLabel>> labelList(@RequestParam(required = false) ItemType type) {
         System.out.println(type);
-        LambdaQueryWrapper<LabelInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(type != null, LabelInfo::getType, type);
-        List<LabelInfo> labelInfos = labelInfoService.list(queryWrapper);
+        LambdaQueryWrapper<StoreLabel> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(type != null, StoreLabel::getType, type);
+        List<StoreLabel> labelInfos = labelInfoService.list(queryWrapper);
         return Result.ok(labelInfos);
     }
 
@@ -46,7 +46,7 @@ public class LabelController {
      */
     @Operation(summary = "新增或修改标签信息")
     @PostMapping("saveOrUpdate")
-    public Result saveOrUpdateLabel(@RequestBody LabelInfo labelInfo) {
+    public Result saveOrUpdateLabel(@RequestBody StoreLabel labelInfo) {
         labelInfoService.saveOrUpdate(labelInfo);
         return Result.ok();
     }

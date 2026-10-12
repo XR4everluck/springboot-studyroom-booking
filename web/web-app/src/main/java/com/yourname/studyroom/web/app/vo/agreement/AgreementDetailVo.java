@@ -1,6 +1,6 @@
 package com.yourname.studyroom.web.app.vo.agreement;
 
-import com.yourname.studyroom.model.entity.LeaseAgreement;
+import com.yourname.studyroom.model.entity.BookingOrder;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Schema(description = "租约详细信息")
-public class AgreementDetailVo extends LeaseAgreement {
+public class AgreementDetailVo extends BookingOrder {
 
     @Schema(description = "自习室门店名称")
     private String apartmentName;

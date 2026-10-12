@@ -3,7 +3,7 @@ package com.yourname.studyroom.web.app.controller.room;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.web.app.service.RoomInfoService;
+import com.yourname.studyroom.web.app.service.SeatService;
 import com.yourname.studyroom.web.app.vo.room.RoomDetailVo;
 import com.yourname.studyroom.web.app.vo.room.RoomItemVo;
 import com.yourname.studyroom.web.app.vo.room.RoomQueryVo;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoomController {
 
     @Autowired
-    RoomInfoService roomInfoService;
+    SeatService roomInfoService;
 
     /**
      * 分页查询房间列表

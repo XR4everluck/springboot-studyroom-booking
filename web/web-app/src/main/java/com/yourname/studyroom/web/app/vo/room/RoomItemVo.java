@@ -1,8 +1,8 @@
 package com.yourname.studyroom.web.app.vo.room;
 
 
-import com.yourname.studyroom.model.entity.ApartmentInfo;
-import com.yourname.studyroom.model.entity.LabelInfo;
+import com.yourname.studyroom.model.entity.StudyStore;
+import com.yourname.studyroom.model.entity.StoreLabel;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,9 +28,9 @@ public class RoomItemVo {
     private List<GraphVo> graphVoList;
 
     @Schema(description = "房间标签列表")
-    private List<LabelInfo> labelInfoList;
+    private List<StoreLabel> labelInfoList;
 
     @Schema(description = "房间所属自习室门店信息")
-    private ApartmentInfo apartmentInfo;
+    private StudyStore apartmentInfo;
 
 }

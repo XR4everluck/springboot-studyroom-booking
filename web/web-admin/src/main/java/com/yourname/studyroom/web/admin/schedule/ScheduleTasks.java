@@ -1,9 +1,9 @@
 package com.yourname.studyroom.web.admin.schedule;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.yourname.studyroom.model.entity.LeaseAgreement;
-import com.yourname.studyroom.model.enums.LeaseStatus;
-import com.yourname.studyroom.web.admin.service.LeaseAgreementService;
+import com.yourname.studyroom.model.entity.BookingOrder;
+import com.yourname.studyroom.model.enums.BookingStatus;
+import com.yourname.studyroom.web.admin.service.BookingOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import java.util.Date;
 public class ScheduleTasks {
 
     @Autowired
-    private LeaseAgreementService leaseAgreementService;
+    private BookingOrderService leaseAgreementService;
 
     /**
      * 定时任务：检查租约状态
@@ -39,12 +39,12 @@ public class ScheduleTasks {
      * * * * * * *
      */
     @Scheduled(cron = "0 0 0 * * *")
-    public void checkLeaseStatus() {
-        LambdaUpdateWrapper<LeaseAgreement> updateWrapper = new LambdaUpdateWrapper<>();
+    public void checkBookingStatus() {
+        LambdaUpdateWrapper<BookingOrder> updateWrapper = new LambdaUpdateWrapper<>();
         Date now = new Date();
-        updateWrapper.le(LeaseAgreement::getLeaseEndDate, now);
-        updateWrapper.in(LeaseAgreement::getStatus, LeaseStatus.SIGNED, LeaseStatus.WITHDRAWING);
-        updateWrapper.set(LeaseAgreement::getStatus, LeaseStatus.EXPIRED);
+        updateWrapper.le(BookingOrder::getEndDate, now);
+        updateWrapper.in(BookingOrder::getStatus, BookingStatus.BOOKED, BookingStatus.CHECKOUT_PENDING);
+        updateWrapper.set(BookingOrder::getStatus, BookingStatus.EXPIRED);
         leaseAgreementService.update(updateWrapper);
     }
 }
