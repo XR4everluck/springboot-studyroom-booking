@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.admin.mapper.ApartmentInfoMapper">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.ApartmentInfoMapper">
 
-    <select id="pageItem" resultType="com.lyc.lease.web.admin.vo.apartment.ApartmentItemVo">
+    <select id="pageItem" resultType="com.yourname.studyroom.web.admin.vo.apartment.ApartmentItemVo">
         select
         ai.id,
         ai.name,
@@ -66,7 +66,7 @@
               group by apartment_id) cc
              on ai.id = cc.apartment_id
     </select>
-    <select id="selectListByApartmentId" resultType="com.lyc.lease.model.entity.LabelInfo">
+    <select id="selectListByApartmentId" resultType="com.yourname.studyroom.model.entity.LabelInfo">
 
 
         select id, type, name

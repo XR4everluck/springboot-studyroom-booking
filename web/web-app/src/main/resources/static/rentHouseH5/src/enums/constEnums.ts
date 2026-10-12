@@ -9,13 +9,13 @@ export function getLabelByValue(
   return item ? item.label : "";
 }
 
-// 公寓的发布状态
+// 自习室门店的发布状态
 export enum ApartmentReleaseStatus {
   NOT_RELEASED = 0,
   RELEASED = 1
 }
 
-// 公寓的发布状态
+// 自习室门店的发布状态
 export const ApartmentReleaseStatusMap = [
   { label: "未发布", value: ApartmentReleaseStatus.NOT_RELEASED },
   { label: "已发布", value: ApartmentReleaseStatus.RELEASED }
@@ -43,14 +43,14 @@ export const RoomCheckInStatusMap = [
   { label: "已入住", value: RoomCheckInStatus.CHECK_IN }
 ];
 
-//type: '公寓' | '房间'
+//type: '自习室门店' | '房间'
 export enum BuildingType {
   APARTMENT = 1,
   ROOM = 2
 }
 
 export const BuildingTypeTypeMap = [
-  { label: "公寓", value: BuildingType.APARTMENT },
+  { label: "自习室门店", value: BuildingType.APARTMENT },
   { label: "房间", value: BuildingType.ROOM }
 ];
 

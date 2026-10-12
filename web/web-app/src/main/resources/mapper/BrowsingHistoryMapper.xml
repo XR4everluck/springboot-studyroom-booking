@@ -2,11 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.app.mapper.BrowsingHistoryMapper">
-    <resultMap id="HistoryItemVoMP" type="com.lyc.lease.web.app.vo.history.HistoryItemVo" autoMapping="true">
+<mapper namespace="com.yourname.studyroom.web.app.mapper.BrowsingHistoryMapper">
+    <resultMap id="HistoryItemVoMP" type="com.yourname.studyroom.web.app.vo.history.HistoryItemVo" autoMapping="true">
         <id column="id" property="id"/>
         <result column="room_id" property="roomId"/>
-        <collection property="roomGraphVoList" ofType="com.lyc.lease.web.app.vo.graph.GraphVo" autoMapping="true"
+        <collection property="roomGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"
                     select="selectGraphVoByRoomId" column="room_id"
         />
     </resultMap>
@@ -29,7 +29,7 @@
         order by bh.browse_time desc
     </select>
 
-    <select id="selectGraphVoByRoomId" resultType="com.lyc.lease.web.app.vo.graph.GraphVo">
+    <select id="selectGraphVoByRoomId" resultType="com.yourname.studyroom.web.app.vo.graph.GraphVo">
         select url,
                name
         from graph_info

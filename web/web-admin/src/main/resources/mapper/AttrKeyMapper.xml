@@ -2,12 +2,12 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.admin.mapper.AttrKeyMapper">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.AttrKeyMapper">
 
-    <resultMap id="AttrKeyVoMP" type="com.lyc.lease.web.admin.vo.attr.AttrKeyVo">
+    <resultMap id="AttrKeyVoMP" type="com.yourname.studyroom.web.admin.vo.attr.AttrKeyVo">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
-        <collection property="attrValueList" ofType="com.lyc.lease.model.entity.AttrValue">
+        <collection property="attrValueList" ofType="com.yourname.studyroom.model.entity.AttrValue">
             <id column="attr_value_id" property="id"/>
             <result property="name" column="attr_value_name"/>
             <result property="attrKeyId" column="attr_key_id"/>

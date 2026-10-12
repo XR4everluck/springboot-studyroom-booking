@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.lyc</groupId>
-        <artifactId>lease</artifactId>
+        <groupId>com.yourname.studyroom</groupId>
+        <artifactId>studyroom-booking</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>web</artifactId>
+    <artifactId>studyroom-web</artifactId>
+    <name>共享自习室预订系统-Web聚合模块</name>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,14 +28,14 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.lyc</groupId>
-            <artifactId>common</artifactId>
+            <groupId>com.yourname.studyroom</groupId>
+            <artifactId>studyroom-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lyc</groupId>
-            <artifactId>model</artifactId>
+            <groupId>com.yourname.studyroom</groupId>
+            <artifactId>studyroom-model</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

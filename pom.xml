@@ -4,11 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.lyc</groupId>
-    <artifactId>lease</artifactId>
+    <groupId>com.yourname.studyroom</groupId>
+    <artifactId>studyroom-booking</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
+
+    <name>共享自习室预订系统</name>
+    <description>基于 SpringBoot+Vue3 的共享自习室预订管理平台，包含后台管理系统与用户移动端</description>
 
     <modules>
         <module>model</module>

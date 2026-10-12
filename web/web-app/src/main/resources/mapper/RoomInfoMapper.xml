@@ -2,17 +2,17 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.app.mapper.RoomInfoMapper">
-    <resultMap id="RoomItemVoMP" type="com.lyc.lease.web.app.vo.room.RoomItemVo" autoMapping="true">
+<mapper namespace="com.yourname.studyroom.web.app.mapper.RoomInfoMapper">
+    <resultMap id="RoomItemVoMP" type="com.yourname.studyroom.web.app.vo.room.RoomItemVo" autoMapping="true">
         <id column="id" property="id"/>
-        <association property="apartmentInfo" javaType="com.lyc.lease.model.entity.ApartmentInfo" autoMapping="true">
+        <association property="apartmentInfo" javaType="com.yourname.studyroom.model.entity.ApartmentInfo" autoMapping="true">
             <id column="apartment_id" property="id"/>
         </association>
-        <collection property="graphVoList" ofType="com.lyc.lease.web.app.vo.graph.GraphVo"
+        <collection property="graphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo"
                     select="selectGraphListByRoomID"
                     column="id"
         />
-        <collection property="labelInfoList" ofType="com.lyc.lease.model.entity.LabelInfo"
+        <collection property="labelInfoList" ofType="com.yourname.studyroom.model.entity.LabelInfo"
                     select="selectLabelListByRoomId"
                     column="id"
         />
@@ -69,7 +69,7 @@
         </if>
     </select>
 
-    <select id="selectGraphListByRoomID" resultType="com.lyc.lease.web.app.vo.graph.GraphVo">
+    <select id="selectGraphListByRoomID" resultType="com.yourname.studyroom.web.app.vo.graph.GraphVo">
         select name,
                url
         from graph_info
@@ -78,7 +78,7 @@
           and item_id = #{id}
     </select>
 
-    <select id="selectLabelListByRoomId" resultType="com.lyc.lease.model.entity.LabelInfo">
+    <select id="selectLabelListByRoomId" resultType="com.yourname.studyroom.model.entity.LabelInfo">
         select
             id,
             type,

@@ -68,14 +68,14 @@ export function getRoomDetailById(id: number | string) {
 }
 
 /**
- * @description 根据id获取公寓信息
+ * @description 根据id获取自习室门店信息
  */
 export function getApartmentDetailById(id: number | string) {
   return http.get<ApartmentInterface>(`/app/apartment/getDetailById?id=${id}`);
 }
 
 /**
- * @description 根据公寓id分页查询房间列表
+ * @description 根据自习室门店id分页查询房间列表
  * @param params
  */
 export function getRoomListByApartmentId(

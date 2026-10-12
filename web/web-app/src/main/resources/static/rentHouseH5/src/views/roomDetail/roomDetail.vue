@@ -182,9 +182,9 @@
           </van-row>
         </div>
       </div>
-      <!--    所属公寓-->
+      <!--    所属自习室门店-->
       <div class="card">
-        <div class="base-info-title py-[4px]">所属公寓</div>
+        <div class="base-info-title py-[4px]">所属自习室门店</div>
         <div class="my-[5px] pb-[50px] px-[10px]">
           <ApartmentCard :data="roomDetailInfo.apartmentItemVo"></ApartmentCard>
         </div>

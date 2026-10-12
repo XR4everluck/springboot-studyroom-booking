@@ -2,12 +2,12 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.admin.mapper.FeeKeyMapper">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.FeeKeyMapper">
 
-    <resultMap id="FeeKeyVoMP" type="com.lyc.lease.web.admin.vo.fee.FeeKeyVo">
+    <resultMap id="FeeKeyVoMP" type="com.yourname.studyroom.web.admin.vo.fee.FeeKeyVo">
         <id column="id" property="id"/>
         <result column="key_name" property="name"/>
-        <collection property="feeValueList" ofType="com.lyc.lease.model.entity.FeeValue">
+        <collection property="feeValueList" ofType="com.yourname.studyroom.model.entity.FeeValue">
             <id column="value_id" property="id"/>
             <result column="value_name" property="name"/>
             <result column="value_unit" property="unit"/>

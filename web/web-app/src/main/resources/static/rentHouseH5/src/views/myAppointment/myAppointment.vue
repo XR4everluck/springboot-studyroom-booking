@@ -72,7 +72,7 @@ const getAppointmentListHandle = async () => {
   const { data } = await getMyAppointmentList();
   appointmentList.value = data;
 };
-// 跳转到公寓的详情页面
+// 跳转到自习室门店的详情页面
 const goAppointmentDetail = (item: AppointmentItemInterface) => {
   router.push({
     path: "/appointment",

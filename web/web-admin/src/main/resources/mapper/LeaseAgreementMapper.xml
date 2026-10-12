@@ -2,22 +2,22 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.admin.mapper.LeaseAgreementMapper">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.LeaseAgreementMapper">
 
-    <resultMap id="agreementVoMap" type="com.lyc.lease.web.admin.vo.agreement.AgreementVo" autoMapping="true">
+    <resultMap id="agreementVoMap" type="com.yourname.studyroom.web.admin.vo.agreement.AgreementVo" autoMapping="true">
         <id property="id" column="id"/>
-        <association property="apartmentInfo" javaType="com.lyc.lease.model.entity.ApartmentInfo" autoMapping="true">
+        <association property="apartmentInfo" javaType="com.yourname.studyroom.model.entity.ApartmentInfo" autoMapping="true">
             <id property="id" column="apartment_id"/>
             <result property="name" column="apartment_name"/>
         </association>
-        <association property="roomInfo" javaType="com.lyc.lease.model.entity.RoomInfo" autoMapping="true">
+        <association property="roomInfo" javaType="com.yourname.studyroom.model.entity.RoomInfo" autoMapping="true">
             <id property="id" column="room_id"/>
         </association>
-        <association property="paymentType" javaType="com.lyc.lease.model.entity.PaymentType" autoMapping="true">
+        <association property="paymentType" javaType="com.yourname.studyroom.model.entity.PaymentType" autoMapping="true">
             <id property="id" column="payment_type_id"/>
             <result property="name" column="payment_type_name"/>
         </association>
-        <association property="leaseTerm" javaType="com.lyc.lease.model.entity.LeaseTerm" autoMapping="true">
+        <association property="leaseTerm" javaType="com.yourname.studyroom.model.entity.LeaseTerm" autoMapping="true">
             <id property="id" column="lease_term_id"/>
         </association>
     </resultMap>

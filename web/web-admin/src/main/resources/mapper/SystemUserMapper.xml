@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.admin.mapper.SystemUserMapper">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.SystemUserMapper">
 
-    <select id="pageSystemUser" resultType="com.lyc.lease.web.admin.vo.system.user.SystemUserItemVo">
+    <select id="pageSystemUser" resultType="com.yourname.studyroom.web.admin.vo.system.user.SystemUserItemVo">
         select su.id,
                username,
                su.name,
@@ -27,7 +27,7 @@
             </if>
         </where>
     </select>
-    <select id="selectOneByUsername" resultType="com.lyc.lease.model.entity.SystemUser">
+    <select id="selectOneByUsername" resultType="com.yourname.studyroom.model.entity.SystemUser">
         select id,
                username,
                password,

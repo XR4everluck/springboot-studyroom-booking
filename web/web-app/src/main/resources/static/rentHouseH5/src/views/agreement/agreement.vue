@@ -1,9 +1,9 @@
 <template>
   <van-skeleton :row="20" :loading="!agreementDetailInfo?.roomId">
     <div class="page-container min-h-[100vh] py-[15px]">
-      <!--    签约公寓-->
+      <!--    签约自习室门店-->
       <div>
-        <div class="base-info-title main-container py-[4px]">签约公寓</div>
+        <div class="base-info-title main-container py-[4px]">签约自习室门店</div>
         <div class="my-[5px] px-[20px]">
           <van-card @click="goApartmentDetail()" class="rounded-xl shadow">
             <!--      title-->
@@ -234,7 +234,7 @@ const isRenew = ref(route.query.isRenew === "true");
 const isAddRenew = ref(route.query.isAdd === "true");
 // 是否确认签约
 const isConfirmAgreement = ref(route.query.isConfirm === "true");
-// 公寓的详情信息
+// 自习室门店的详情信息
 const agreementDetailInfo = ref<Partial<AgreementDetailInterface>>({
   id: "",
   // 	承租人姓名
@@ -243,7 +243,7 @@ const agreementDetailInfo = ref<Partial<AgreementDetailInterface>>({
   phone: "",
   // identificationNumber	承租人身份证号码
   identificationNumber: "",
-  // apartmentId	签约公寓id
+  // apartmentId	签约自习室门店id
   apartmentId: "",
   // roomId	签约房间id
   roomId: "",
@@ -382,7 +382,7 @@ const depositText = computed(() => {
   return `${agreementDetailInfo.value.deposit}元`;
 });
 //#endregion
-// 获取公寓的详情信息
+// 获取自习室门店的详情信息
 const getAgreementDetailHandle = async () => {
   const { data } = await getAgreementDetailById(route.query.id as string);
   agreementDetailInfo.value = data;
@@ -438,7 +438,7 @@ const correctLeaseTermAndPaymentType = () => {
     paymentTypeInfo.value.value = targetPaymentType.id as unknown as string;
   }
 };
-// 跳转到公寓的详情页面
+// 跳转到自习室门店的详情页面
 const goApartmentDetail = () => {
   router.push({
     path: "/apartmentDetail",

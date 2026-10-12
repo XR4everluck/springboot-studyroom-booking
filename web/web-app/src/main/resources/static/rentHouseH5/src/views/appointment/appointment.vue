@@ -1,9 +1,9 @@
 <template>
   <van-skeleton :row="20" :loading="!apartmentDetailInfo?.id">
     <div class="page-container min-h-[100vh] py-[15px]">
-      <!--    预约公寓-->
+      <!--    预约自习室门店-->
       <div>
-        <div class="base-info-title main-container py-[4px]">预约公寓</div>
+        <div class="base-info-title main-container py-[4px]">预约自习室门店</div>
         <div class="my-[5px] px-[15px]">
           <ApartmentCard :data="apartmentDetailInfo"></ApartmentCard>
         </div>
@@ -120,9 +120,9 @@ import { AppointmentStatus } from "@/enums/constEnums";
 import { showToast } from "vant";
 const route = useRoute();
 const router = useRouter();
-// 公寓的详情信息
+// 自习室门店的详情信息
 const apartmentDetailInfo = ref<ApartmentInterface>({} as ApartmentInterface);
-// 获取公寓的详情信息
+// 获取自习室门店的详情信息
 const getApartmentDetailHandle = async () => {
   const { data } = await getApartmentDetailById(
     route.query.apartmentId as string

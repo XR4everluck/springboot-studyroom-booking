@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.admin.mapper.AttrValueMapper">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.AttrValueMapper">
 
-    <select id="selectListByRoomId" resultType="com.lyc.lease.web.admin.vo.attr.AttrValueVo">
+    <select id="selectListByRoomId" resultType="com.yourname.studyroom.web.admin.vo.attr.AttrValueVo">
         select v.id,
                v.name,
                v.attr_key_id,

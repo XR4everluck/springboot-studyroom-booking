@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://192.168.70.128:3306/lease?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+    url: jdbc:mysql://192.168.70.128:3306/studyroom_booking?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
     username: root
     password: 123456
     hikari:
@@ -32,7 +32,7 @@ minio:
   endpoint: http://192.168.70.128:9000
   access-key: minioadmin
   secret-key: minioadmin
-  bucket-name: lease
+  bucket-name: studyroom
 
 # 将queryVo打平处理
 springdoc:

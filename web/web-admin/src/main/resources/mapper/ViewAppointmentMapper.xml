@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.admin.mapper.ViewAppointmentMapper">
-    <resultMap id="AppointmentVoMP" type="com.lyc.lease.web.admin.vo.appointment.AppointmentVo" autoMapping="true">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.ViewAppointmentMapper">
+    <resultMap id="AppointmentVoMP" type="com.yourname.studyroom.web.admin.vo.appointment.AppointmentVo" autoMapping="true">
         <id property="id" column="id"/>
-        <association property="apartmentInfo" javaType="com.lyc.lease.model.entity.ApartmentInfo" autoMapping="true">
+        <association property="apartmentInfo" javaType="com.yourname.studyroom.model.entity.ApartmentInfo" autoMapping="true">
             <id property="id" column="ai_id"/>
             <result property="name" column="ai_name"/>
             <result property="phone" column="ai_phone"/>

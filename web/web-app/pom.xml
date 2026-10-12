@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.lyc</groupId>
-        <artifactId>web</artifactId>
+        <groupId>com.yourname.studyroom</groupId>
+        <artifactId>studyroom-web</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>web-app</artifactId>
+    <artifactId>studyroom-web-app</artifactId>
+    <name>共享自习室预订系统-用户移动端</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

@@ -15,7 +15,7 @@
           </van-image>
         </van-swipe-item>
       </van-swipe>
-      <!--  公寓的信息-->
+      <!--  自习室门店的信息-->
       <div class="card">
         <!--      标题-->
         <div class="font-bold">
@@ -122,9 +122,9 @@ import type { RoomInterface } from "@/api/search/types";
 import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const route = useRoute();
-// 公寓的详情信息
+// 自习室门店的详情信息
 const apartmentDetailInfo = ref<ApartmentInterface>({} as ApartmentInterface);
-// 获取公寓的详情信息
+// 获取自习室门店的详情信息
 const getApartmentDetailHandle = async () => {
   const { data } = await getApartmentDetailById(route.query.id as string);
   apartmentDetailInfo.value = data;

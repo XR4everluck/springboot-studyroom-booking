@@ -51,9 +51,9 @@ export interface RoomInterface {
   apartmentInfo: ApartmentInterface;
   // 	属性信息列表
   attrValueVoList?: any[];
-  // 	公寓配套信息
+  // 	自习室门店配套信息
   facilityInfoList?: FacilityInfoInterface[];
-  // 公寓标签信息
+  // 自习室门店标签信息
   labelInfoList?: LabelInfoInterface[];
   // 	支付方式列表
   paymentTypeList?: PaymentInfoInterface[];
@@ -81,13 +81,13 @@ export interface ApartmentInterface {
   phone: string;
   isRelease: string | number;
   minRent?: number | string;
-  // 	公寓配套id
+  // 	自习室门店配套id
   facilityInfoIds?: number[];
-  // 	公寓配套信息
+  // 	自习室门店配套信息
   facilityInfoList?: FacilityInfoInterface[];
-  // 公寓标签信息
+  // 自习室门店标签信息
   labelInfoList?: LabelInfoInterface[];
-  // 	公寓杂费值信息
+  // 	自习室门店杂费值信息
   feeValueVoList?: FeeInfoInterface["feeValueList"];
   // 图片信息
   graphVoList?: {
@@ -126,15 +126,15 @@ export interface RoomDetailInterface {
   apartmentItemVo: ApartmentInterface;
   // 	属性信息列表
   attrValueVoList?: AttrValueInfoInterface[];
-  // 	公寓配套信息
+  // 	自习室门店配套信息
   facilityInfoList?: FacilityInfoInterface[];
-  // 公寓标签信息
+  // 自习室门店标签信息
   labelInfoList?: LabelInfoInterface[];
   // 	支付方式列表
   paymentTypeList?: PaymentInfoInterface[];
   // 可选租期列表
   leaseTermList?: TermInfoInterface[];
-  // 	公寓杂费值信息
+  // 	自习室门店杂费值信息
   feeValueVoList?: FeeValueInfoInterface[];
   // 图片信息
   graphVoList?: {
@@ -169,7 +169,7 @@ export interface AppointmentQueryInterface {
   name: string;
   // phone	用户手机号码
   phone: string;
-  // apartmentId	公寓id
+  // apartmentId	自习室门店id
   apartmentId: number | string;
   // appointmentTime	预约时间
   appointmentTime: string;
@@ -216,7 +216,7 @@ export interface AgreementQueryInterface {
   phone: string;
   // identificationNumber	承租人身份证号码
   identificationNumber: string;
-  // apartmentId	签约公寓id
+  // apartmentId	签约自习室门店id
   apartmentId: number | string;
   // roomId	签约房间id
   roomId: number | string;

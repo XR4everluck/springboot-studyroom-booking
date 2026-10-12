@@ -2,12 +2,12 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lyc.lease.web.app.mapper.ViewAppointmentMapper">
+<mapper namespace="com.yourname.studyroom.web.app.mapper.ViewAppointmentMapper">
 
-    <resultMap id="AppointmentItemVoMap" type="com.lyc.lease.web.app.vo.appointment.AppointmentItemVo"
+    <resultMap id="AppointmentItemVoMap" type="com.yourname.studyroom.web.app.vo.appointment.AppointmentItemVo"
                autoMapping="true">
         <id column="id" property="id"/>
-        <collection property="graphVoList" ofType="com.lyc.lease.web.app.vo.graph.GraphVo" autoMapping="true"/>
+        <collection property="graphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"/>
     </resultMap>
     <select id="listItemByUserId" resultMap="AppointmentItemVoMap">
         select va.id,

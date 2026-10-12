@@ -27,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/apartmentDetail",
     component: () => import("@/views/apartmentDetail/apartmentDetail.vue"),
     meta: {
-      title: "公寓详情",
+      title: "自习室门店详情",
       noCache: true
     }
   },
