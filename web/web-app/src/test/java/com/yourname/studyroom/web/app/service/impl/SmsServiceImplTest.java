@@ -8,11 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @ClassName SmsServiceImplTest
- * @Description TODO
- * @Author LuKey_C
- * @Date 2025/2/10 10:44
- * @Version 1.0
+ * SmsServiceImplTest
  */
 @SpringBootTest
 class SmsServiceImplTest {

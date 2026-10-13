@@ -6,11 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
- * @ClassName MybatisMetaObjectHandler
- * @Description TODO 实现MP对象处理器 完成自动更新属性功能
- * @Author LuKey_C
- * @Date 2025/2/1 10:05
- * @Version 1.0
+ * 实现MP对象处理器 完成自动更新属性功能
  */
 
 @Component

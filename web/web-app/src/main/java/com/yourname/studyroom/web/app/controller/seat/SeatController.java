@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Tag(name = "座位信息")
 @RestController
 @RequestMapping("/app/seat")
@@ -66,6 +68,13 @@ public class SeatController {
     public Result<IPage<SeatItemVo>> pageItemByStoreId(@RequestParam long current, @RequestParam long size, @RequestParam Long id) {
         IPage<SeatItemVo> page = new Page<>();
         IPage<SeatItemVo> result = seatService.pageItemByStoreId(page,id);
+        return Result.ok(result);
+    }
+
+    @Operation(summary = "首页热门座位列表")
+    @GetMapping("getHotList")
+    public Result<List<SeatItemVo>> getHotList(@RequestParam(defaultValue = "6") Integer limit) {
+        List<SeatItemVo> result = seatService.getHotList(limit);
         return Result.ok(result);
     }
 }

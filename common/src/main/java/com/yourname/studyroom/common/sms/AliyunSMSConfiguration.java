@@ -10,11 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 /**
- * @ClassName AliyunSMSProperties
- * @Description TODO 阿里云SMS配置类
- * @Author LuKey_C
- * @Date 2025/2/10 10:32
- * @Version 1.0
+ * 阿里云SMS配置类
  */
 @Configuration
 @EnableConfigurationProperties(AliyunSMSProperties.class)

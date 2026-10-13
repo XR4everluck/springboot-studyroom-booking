@@ -6,11 +6,7 @@ import org.springframework.core.convert.converter.ConverterFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * @ClassName StringToBaseEnumConverterFactory
- * @Description TODO 自定义类型转换器工厂 实现数字字符串转换为枚举类 String -> BaseEnum子类类型转换
- * @Author LuKey_C
- * @Date 2025/2/1 16:06
- * @Version 1.0
+ * 自定义类型转换器工厂 实现数字字符串转换为枚举类 String -> BaseEnum子类类型转换
  */
 @Component
 public class StringToBaseEnumConverterFactory implements ConverterFactory<String, BaseEnum> {

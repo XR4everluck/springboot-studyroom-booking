@@ -6,11 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * @ClassName GlobalExceptionHandler
- * @Description TODO 全局异常处理类
- * @Author LuKey_C
- * @Date 2025/2/2 18:06
- * @Version 1.0
+ * 全局异常处理类
  */
 
 @ControllerAdvice

@@ -3,11 +3,7 @@ package com.yourname.studyroom.common.utils;
 import java.util.Random;
 
 /**
- * @ClassName CodeUtil
- * @Description TODO 随机字符生成器
- * @Author LuKey_C
- * @Date 2025/2/10 10:55
- * @Version 1.0
+ * 随机字符生成器
  */
 public class CodeUtil {
 

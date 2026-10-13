@@ -9,11 +9,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 /**
- * @ClassName JwtUtil
- * @Description TODO JwtToken工具类
- * @Author LuKey_C
- * @Date 2025/2/9 11:20
- * @Version 1.0
+ * JwtToken工具类
  */
 
 public class JwtUtil {

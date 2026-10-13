@@ -9,11 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @ClassName MinioConfiguration
- * @Description TODO Minio配置类
- * @Author LuKey_C
- * @Date 2025/2/2 16:06
- * @Version 1.0
+ * Minio配置类
  */
 
 @Configuration

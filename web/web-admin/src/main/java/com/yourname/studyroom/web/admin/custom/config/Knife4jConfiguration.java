@@ -7,11 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @ClassName Knife4jConfiguration
- * @Description TODO Knife4j 配置类
- * @Author LuKey_C
- * @Date 2025/1/31 11:17
- * @Version 1.0
+ * Knife4j 配置类
  */
 @Configuration
 public class Knife4jConfiguration {

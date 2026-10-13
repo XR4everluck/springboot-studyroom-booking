@@ -1,11 +1,7 @@
 package com.yourname.studyroom.common.constant;
 
 /**
- * @ClassName RedisConstant
- * @Description TODO Reids常量
- * @Author LuKey_C
- * @Date 2025/2/8 21:06
- * @Version 1.0
+ * Redis 缓存 key 前缀与过期时间常量
  */
 public class RedisConstant {
     public static final String ADMIN_LOGIN_PREFIX = "admin:login:";
@@ -18,4 +14,11 @@ public class RedisConstant {
     public static final String APP_SEAT_STATUS_PREFIX = "app:seat:status:";
     /** 座位实时状态缓存过期时间（秒），1 天 */
     public static final Integer APP_SEAT_STATUS_TTL_SEC = 60 * 60 * 24;
+
+    /** 首页热门门店缓存 key（值为按浏览量降序的门店 id 列表） */
+    public static final String APP_HOT_STORE_LIST = "app:store:hot:list";
+    /** 首页热门座位缓存 key（值为按浏览量降序的座位 id 列表） */
+    public static final String APP_HOT_SEAT_LIST = "app:seat:hot:list";
+    /** 首页热门榜单缓存过期时间（秒），1 小时 */
+    public static final Integer APP_HOT_LIST_TTL_SEC = 60 * 60;
 }

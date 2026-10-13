@@ -5,11 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
- * @ClassName StudyroomAppApplication
- * @Description TODO 移动端启动类
- * @Author LuKey_C
- * @Date 2025/2/10 8:52
- * @Version 1.0
+ * 移动端启动类
  */
 @SpringBootApplication
 @EnableAsync //开启异步请求支持

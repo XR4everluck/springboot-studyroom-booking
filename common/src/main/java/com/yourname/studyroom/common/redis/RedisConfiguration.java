@@ -6,11 +6,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 /**
- * @ClassName RedisConfiguration
- * @Description TODO Redis配置类
- * @Author LuKey_C
- * @Date 2025/2/10 22:06
- * @Version 1.0
+ * Redis配置类
  */
 @Configuration
 public class RedisConfiguration {

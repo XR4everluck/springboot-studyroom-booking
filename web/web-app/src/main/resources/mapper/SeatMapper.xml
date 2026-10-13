@@ -127,4 +127,28 @@
                             where is_deleted = 0
                               and status in (2, 5))
     </select>
+
+    <select id="selectItemById" resultMap="SeatItemVoMP">
+        select ri.id,
+               ri.seat_code,
+               ri.price,
+               ai.id store_id,
+               ai.name,
+               ai.introduction,
+               ai.district_id,
+               ai.district_name,
+               ai.city_id,
+               ai.city_name,
+               ai.province_id,
+               ai.province_name,
+               ai.address_detail,
+               ai.latitude,
+               ai.longitude,
+               ai.phone,
+               ai.is_release
+        from seat ri
+                 left join study_store ai on ri.store_id = ai.id and ai.is_deleted = 0
+        where ri.id = #{id}
+          and ri.is_deleted = 0
+    </select>
 </mapper>

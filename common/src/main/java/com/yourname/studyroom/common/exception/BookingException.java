@@ -4,11 +4,7 @@ import com.yourname.studyroom.common.result.ResultCodeEnum;
 import lombok.Data;
 
 /**
- * @ClassName BookingException
- * @Description TODO 自定义异常类
- * @Author LuKey_C
- * @Date 2025/2/4 9:22
- * @Version 1.0
+ * 自定义异常类
  */
 @Data
 public class BookingException extends RuntimeException{

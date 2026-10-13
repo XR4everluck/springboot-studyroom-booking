@@ -10,11 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * @ClassName AuthenticationInterceptor
- * @Description TODO 登录状态校验拦截器
- * @Author LuKey_C
- * @Date 2025/2/9 15:50
- * @Version 1.0
+ * 登录状态校验拦截器
  */
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {

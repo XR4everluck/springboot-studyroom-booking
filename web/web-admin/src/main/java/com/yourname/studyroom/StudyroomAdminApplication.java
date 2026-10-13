@@ -5,11 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * @ClassName StudyroomAdminApplication
- * @Description TODO 启动类
- * @Author LuKey_C
- * @Date 2025/1/31 10:36
- * @Version 1.0
+ * 启动类
  */
 
 @SpringBootApplication

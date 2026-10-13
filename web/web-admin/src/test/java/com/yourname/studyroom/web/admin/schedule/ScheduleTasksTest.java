@@ -5,11 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * @ClassName ScheduleTasksTest
- * @Description TODO
- * @Author LuKey_C
- * @Date 2025/2/6 19:09
- * @Version 1.0
+ * ScheduleTasksTest
  */
 @SpringBootTest
 class ScheduleTasksTest {

@@ -24,12 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
- * @author liubo
- * @description 针对表【seat(座位信息表)】的数据库操作Service实现
- * @createDate 2023-07-26 11:12:39
+ * 针对表【seat(座位信息表)】的数据库操作Service实现
  */
 @Service
 @Slf4j
@@ -134,6 +134,32 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     public IPage<SeatItemVo> pageItemByStoreId(IPage<SeatItemVo> page, Long id) {
         IPage<SeatItemVo> result = seatMapper.pageItemByStoreId(page, id);
         fillRealtimeStatus(result.getRecords());
+        return result;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<SeatItemVo> getHotList(int limit) {
+        List<Long> hotIds = (List<Long>) redisTemplate.opsForValue().get(RedisConstant.APP_HOT_SEAT_LIST);
+        if (hotIds == null) {
+            hotIds = seatMapper.selectHotSeatIds(limit);
+            redisTemplate.opsForValue().set(
+                    RedisConstant.APP_HOT_SEAT_LIST,
+                    new ArrayList<>(hotIds),
+                    RedisConstant.APP_HOT_LIST_TTL_SEC,
+                    TimeUnit.SECONDS);
+        }
+        List<SeatItemVo> result = new ArrayList<>();
+        for (Long id : hotIds) {
+            if (result.size() >= limit) {
+                break;
+            }
+            SeatItemVo item = seatMapper.selectItemById(id);
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        fillRealtimeStatus(result);
         return result;
     }
 

@@ -4,11 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * @ClassName MinioProperties
- * @Description TODO Minio属性类
- * @Author LuKey_C
- * @Date 2025/2/2 16:12
- * @Version 1.0
+ * Minio属性类
  */
 
 //类属性应该映射到哪个字符串开头的属性

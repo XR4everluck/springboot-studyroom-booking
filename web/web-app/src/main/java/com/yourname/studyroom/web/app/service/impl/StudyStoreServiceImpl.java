@@ -1,5 +1,6 @@
 package com.yourname.studyroom.web.app.service.impl;
 
+import com.yourname.studyroom.common.constant.RedisConstant;
 import com.yourname.studyroom.model.entity.StudyStore;
 import com.yourname.studyroom.model.entity.FacilityInfo;
 import com.yourname.studyroom.model.entity.LabelInfo;
@@ -12,15 +13,16 @@ import com.yourname.studyroom.web.app.vo.store.StoreItemVo;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
- * @author liubo
- * @description 针对表【study_store(自习室门店信息表)】的数据库操作Service实现
- * @createDate 2023-07-26 11:12:39
+ * 针对表【study_store(自习室门店信息表)】的数据库操作Service实现
  */
 @Service
 public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudyStore>
@@ -40,6 +42,9 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
 
     @Autowired
     FacilityInfoMapper facilityInfoMapper;
+
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public StoreItemVo selectStoreItemVoById(Long id) {
@@ -81,6 +86,31 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
         storeDetailVo.setFacilityInfoList(facilityInfoList);
         storeDetailVo.setMinPrice(minPrice);
         return storeDetailVo;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<StoreItemVo> getHotList(int limit) {
+        List<Long> hotIds = (List<Long>) redisTemplate.opsForValue().get(RedisConstant.APP_HOT_STORE_LIST);
+        if (hotIds == null) {
+            hotIds = studyStoreMapper.selectHotStoreIds(limit);
+            redisTemplate.opsForValue().set(
+                    RedisConstant.APP_HOT_STORE_LIST,
+                    new ArrayList<>(hotIds),
+                    RedisConstant.APP_HOT_LIST_TTL_SEC,
+                    TimeUnit.SECONDS);
+        }
+        List<StoreItemVo> result = new ArrayList<>();
+        for (Long id : hotIds) {
+            if (result.size() >= limit) {
+                break;
+            }
+            StoreItemVo item = selectStoreItemVoById(id);
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result;
     }
 }
 
