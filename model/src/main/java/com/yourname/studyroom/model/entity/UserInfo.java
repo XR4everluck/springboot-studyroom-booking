@@ -15,7 +15,11 @@ public class UserInfo extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "手机号码（用做登录用户名）")
+    @Schema(description = "登录账号")
+    @TableField(value = "username")
+    private String username;
+
+    @Schema(description = "手机号码（订单联系方式）")
     @TableField(value = "phone")
     private String phone;
 

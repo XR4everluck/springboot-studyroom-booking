@@ -34,10 +34,3 @@ springdoc:
 storage:
   upload-dir: ./upload-data
   url-prefix: /upload
-
-# 阿里云短信服务配置：不填 access-key-id 时不真正发短信，登录验证码打印到应用日志
-#aliyun:
-#  sms:
-#    access-key-id: 你的AccessKeyId
-#    access-key-secret: 你的AccessKeySecret
-#    endpoint: dysmsapi.aliyuncs.com

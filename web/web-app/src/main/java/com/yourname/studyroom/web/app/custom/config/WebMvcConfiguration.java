@@ -19,6 +19,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 addPathPatterns("/app/**").
                 excludePathPatterns(
                         "/app/login/**",
+                        "/app/register/**",
                         "/app/seat/**",
                         "/app/store/**",
                         "/app/region/**",

@@ -1,12 +1,12 @@
 import http from "@/utils/http";
 import type {
   loginQueryInterface,
-  SmsCodeQueryInterface,
+  registerQueryInterface,
   UserInfoInterface
 } from "@/api/user/types";
 
 /**
- * @description 登录
+ * @description 账号密码登录
  * @param params
  */
 export function login(params: loginQueryInterface) {
@@ -14,11 +14,11 @@ export function login(params: loginQueryInterface) {
 }
 
 /**
- * @description 获取短信验证码
+ * @description 账号注册
  * @param params
  */
-export function getSmsCode(params: SmsCodeQueryInterface) {
-  return http.get(`/app/login/getCode`, params);
+export function register(params: registerQueryInterface) {
+  return http.post<null>(`/app/register`, params);
 }
 
 /**

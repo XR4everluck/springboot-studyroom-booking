@@ -2,147 +2,267 @@
   <div class="login-page">
     <div class="login-page__card">
       <div class="login-page__brand">
-        <van-image round width="72px" height="72px" :src="defaultAvatarUrl" />
+        <van-image round width="64px" height="64px" :src="defaultAvatarUrl" />
         <h1 class="login-page__title">共享自习室</h1>
-        <p class="--van-gray-6 login-page__subtitle">手机号验证码登录</p>
+        <p class="--van-gray-6 login-page__subtitle">账号密码登录，没有账号可免费注册</p>
       </div>
-      <van-form ref="formRef" class="login-page__form">
-        <van-cell-group>
-          <!--            手机号-->
-          <van-field
-            v-model.trim="loginInfo.phone"
-            border
-            name="phone"
-            required
-            type="tel"
-            autocomplete="off"
-            placeholder="请输入手机号"
-            :rules="[
-              {
-                required: true,
-                pattern: /^1([3589]\d|4[5-9]|6[1-2,4-7]|7[0-8])\d{8}$/,
-                message: '请正确填写手机号'
-              }
-            ]"
-          />
 
-          <van-field
-            v-model.trim="loginInfo.code"
-            name="code"
-            placeholder="请输入验证码"
-            clearable
-            type="digit"
-            maxlength="6"
-            autocomplete="off"
-            :rules="[
-              {
-                required: true,
-                pattern: /^\d{6}$/,
-                message: '请填写验证码'
-              }
-            ]"
-          >
-            <template #button>
-              <van-button @click="getCodeHandle" size="small" type="primary">
-                <div class="flex justify-center items-center">
-                  <span class="--van-gray-1">{{
-                    codeSendStatus ? "已发送" : "发送验证码"
-                  }}</span>
-                  <van-count-down
-                    v-show="codeSendStatus"
-                    ref="countDownRef"
-                    @finish="countDownFinishHandle"
-                    :time="countDown"
-                    :auto-start="false"
-                    format="ss"
-                  >
-                    <template #default="{ seconds }">
-                      <span class="--van-gray-1">{{ `(${seconds}s)` }}</span>
-                    </template>
-                  </van-count-down>
-                </div>
-              </van-button>
-            </template>
-          </van-field>
-        </van-cell-group>
-        <div class="login-page__submit">
-          <loading-button
-            round
-            block
-            type="primary"
-            native-type="submit"
-            :loadingClick="onSubmitHandle"
-          >
-            登录
-          </loading-button>
-        </div>
-      </van-form>
+      <van-tabs v-model:active="activeTab" shrink class="login-page__tabs">
+        <!--          登录-->
+        <van-tab title="登录">
+          <van-form ref="loginFormRef" class="login-page__form" @submit="onSubmitLogin">
+            <van-cell-group>
+              <van-field
+                v-model.trim="loginForm.username"
+                name="username"
+                label="账号"
+                clearable
+                autocomplete="username"
+                placeholder="请输入登录账号"
+                :rules="[
+                  { required: true, message: '请输入登录账号' },
+                  { pattern: USERNAME_PATTERN, message: '账号为4-20位字母、数字或下划线' }
+                ]"
+              />
+              <van-field
+                v-model="loginForm.password"
+                name="password"
+                label="密码"
+                clearable
+                autocomplete="current-password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="请输入密码"
+                :rules="[{ required: true, message: '请输入密码' }]"
+              >
+                <template #right-icon>
+                  <van-icon
+                    :name="showPassword ? 'eye-o' : 'closed-eye'"
+                    class="login-page__eye"
+                    @click="showPassword = !showPassword"
+                  />
+                </template>
+              </van-field>
+            </van-cell-group>
+
+            <div class="login-page__options">
+              <van-checkbox v-model="rememberAccount" shape="square" icon-size="16px">
+                记住账号
+              </van-checkbox>
+            </div>
+
+            <div class="login-page__submit">
+              <loading-button
+                round
+                block
+                type="primary"
+                native-type="submit"
+                :loadingClick="onSubmitLogin"
+              >
+                登录
+              </loading-button>
+            </div>
+          </van-form>
+        </van-tab>
+
+        <!--          注册-->
+        <van-tab title="注册">
+          <van-form ref="registerFormRef" class="login-page__form" @submit="onSubmitRegister">
+            <van-cell-group>
+              <van-field
+                v-model.trim="registerForm.username"
+                name="username"
+                label="账号"
+                clearable
+                autocomplete="username"
+                placeholder="4-20位字母、数字或下划线"
+                :rules="[
+                  { required: true, message: '请输入登录账号' },
+                  { pattern: USERNAME_PATTERN, message: '账号为4-20位字母、数字或下划线' }
+                ]"
+              />
+              <van-field
+                v-model.trim="registerForm.nickname"
+                name="nickname"
+                label="昵称"
+                clearable
+                maxlength="12"
+                show-word-limit
+                placeholder="1-12个字符，展示给其他用户"
+                :rules="[{ required: true, message: '请输入昵称' }]"
+              />
+              <van-field
+                v-model.trim="registerForm.phone"
+                name="phone"
+                label="手机号"
+                type="tel"
+                clearable
+                maxlength="11"
+                autocomplete="tel"
+                placeholder="选填，作为订单联系方式"
+                :rules="[
+                  {
+                    pattern: /^1[3-9]\d{9}$/,
+                    required: false,
+                    message: '手机号格式不正确'
+                  }
+                ]"
+              />
+              <van-field
+                v-model="registerForm.password"
+                name="password"
+                label="密码"
+                clearable
+                autocomplete="new-password"
+                :type="showRegPassword ? 'text' : 'password'"
+                placeholder="8-20位，需包含字母和数字"
+                :rules="[
+                  { required: true, message: '请输入密码' },
+                  { pattern: PASSWORD_PATTERN, message: '密码需为8-20位，且同时包含字母和数字' }
+                ]"
+              >
+                <template #right-icon>
+                  <van-icon
+                    :name="showRegPassword ? 'eye-o' : 'closed-eye'"
+                    class="login-page__eye"
+                    @click="showRegPassword = !showRegPassword"
+                  />
+                </template>
+              </van-field>
+              <van-field
+                v-model="registerForm.confirmPassword"
+                name="confirmPassword"
+                label="确认密码"
+                clearable
+                autocomplete="new-password"
+                :type="showRegPassword ? 'text' : 'password'"
+                placeholder="请再次输入密码"
+                :rules="[
+                  { required: true, message: '请再次输入密码' },
+                  {
+                    validator: value => value === registerForm.password,
+                    message: '两次输入的密码不一致'
+                  }
+                ]"
+              />
+            </van-cell-group>
+
+            <div class="login-page__hint --van-gray-6">
+              密码将加盐加密后存储，请勿使用其他网站的密码
+            </div>
+
+            <div class="login-page__submit">
+              <loading-button
+                round
+                block
+                type="primary"
+                native-type="submit"
+                :loadingClick="onSubmitRegister"
+              >
+                注册并登录
+              </loading-button>
+            </div>
+          </van-form>
+        </van-tab>
+      </van-tabs>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import defaultAvatarUrl from "../../../public/favicon.ico";
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getSmsCode } from "@/api/user";
-import type { CountDownInstance, FormInstance } from "vant";
+import { login, register } from "@/api/user";
+import type { FormInstance } from "vant";
+import { showToast } from "vant";
 import { useUserStore } from "@/store/modules/user";
 import LoadingButton from "@/components/LoadingButton/LoadingButton.vue";
+
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
-// 登录信息
-const loginInfo = ref({
-  phone: "13888888888",
-  code: "123456"
+
+// 与后端一致的校验规则
+const USERNAME_PATTERN = /^[a-zA-Z0-9_]{4,20}$/;
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/;
+
+const REMEMBER_KEY = "studyroom:remember-account";
+
+// 当前激活的 Tab：0 登录，1 注册
+const activeTab = ref(0);
+
+// 登录表单
+const loginFormRef = ref<FormInstance>();
+const loginForm = reactive({
+  username: "",
+  password: ""
 });
-// 表单实例
-const formRef = ref<FormInstance>();
-// 验证码发送状态
-const codeSendStatus = ref(false);
-//#region <倒计时相关>
-// 倒计时
-const countDown = ref(60 * 1000);
-const countDownRef = ref<CountDownInstance>();
-// 倒计时开始
-const countDownStartHandle = () => {
-  countDownRef.value?.start();
-  //   修改验证码发送状态
-  codeSendStatus.value = true;
-};
-// 倒计时重置
-const countDownResetHandle = () => {
-  countDownRef.value?.reset();
-  //   修改验证码发送状态
-  codeSendStatus.value = false;
-};
-// 倒计时结束
-const countDownFinishHandle = () => {
-  countDownResetHandle();
-};
-//#endregion
-// 获取验证码
-const getCodeHandle = async () => {
-  // 验证字段phone
-  await formRef.value?.validate("phone");
-  // 开始倒计时
-  countDownStartHandle();
-  getSmsCode({ phone: loginInfo.value.phone });
-};
-const onSubmitHandle = async () => {
+const showPassword = ref(false);
+// 记住账号
+const rememberAccount = ref(false);
+
+// 注册表单
+const registerFormRef = ref<FormInstance>();
+const registerForm = reactive({
+  username: "",
+  nickname: "",
+  phone: "",
+  password: "",
+  confirmPassword: ""
+});
+const showRegPassword = ref(false);
+
+// 登录
+const onSubmitLogin = async () => {
   // 验证字段
-  await formRef.value?.validate();
+  await loginFormRef.value?.validate();
   // 登录
-  await userStore.LoginAction(loginInfo.value);
-  // 跳转首页
+  await userStore.LoginAction({
+    username: loginForm.username,
+    password: loginForm.password
+  });
+  // 记住账号
+  if (rememberAccount.value) {
+    localStorage.setItem(REMEMBER_KEY, loginForm.username);
+  } else {
+    localStorage.removeItem(REMEMBER_KEY);
+  }
+  await redirectAfterAuth();
+};
+
+// 注册成功后自动登录
+const onSubmitRegister = async () => {
+  await registerFormRef.value?.validate();
+  await register({
+    username: registerForm.username,
+    password: registerForm.password,
+    nickname: registerForm.nickname,
+    phone: registerForm.phone || undefined
+  });
+  showToast({ type: "success", message: "注册成功" });
+  // 注册即登录，省去重复输入
+  await userStore.LoginAction({
+    username: registerForm.username,
+    password: registerForm.password
+  });
+  await redirectAfterAuth();
+};
+
+// 登录/注册成功后的跳转
+const redirectAfterAuth = async () => {
   await router.replace(
     route.query?.redirect
       ? decodeURIComponent(route.query?.redirect as string)
       : "/"
   );
 };
+
 onMounted(() => {
-  console.log("route", route);
+  // 回填记住的账号
+  const remembered = localStorage.getItem(REMEMBER_KEY);
+  if (remembered) {
+    loginForm.username = remembered;
+    rememberAccount.value = true;
+  }
 });
 </script>
 
@@ -150,17 +270,17 @@ onMounted(() => {
 .login-page {
   display: flex;
   justify-content: center;
-  padding: 48px 20px 0;
+  padding: 48px 24px 0;
 }
 
 .login-page__card {
   box-sizing: border-box;
   width: 420px;
-  padding: 32px;
+  padding: 28px 32px 32px;
   border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 2px rgba(24, 34, 28, 0.03), 0 6px 20px rgba(24, 34, 28, 0.04);
 }
 
 .login-page__brand {
@@ -168,7 +288,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .login-page__title {
@@ -183,7 +303,45 @@ onMounted(() => {
   font-size: 13px;
 }
 
+.login-page__tabs {
+  margin-bottom: 4px;
+}
+
+.login-page__form {
+  padding-top: 12px;
+}
+
+.login-page__eye {
+  font-size: 18px;
+  color: var(--van-text-color-3);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--van-primary-color);
+  }
+}
+
+.login-page__options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px 0;
+}
+
+.login-page__hint {
+  padding: 8px 16px 0;
+  font-size: 12px;
+}
+
 .login-page__submit {
-  margin-top: 24px;
+  margin-top: 20px;
+}
+
+// 窄屏适配
+@media (max-width: 480px) {
+  .login-page__card {
+    width: 100%;
+    padding: 20px 16px 24px;
+  }
 }
 </style>

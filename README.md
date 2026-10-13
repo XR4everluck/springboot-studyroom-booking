@@ -118,7 +118,7 @@
 
 ```
 studyroom-booking                     父工程（聚合模块）
-├── common        公共模块：常量、异常、登录、本地磁盘文件存储、MyBatis-Plus、Redis、短信、工具类
+├── common        公共模块：常量、异常、登录、本地磁盘文件存储、MyBatis-Plus、Redis、工具类
 ├── model         实体模型模块：entity、enums
 └── web           Web 聚合模块
     ├── web-admin 后台管理系统启动模块
@@ -139,7 +139,7 @@ studyroom-booking                     父工程（聚合模块）
 | 缓存项 | Key 前缀 / 常量 | 值 | 过期时间 |
 | --- | --- | --- | --- |
 | 后台登录验证码 | `admin:login:` + UUID | 图形验证码文本 | `ADMIN_LOGIN_CAPTCHA_TTL_SEC` = 60s |
-| 用户端登录短信码 | `app:login:` + phone | 6 位随机码 | 与重发间隔控制（`APP_LOGIN_*`） |
+| 用户端登录失败计数 | `app:login:fail:` + username | 累计失败次数 | 5 次锁定 10 分钟（`APP_LOGIN_FAIL_*`） |
 | 座位详情 | `app:seat:` + seatId | `SeatDetailVo` | 常驻（命中后回填实时状态） |
 | 座位实时状态 | `app:seat:status:` + seatId | `SeatRealtimeStatus.code`（1空闲/2已预订/3使用中） | `APP_SEAT_STATUS_TTL_SEC` = 1 天 |
 | 首页热门门店（新增） | `app:store:hot:list` | 按浏览量降序的门店 id 列表 | `APP_HOT_LIST_TTL_SEC` = 1 小时 |
@@ -175,7 +175,7 @@ studyroom-booking                     父工程（聚合模块）
 
 ### 系统与用户表
 
-`system_post`（岗位）、`system_user`（后台账号，密码 `md5Hex` 存储，唯一 `username`）、`user_info`（C 端用户，以手机号为登录账号，短信验证码登录）。
+`system_post`（岗位）、`system_user`（后台账号，密码 `md5Hex` 存储，唯一 `username`）、`user_info`（C 端用户，账号密码登录，PBKDF2 加盐哈希存储；手机号选填作订单联系方式）。
 
 ## 接口清单
 
@@ -202,7 +202,7 @@ studyroom-booking                     父工程（聚合模块）
 
 | 分组 | 方法 | 路径 |
 | --- | --- | --- |
-| 登录 | GET/POST | `/app/login/getCode`、`/app/login`、`/app/login/info` |
+| 登录注册 | POST | `/app/login`（账密登录，失败5次锁定）、`/app/register`（注册）；GET `/app/info` |
 | 门店 | GET | `/app/store/getDetailById`、`/app/store/getHotList`（新增热门门店） |
 | 座位 | GET | `/app/seat/pageItem`、`getDetailById`、`pageItemByStoreId`、`getHotList`（新增热门座位） |
 | 预订时长 / 支付方式 | GET | `/app/term/listBySeatId`、`/app/payment/listBySeatId`、`/app/payment/list` |
@@ -257,7 +257,7 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
    mysql -u root -p < sql/studyroom_booking.sql     # 建表 + 字典 + 公共初始化
    mysql -u root -p < sql/studyroom_init_data.sql   # 测试门店/座位/关联/账号/浏览数据
    ```
-2. 修改 `web-admin` / `web-app` 的 `application.yaml` 中 MySQL、Redis、本地存储、阿里云短信连接参数。
+2. 修改 `web-admin` / `web-app` 的 `application.yaml` 中 MySQL、Redis、本地存储连接参数。
 3. 构建并运行：
    ```bash
    mvn clean package -DskipTests
@@ -272,7 +272,7 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
 ### 测试账号
 
 - 后台管理：`admin / 123456`、`manager / 123456`（密码以 `md5Hex` 存储，密文 `e10adc3949ba59abbe56e057f20f883e`）。
-- 用户端：手机号 + 短信验证码登录，预置测试用户 `13900000001 / 13900000002 / 13900000003`（未接阿里云短信服务时，验证码会打印在 `studyroom-app` 窗口日志中，也可在 Redis 中手工写入 `app:login:<phone>` 联调）。
+- 用户端：账号密码登录，支持自助注册（注册成功自动登录）；预置测试账号 `demo001 / demo002 / demo003`，密码均为 `123456`。密码以 PBKDF2 加盐哈希存储；连续失败 5 次锁定 10 分钟。
 
 ## 测试用例清单（阶段七联调校验）
 
@@ -283,6 +283,7 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
 | 编号 | 场景 | 步骤 | 预期 |
 | --- | --- | --- | --- |
 | A1 | 登录鉴权 | 获取图形验证码→输入 `admin/123456` 登录 | 验证码存 Redis 60s；密码 md5 比对通过返回 JWT |
+| C0 | 登录注册 | `demo001/123456` 登录；注册新账号并自动登录；错误密码连续 5 次被锁定 | 密码 PBKDF2 校验；失败计数存 Redis 10 分钟 |
 | A2 | 门店增删改 | 新增门店（营业时间/区划/上架）→编辑→上架/下架→删除 | `saveOrUpdate` 生效，`is_release` 变更，`removeById` 逻辑删除 |
 | A3 | 座位增删改 | 在门店下新增座位（编号/单价/类型）→编辑→删除 | 座位落库且关联 `store_id`，逻辑删除 |
 | A4 | 订单审核 | 订单列表分页→查看详情→`updateStatusById` 流转 | 状态按 `BookingStatus` 正确迁移 |
@@ -317,7 +318,7 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
 
 | 编号 | 场景 | 预期 |
 | --- | --- | --- |
-| D1 | 验证码 | 图形码/短信码写入 Redis 且 TTL 生效，重发受间隔限制 |
+| D1 | 验证码 | 图形验证码写入 Redis 且 TTL 生效；用户端登录失败锁定 10 分钟 |
 | D2 | 缓存 | 座位详情、实时状态、热门门店/座位列表命中与过期重算 |
 | D3 | 图片上传 | 本地磁盘存取正常，URL 可访问 |
 | D4 | 定时任务 | `checkBookingStatus` 每日 00:00 到期处理 |

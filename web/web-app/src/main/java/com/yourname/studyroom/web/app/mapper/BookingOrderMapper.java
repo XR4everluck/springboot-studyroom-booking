@@ -16,7 +16,7 @@ import java.util.List;
 */
 public interface BookingOrderMapper extends BaseMapper<BookingOrder> {
 
-    List<OrderItemVo> listItemByPhone(String phone);
+    List<OrderItemVo> listItemByUserId(Long userId);
 
     /**
      * 统计同一座位在指定时段内的有效预订冲突数量

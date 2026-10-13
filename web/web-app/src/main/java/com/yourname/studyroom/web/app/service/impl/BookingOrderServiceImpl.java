@@ -65,8 +65,8 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
      * @return 预订订单基本信息列表
      */
     @Override
-    public List<OrderItemVo> listItemByPhone(String phone) {
-        return bookingOrderMapper.listItemByPhone(phone);
+    public List<OrderItemVo> listItemByUserId(Long userId) {
+        return bookingOrderMapper.listItemByUserId(userId);
     }
 
     /**

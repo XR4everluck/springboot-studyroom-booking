@@ -466,8 +466,9 @@ CREATE TABLE `system_user` (
 DROP TABLE IF EXISTS `user_info`;
 CREATE TABLE `user_info` (
     `id`          BIGINT      NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `phone`       VARCHAR(20) NOT NULL COMMENT '手机号码（登录账号）',
-    `password`    VARCHAR(100)         DEFAULT NULL COMMENT '登录密码（加密存储）',
+    `username`    VARCHAR(30) NOT NULL COMMENT '登录账号',
+    `phone`       VARCHAR(20)          DEFAULT NULL COMMENT '手机号码（订单联系方式，选填）',
+    `password`    VARCHAR(100)         DEFAULT NULL COMMENT '登录密码（PBKDF2 加盐哈希）',
     `avatar_url`  VARCHAR(255)         DEFAULT NULL COMMENT '头像地址',
     `nickname`    VARCHAR(50)          DEFAULT NULL COMMENT '昵称',
     `status`      TINYINT     NOT NULL DEFAULT 1 COMMENT '状态 0禁用 1正常',
@@ -475,7 +476,7 @@ CREATE TABLE `user_info` (
     `update_time` DATETIME             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_deleted`  TINYINT     NOT NULL DEFAULT 0 COMMENT '逻辑删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_user_phone` (`phone`)
+    UNIQUE KEY `uk_user_username` (`username`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT 'C端用户表';
 
 -- =============================================================

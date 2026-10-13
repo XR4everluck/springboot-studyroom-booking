@@ -42,7 +42,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String login(LoginVo loginVo) {
         if (loginVo.getCaptchaCode() == null) {
-            throw new BookingException(ResultCodeEnum.APP_LOGIN_CODE_EMPTY);
+            throw new BookingException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_NOT_FOUND);
         }
 
         String code = redisTemplate.opsForValue().get(loginVo.getCaptchaKey());

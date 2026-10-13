@@ -21,13 +21,13 @@ INSERT INTO `system_user` (`id`, `username`, `password`, `name`, `type`, `phone`
 ON DUPLICATE KEY UPDATE `password` = VALUES(`password`);
 
 -- ------------------------------------------------------------
--- 二、C端测试用户（移动端以手机号+短信验证码登录，首次登录会自动建号；此处预置便于关联历史/会员卡）
+-- 二、C端测试用户（账号密码登录，密码均为 123456；手机号为订单联系方式，选填）
 -- ------------------------------------------------------------
-INSERT INTO `user_info` (`id`, `phone`, `nickname`, `status`) VALUES
-(1, '13900000001', '测试用户-001', 1),
-(2, '13900000002', '测试用户-002', 1),
-(3, '13900000003', '测试用户-003', 1)
-ON DUPLICATE KEY UPDATE `nickname` = VALUES(`nickname`);
+INSERT INTO `user_info` (`id`, `username`, `password`, `phone`, `nickname`, `status`) VALUES
+(1, 'demo001', 'pbkdf2$100000$sVhfu/ejn14wtOF5Lo7/Aw==$TekJIGspdzLzFJNu35bprwTphtTpOtgQCFsZN5CM+EM=', '13900000001', '测试用户-001', 1),
+(2, 'demo002', 'pbkdf2$100000$sVhfu/ejn14wtOF5Lo7/Aw==$TekJIGspdzLzFJNu35bprwTphtTpOtgQCFsZN5CM+EM=', '13900000002', '测试用户-002', 1),
+(3, 'demo003', 'pbkdf2$100000$sVhfu/ejn14wtOF5Lo7/Aw==$TekJIGspdzLzFJNu35bprwTphtTpOtgQCFsZN5CM+EM=', '13900000003', '测试用户-003', 1)
+ON DUPLICATE KEY UPDATE `username` = VALUES(`username`), `password` = VALUES(`password`);
 
 -- ------------------------------------------------------------
 -- 三、自习室门店（3 家，均已上架）

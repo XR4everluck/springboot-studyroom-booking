@@ -13,7 +13,7 @@ import java.util.List;
 * @createDate 2023-07-26 11:12:39
 */
 public interface BookingOrderService extends IService<BookingOrder> {
-    List<OrderItemVo> listItemByPhone(String phone);
+    List<OrderItemVo> listItemByUserId(Long userId);
 
     OrderDetailVo getDetailById(Long id);
 

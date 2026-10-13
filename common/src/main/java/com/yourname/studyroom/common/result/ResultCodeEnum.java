@@ -42,12 +42,17 @@ public enum ResultCodeEnum {
     MEMBER_CARD_NOT_ENOUGH(408, "会员卡余次/时长不足，无法抵扣本次预订"),
 
     APP_LOGIN_AUTH(501, "未登陆"),
-    APP_LOGIN_PHONE_EMPTY(502, "手机号码为空"),
-    APP_LOGIN_CODE_EMPTY(503, "验证码为空"),
-    APP_SEND_SMS_TOO_OFTEN(504, "验证法发送过于频繁"),
-    APP_LOGIN_CODE_EXPIRED(505, "验证码已过期"),
-    APP_LOGIN_CODE_ERROR(506, "验证码错误"),
+    APP_LOGIN_USERNAME_EMPTY(502, "请输入账号"),
+    APP_LOGIN_PASSWORD_EMPTY(503, "请输入密码"),
+    APP_LOGIN_ERROR(504, "账号或密码错误"),
+    APP_LOGIN_LOCKED(505, "失败次数过多，请10分钟后再试"),
+    APP_REGISTER_USERNAME_INVALID(506, "账号需为4-20位字母、数字或下划线"),
     APP_ACCOUNT_DISABLED_ERROR(507, "该用户已被禁用"),
+    APP_REGISTER_USERNAME_EXISTS(509, "该账号已被注册"),
+    APP_REGISTER_PASSWORD_INVALID(510, "密码需为8-20位，且同时包含字母和数字"),
+    APP_REGISTER_PHONE_INVALID(511, "手机号格式不正确"),
+    APP_REGISTER_NICKNAME_INVALID(512, "昵称需为1-12个字符"),
+    APP_REGISTER_PHONE_EXISTS(513, "该手机号已被其他账号使用"),
 
 
     TOKEN_EXPIRED(601, "token过期"),

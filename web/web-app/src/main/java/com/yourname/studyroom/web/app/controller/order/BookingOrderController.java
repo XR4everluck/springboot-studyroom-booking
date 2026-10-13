@@ -5,9 +5,11 @@ import com.yourname.studyroom.common.login.LoginUser;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.common.result.Result;
 import com.yourname.studyroom.model.entity.BookingOrder;
+import com.yourname.studyroom.model.entity.UserInfo;
 import com.yourname.studyroom.model.enums.BookingSourceType;
 import com.yourname.studyroom.model.enums.BookingStatus;
 import com.yourname.studyroom.web.app.service.BookingOrderService;
+import com.yourname.studyroom.web.app.service.UserInfoService;
 import com.yourname.studyroom.web.app.vo.order.OrderDetailVo;
 import com.yourname.studyroom.web.app.vo.order.OrderItemVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,9 @@ public class BookingOrderController {
     @Autowired
     BookingOrderService bookingOrderService;
 
+    @Autowired
+    UserInfoService userInfoService;
+
     /**
      * 获取个人预订订单基本信息列表
      *
@@ -32,7 +37,7 @@ public class BookingOrderController {
     @Operation(summary = "获取个人预订订单基本信息列表")
     @GetMapping("listItem")
     public Result<List<OrderItemVo>> listItem() {
-        List<OrderItemVo> result = bookingOrderService.listItemByPhone(LoginUserHolder.getLoginUser().getUsername());
+        List<OrderItemVo> result = bookingOrderService.listItemByUserId(LoginUserHolder.getLoginUser().getUserId());
         return Result.ok(result);
     }
 
@@ -78,9 +83,10 @@ public class BookingOrderController {
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
         LoginUser loginUser = LoginUserHolder.getLoginUser();
-        // 订单归属与联系电话一律以登录用户为准，避免越权为他人下单
+        // 订单归属以登录用户为准，联系电话取用户绑定的手机号（注册时选填），避免越权为他人下单
         bookingOrder.setUserId(loginUser.getUserId());
-        bookingOrder.setPhone(loginUser.getUsername());
+        UserInfo loginUser_ = userInfoService.getById(loginUser.getUserId());
+        bookingOrder.setPhone(loginUser_ == null ? null : loginUser_.getPhone());
         if (bookingOrder.getSourceType() == null) {
             bookingOrder.setSourceType(BookingSourceType.NEW);
         }
