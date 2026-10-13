@@ -9,7 +9,6 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppHeader: typeof import('./src/components/AppHeader/index.vue')['default']
     LoadingButton: typeof import('./src/components/LoadingButton/LoadingButton.vue')['default']
-    PullDownRefreshContainer: typeof import('./src/components/PullDownRefreshContainer/PullDownRefreshContainer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./src/components/SearchBar/SearchBar.vue')['default']
@@ -37,7 +36,6 @@ declare module '@vue/runtime-core' {
     VanPullRefresh: typeof import('vant/es')['PullRefresh']
     VanRow: typeof import('vant/es')['Row']
     VanSkeleton: typeof import('vant/es')['Skeleton']
-    VanSticky: typeof import('vant/es')['Sticky']
     VanSwipe: typeof import('vant/es')['Swipe']
     VanSwipeItem: typeof import('vant/es')['SwipeItem']
     VanTag: typeof import('vant/es')['Tag']

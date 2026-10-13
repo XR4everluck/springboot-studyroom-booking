@@ -1,114 +1,111 @@
 <template>
   <van-skeleton :row="20" :loading="!storeDetailInfo?.id">
-    <div class="page-container">
-      <!--  轮播图-->
-      <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item
-          v-for="item in storeDetailInfo.graphVoList"
-          :key="item.url"
+    <div class="std">
+      <div class="std__back">
+        <van-button icon="arrow-left" size="small" @click="router.back()"
+          >返回</van-button
         >
-          <van-image fit="fill" :src="item.url" width="100%" height="360px">
-            <template v-slot:error>加载失败</template>
-            <template v-slot:loading>
-              <van-loading type="spinner" size="20" />
-            </template>
-          </van-image>
-        </van-swipe-item>
-      </van-swipe>
-      <!--  自习室门店的信息-->
-      <div class="card">
-        <!--      标题-->
-        <div class="font-bold">
-          {{ `${storeDetailInfo.name}` }}
-        </div>
-        <!--      标签-->
-        <div class="my-[7px]">
-          <van-tag
-            class="last:mr-0 mr-[5px]"
-            plain
-            v-for="item in storeDetailInfo.labelInfoList"
-            :key="item.id"
-            type="primary"
-            >{{ item.name }}
-          </van-tag>
-        </div>
-        <!--      价格-->
-        <div>
-          <span class="text-red-500 text-[16px]">￥</span>
-          <span class="text-red-500 text-[18px]"
-            >{{ storeDetailInfo.minPrice }}/时起</span
+        <span class="std__back-title">自习室门店详情</span>
+      </div>
+
+      <div class="std__layout">
+        <div class="std__main">
+          <!--  轮播图-->
+          <van-swipe
+            class="std__swipe"
+            :autoplay="3000"
+            indicator-color="white"
+            :show-indicators="true"
           >
-        </div>
-      </div>
-      <!--    基本信息-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">门店介绍</div>
-        <div class="my-[5px]">
-          <div>
-            {{ storeDetailInfo.introduction }}
-          </div>
-          <div class="text-xs mt-[5px]">
-            营业时间：{{ storeDetailInfo.businessHours }}
-          </div>
-        </div>
-      </div>
-      <!--    配套说明-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">配套说明</div>
-        <div class="my-[5px]">
-          <van-row>
-            <van-col
-              span="4"
-              class="my-[3px]"
-              v-for="item in storeDetailInfo.facilityInfoList"
-              :key="item.id"
+            <van-swipe-item
+              v-for="item in storeDetailInfo.graphVoList"
+              :key="item.url"
             >
-              <div class="flex flex-col justify-center items-center">
-                <SvgIcon :name="item.icon" size="25" />
-                <span class="text-center">
-                  {{ item.name }}
-                </span>
+              <van-image fit="fill" :src="item.url" width="100%" height="400px">
+                <template v-slot:error>加载失败</template>
+                <template v-slot:loading>
+                  <van-loading type="spinner" size="20" />
+                </template>
+              </van-image>
+            </van-swipe-item>
+          </van-swipe>
+
+          <!--    基本信息-->
+          <section class="std__card">
+            <h3 class="std__card-title">门店介绍</h3>
+            <div class="std__intro">{{ storeDetailInfo.introduction }}</div>
+            <div class="std__hours">
+              营业时间：{{ storeDetailInfo.businessHours }}
+            </div>
+          </section>
+
+          <!--    配套说明-->
+          <section class="std__card">
+            <h3 class="std__card-title">配套说明</h3>
+            <div class="std__facility">
+              <div
+                class="std__facility-item"
+                v-for="item in storeDetailInfo.facilityInfoList"
+                :key="item.id"
+              >
+                <SvgIcon :name="item.icon" size="26" />
+                <span>{{ item.name }}</span>
               </div>
-            </van-col>
-          </van-row>
-        </div>
-      </div>
-      <!--    位置详情-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">位置详情</div>
-        <div class="my-[5px]">
-          <div class="text-xs mb-[5px]">
-            {{ storeDetailInfo.addressDetail }}
-          </div>
-        </div>
-        <!--        地图容器-->
-        <div id="container" class="w-full h-[360px]"></div>
-      </div>
-      <!--    可选座位列表-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">可选座位列表</div>
-        <div class="mt-[5px]">
-          <PullDownRefreshContainer
-            :request="getSeatListHandler"
-            ref="pullDownRefreshContainerRef"
-            class="min-h-[480px] px-[10px]"
-          >
-            <template v-if="seatList?.length">
+            </div>
+          </section>
+
+          <!--    位置详情-->
+          <section class="std__card">
+            <h3 class="std__card-title">位置详情</h3>
+            <div class="std__address">{{ storeDetailInfo.addressDetail }}</div>
+            <!--        地图容器-->
+            <div id="container" class="std__map"></div>
+          </section>
+
+          <!--    可选座位列表-->
+          <section class="std__card">
+            <h3 class="std__card-title">可选座位列表</h3>
+            <div class="std__seat-grid" v-if="seatList?.length">
               <SeatCard
                 v-for="item in seatList"
                 :key="item.id"
                 :data="item"
+                class="std__seat-card"
               ></SeatCard>
-            </template>
-          </PullDownRefreshContainer>
+            </div>
+            <van-empty v-else description="暂无可选座位" />
+          </section>
         </div>
+
+        <aside class="std__side">
+          <section class="std__card">
+            <!--      标题-->
+            <div class="font-bold std__title">{{ storeDetailInfo.name }}</div>
+            <!--      标签-->
+            <div class="std__labels">
+              <van-tag
+                class="last:mr-0 mr-[5px]"
+                plain
+                v-for="item in storeDetailInfo.labelInfoList"
+                :key="item.id"
+                type="primary"
+                >{{ item.name }}
+              </van-tag>
+            </div>
+            <!--      价格-->
+            <div class="std__price">
+              <span class="text-red-500 text-[16px]">￥</span>
+              <span class="text-red-500 text-[22px]"
+                >{{ storeDetailInfo.minPrice }}/时起</span
+              >
+            </div>
+            <!--    到店体验-->
+            <van-button type="primary" block @click="appointmentToViewHandle"
+              >到店体验</van-button
+            >
+          </section>
+        </aside>
       </div>
-      <!--    到店体验-->
-      <van-sticky :offset-bottom="0" position="bottom">
-        <van-button type="primary" block @click="appointmentToViewHandle"
-          >到店体验</van-button
-        >
-      </van-sticky>
     </div>
   </van-skeleton>
 </template>
@@ -119,8 +116,6 @@ import type { StoreInterface } from "@/api/search/types";
 import { useMap } from "@/hooks/useMap";
 import poiMarkerRed from "@/assets/poi-marker-red.png";
 import SeatCard from "@/components/SeatCard/SeatCard.vue";
-import PullDownRefreshContainer from "@/components/PullDownRefreshContainer/PullDownRefreshContainer.vue";
-import type { ReqPage } from "@/api/types";
 import type { SeatInterface } from "@/api/search/types";
 import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
@@ -132,29 +127,18 @@ const getStoreDetailHandle = async () => {
   const { data } = await getStoreDetailById(route.query.id as string);
   storeDetailInfo.value = data;
 };
-// 座位列表
+// 座位列表（后端该接口分页参数不生效，一次返回全量）
 const seatList = ref<SeatInterface[]>([]);
-const pullDownRefreshContainerRef =
-  ref<InstanceType<typeof PullDownRefreshContainer>>();
-// 分页获取座位的信息
-async function getSeatListHandler(pageInfo: ReqPage) {
-  //   调用接口
+async function getSeatListHandler() {
   const { data } = await getSeatListByStoreId({
     id: route.query.id as string,
-    ...pageInfo
+    current: 1,
+    size: 100
   });
   data.records.forEach(item => {
     item.studyStore = storeDetailInfo.value;
   });
-  console.log("pageInfo.current", pageInfo.current);
-  if (pageInfo.current === 1) {
-    seatList.value = data.records;
-  } else {
-    seatList.value = [...seatList.value, ...data.records];
-  }
-  pullDownRefreshContainerRef.value?.setFinished(
-    seatList.value.length >= data.total
-  );
+  seatList.value = data.records;
 }
 //#region <高德地图相关>
 // 地图实例
@@ -182,7 +166,6 @@ function initMapPage(opts?: { lng: number; lat: number }) {
 }
 // 到店体验
 const appointmentToViewHandle = () => {
-  console.log("appointmentToViewHandle");
   router.push({
     path: "/visit",
     query: { storeId: storeDetailInfo.value.id }
@@ -191,7 +174,7 @@ const appointmentToViewHandle = () => {
 //#endregion
 onMounted(async () => {
   await getStoreDetailHandle();
-  console.log(storeDetailInfo.value.longitude);
+  await getSeatListHandler();
   await initMap();
   initMapPage({
     lng: +storeDetailInfo.value.longitude,
@@ -201,9 +184,149 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="less">
-.base-info-title {
-  //background-color: var(--van-primary-background-color);
-  font-weight: bold;
-  //color: white;
+.std {
+  padding: 16px 20px 0;
+}
+
+.std__back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.std__back-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.std__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.std__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.std__side {
+  width: 320px;
+  flex-shrink: 0;
+}
+
+.std__swipe {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.std__card {
+  box-sizing: border-box;
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 10px;
+  background-color: var(--van-background-2);
+  border: 1px solid var(--van-border-color);
+}
+
+.std__side .std__card {
+  margin-top: 0;
+  position: sticky;
+  top: 76px;
+}
+
+.std__card-title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.std__title {
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.std__labels {
+  margin: 8px 0;
+}
+
+.std__price {
+  margin: 6px 0 14px;
+}
+
+.std__intro {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--van-text-color-2);
+}
+
+.std__hours {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--van-text-color-3);
+}
+
+.std__facility {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.std__facility-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 72px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--van-text-color-2);
+}
+
+.std__address {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--van-text-color-2);
+}
+
+.std__map {
+  width: 100%;
+  height: 360px;
+  border-radius: 8px;
+  background-color: var(--van-active-color);
+}
+
+.std__seat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.std__seat-card {
+  margin: 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .std__layout {
+    flex-direction: column;
+  }
+
+  .std__side {
+    width: 100%;
+  }
+
+  .std__side .std__card {
+    position: static;
+  }
 }
 </style>

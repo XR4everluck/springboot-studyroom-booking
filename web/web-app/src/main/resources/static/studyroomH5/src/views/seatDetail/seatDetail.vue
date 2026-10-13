@@ -1,226 +1,199 @@
 <template>
   <van-skeleton :row="20" :loading="!seatDetailInfo?.id">
-    <div class="page-container">
-      <!--  轮播图-->
-      <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-        <van-swipe-item
-          v-for="item in seatDetailInfo.graphVoList"
-          :key="item.url"
+    <div class="sd">
+      <div class="sd__back">
+        <van-button icon="arrow-left" size="small" @click="router.back()"
+          >返回</van-button
         >
-          <van-image fit="fill" :src="item.url" width="100%" height="360px">
-            <template v-slot:error>加载失败</template>
-            <template v-slot:loading>
-              <van-loading type="spinner" size="20" />
-            </template>
-          </van-image>
-        </van-swipe-item>
-      </van-swipe>
-
-      <!--  座位的信息-->
-      <div class="card">
-        <div class="">
-          <!--      标题-->
-          <div class="font-bold flex items-center">
-            {{
-              `${seatDetailInfo.storeItemVo.name} ${seatDetailInfo.seatCode}座位`
-            }}
-            <van-tag
-              class="ml-[8px]"
-              :type="
-                seatDetailInfo.realtimeStatus === 2
-                  ? 'danger'
-                  : seatDetailInfo.realtimeStatus === 1
-                    ? 'warning'
-                    : 'success'
-              "
-              >{{ seatDetailInfo.realtimeStatusName || "空闲" }}</van-tag
-            >
-          </div>
-          <!--      标签-->
-          <div class="my-[7px]">
-            <van-tag
-              class="last:mr-0 mr-[5px]"
-              plain
-              v-for="item in seatDetailInfo.labelInfoList"
-              :key="item.id"
-              type="primary"
-              >{{ item.name }}
-            </van-tag>
-          </div>
-          <!--      价格-->
-          <div>
-            <span class="text-red-500 text-[16px]">￥</span>
-            <span class="text-red-500 text-[18px]"
-              >{{ seatDetailInfo.price }}/时</span
-            >
-          </div>
-        </div>
+        <span class="sd__back-title">座位详情</span>
       </div>
 
-      <!--    基本信息-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">基本信息</div>
-        <div class="my-[5px]">
-          <van-row gutter="10">
-            <van-col
-              span="12"
-              class="my-[3px]"
-              v-for="item in seatDetailInfo.attrValueVoList"
-              :key="item.id"
+      <div class="sd__layout">
+        <div class="sd__main">
+          <!--  轮播图-->
+          <van-swipe
+            class="sd__swipe"
+            :autoplay="3000"
+            indicator-color="white"
+            :show-indicators="true"
+          >
+            <van-swipe-item
+              v-for="item in seatDetailInfo.graphVoList"
+              :key="item.url"
             >
-              <van-row>
-                <van-col span="6">
-                  <van-tag type="primary">{{ item.attrKeyName }}</van-tag>
-                </van-col>
-                <van-col span="18">
-                  {{ item.name }}
-                </van-col>
-              </van-row>
-            </van-col>
-            <!--          占位修饰-->
-            <van-col
-              class="my-[3px]"
-              v-if="seatDetailInfo.attrValueVoList?.length % 2 !== 0"
-              span="12"
-            >
-            </van-col>
-          </van-row>
-        </div>
-      </div>
-      <!--    配套信息-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">配套信息</div>
-        <div class="my-[5px]">
-          <van-row>
-            <van-col
-              span="4"
-              class="my-[3px]"
-              v-for="item in seatDetailInfo.facilityInfoList"
-              :key="item.id"
-            >
-              <div class="flex flex-col justify-center items-center">
-                <SvgIcon :name="item.icon" size="25" />
-                <span class="text-center">
-                  {{ item.name }}
-                </span>
+              <van-image fit="fill" :src="item.url" width="100%" height="400px">
+                <template v-slot:error>加载失败</template>
+                <template v-slot:loading>
+                  <van-loading type="spinner" size="20" />
+                </template>
+              </van-image>
+            </van-swipe-item>
+          </van-swipe>
+
+          <!--    基本信息-->
+          <section class="sd__card">
+            <h3 class="sd__card-title">基本信息</h3>
+            <div class="sd__attr-grid">
+              <div
+                class="sd__attr"
+                v-for="item in seatDetailInfo.attrValueVoList"
+                :key="item.id"
+              >
+                <van-tag type="primary">{{ item.attrKeyName }}</van-tag>
+                <span class="sd__attr-value">{{ item.name }}</span>
               </div>
-            </van-col>
-          </van-row>
-        </div>
-      </div>
-      <!--    位置详情-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">位置详情</div>
-        <div class="my-[5px]">
-          <div class="text-xs mb-[5px] w-[300px]">
-            {{ seatDetailInfo.storeItemVo.addressDetail }}
-          </div>
-        </div>
-        <!--        地图容器-->
-        <div id="container" class="w-full h-[360px]"></div>
-      </div>
-      <!--    费用明细-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">费用明细</div>
-        <div class="my-[5px]">
-          <van-row gutter="10">
-            <van-col span="12">
-              <van-tag type="primary" size="medium">费用科目</van-tag>
-            </van-col>
-            <van-col span="12">
-              <van-tag type="primary" size="medium">收费标准</van-tag>
-            </van-col>
-            <template
-              v-for="item in seatDetailInfo.feeValueVoList"
-              :key="item.id"
-            >
-              <van-col span="12" class="my-[5px]">
-                <span>{{ item.feeKeyName }}</span>
-              </van-col>
-              <van-col span="12" class="my-[5px]">
-                <span>{{ `￥${item.name}${item.unit}` }}</span>
-              </van-col>
-            </template>
-          </van-row>
-        </div>
-      </div>
-      <!--    付款说明-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">可选付款方式</div>
-        <div class="my-[5px]">
-          <van-row gutter="10">
-            <van-col span="12">
-              <van-tag type="primary" size="medium">可选付款方式</van-tag>
-            </van-col>
-            <van-col span="12">
-              <van-tag type="primary" size="medium">说明</van-tag>
-            </van-col>
-            <template
-              v-for="item in seatDetailInfo.paymentTypeList"
-              :key="item.id"
-            >
-              <van-col span="12" class="my-[5px]">
+            </div>
+          </section>
+
+          <!--    配套信息-->
+          <section class="sd__card">
+            <h3 class="sd__card-title">配套信息</h3>
+            <div class="sd__facility">
+              <div
+                class="sd__facility-item"
+                v-for="item in seatDetailInfo.facilityInfoList"
+                :key="item.id"
+              >
+                <SvgIcon :name="item.icon" size="26" />
                 <span>{{ item.name }}</span>
-              </van-col>
-              <van-col span="12" class="my-[5px]">
-                <span>{{ item.additionalInfo }}</span>
-              </van-col>
-            </template>
-          </van-row>
+              </div>
+            </div>
+          </section>
+
+          <!--    位置详情-->
+          <section class="sd__card">
+            <h3 class="sd__card-title">位置详情</h3>
+            <div class="sd__address">
+              {{ seatDetailInfo.storeItemVo.addressDetail }}
+            </div>
+            <!--        地图容器-->
+            <div id="container" class="sd__map"></div>
+          </section>
+
+          <!--    费用明细-->
+          <section class="sd__card">
+            <h3 class="sd__card-title">费用明细</h3>
+            <table class="sd__table">
+              <thead>
+                <tr>
+                  <th>费用科目</th>
+                  <th>收费标准</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in seatDetailInfo.feeValueVoList" :key="item.id">
+                  <td>{{ item.feeKeyName }}</td>
+                  <td>{{ `￥${item.name}${item.unit}` }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
         </div>
+
+        <aside class="sd__side">
+          <!--  座位的信息-->
+          <section class="sd__card">
+            <div class="font-bold sd__title">
+              {{
+                `${seatDetailInfo.storeItemVo.name} ${seatDetailInfo.seatCode}座位`
+              }}
+              <van-tag
+                class="ml-[8px]"
+                :type="
+                  seatDetailInfo.realtimeStatus === 2
+                    ? 'danger'
+                    : seatDetailInfo.realtimeStatus === 1
+                      ? 'warning'
+                      : 'success'
+                "
+                >{{ seatDetailInfo.realtimeStatusName || "空闲" }}</van-tag
+              >
+            </div>
+            <!--      标签-->
+            <div class="sd__labels">
+              <van-tag
+                class="last:mr-0 mr-[5px]"
+                plain
+                v-for="item in seatDetailInfo.labelInfoList"
+                :key="item.id"
+                type="primary"
+                >{{ item.name }}
+              </van-tag>
+            </div>
+            <!--      价格-->
+            <div class="sd__price">
+              <span class="text-red-500 text-[16px]">￥</span>
+              <span class="text-red-500 text-[22px]"
+                >{{ seatDetailInfo.price }}/时</span
+              >
+            </div>
+            <!--    操作-->
+            <div class="sd__actions">
+              <van-button type="primary" block @click="showBooking = true"
+                >立即预订</van-button
+              >
+              <van-button block @click="appointmentToViewHandle"
+                >到店体验</van-button
+              >
+            </div>
+          </section>
+
+          <!--    付款说明-->
+          <section class="sd__card">
+            <h3 class="sd__card-title">可选付款方式</h3>
+            <table class="sd__table">
+              <thead>
+                <tr>
+                  <th>付款方式</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in seatDetailInfo.paymentTypeList" :key="item.id">
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.additionalInfo }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="sd__card">
+            <h3 class="sd__card-title">可选预订时长</h3>
+            <table class="sd__table">
+              <thead>
+                <tr>
+                  <th>预订时长</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in seatDetailInfo.bookingTermList" :key="item.id">
+                  <td>{{ item.monthCount + item.unit }}</td>
+                  <td>到期可续</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!--    所属自习室门店-->
+          <section class="sd__card">
+            <h3 class="sd__card-title">所属自习室门店</h3>
+            <StoreCard :data="seatDetailInfo.storeItemVo"></StoreCard>
+          </section>
+        </aside>
       </div>
-      <div class="card">
-        <div class="base-info-title py-[4px]">可选预订时长</div>
-        <div class="my-[5px]">
-          <van-row gutter="10">
-            <van-col span="12">
-              <van-tag type="primary" size="medium">可选预订时长</van-tag>
-            </van-col>
-            <van-col span="12">
-              <van-tag type="primary" size="medium">说明</van-tag>
-            </van-col>
-            <template
-              v-for="item in seatDetailInfo.bookingTermList"
-              :key="item.id"
-            >
-              <van-col span="12" class="my-[5px]">
-                <span>{{ item.monthCount + item.unit }}</span>
-              </van-col>
-              <van-col span="12" class="my-[5px]">
-                <span> 到期可续 </span>
-              </van-col>
-            </template>
-          </van-row>
-        </div>
-      </div>
-      <!--    所属自习室门店-->
-      <div class="card">
-        <div class="base-info-title py-[4px]">所属自习室门店</div>
-        <div class="my-[5px] pb-[50px] px-[10px]">
-          <StoreCard :data="seatDetailInfo.storeItemVo"></StoreCard>
-        </div>
-      </div>
-      <!--    底部操作-->
-      <van-sticky :offset-bottom="0" position="bottom">
-        <div class="flex px-[10px] py-[8px]">
-          <van-button
-            class="mr-[10px]"
-            type="primary"
-            round
-            block
-            @click="showBooking = true"
-            >立即预订</van-button
-          >
-          <van-button type="default" round block @click="appointmentToViewHandle"
-            >到店体验</van-button
-          >
-        </div>
-      </van-sticky>
 
       <!--    预订下单-->
-      <van-popup v-model:show="showBooking" position="bottom" round>
+      <van-popup
+        v-model:show="showBooking"
+        position="center"
+        round
+        :style="{ width: '520px' }"
+      >
         <van-form @submit="onSubmitBooking">
-          <div class="px-[16px] py-[12px] font-bold">预订 {{ seatDetailInfo.seatCode }} 号座位</div>
+          <div class="px-[16px] py-[12px] font-bold">
+            预订 {{ seatDetailInfo.seatCode }} 号座位
+          </div>
           <van-cell-group inset>
             <van-field
               v-model.trim="bookingForm.name"
@@ -245,7 +218,7 @@
               :rules="[{ required: true, message: '请选择预订日期' }]"
               @click="showBookingDate = true"
             />
-            <van-popup v-model:show="showBookingDate" position="bottom">
+            <van-popup v-model:show="showBookingDate" position="center" round>
               <van-date-picker
                 :min-date="new Date()"
                 :default-date="new Date()"
@@ -264,7 +237,7 @@
               :rules="[{ required: true, message: '请选择预订时长' }]"
               @click="showBookingTerm = true"
             />
-            <van-popup v-model:show="showBookingTerm" position="bottom">
+            <van-popup v-model:show="showBookingTerm" position="center" round>
               <van-picker
                 title="预订时长"
                 :columns="bookingTermColumns"
@@ -282,7 +255,7 @@
               :rules="[{ required: true, message: '请选择付款方式' }]"
               @click="showPaymentType = true"
             />
-            <van-popup v-model:show="showPaymentType" position="bottom">
+            <van-popup v-model:show="showPaymentType" position="center" round>
               <van-picker
                 title="付款方式"
                 :columns="paymentTypeColumns"
@@ -304,7 +277,9 @@
             />
           </van-cell-group>
           <div class="px-[16px] py-[16px]">
-            <van-button round block type="primary" native-type="submit">确认下单</van-button>
+            <van-button round block type="primary" native-type="submit"
+              >确认下单</van-button
+            >
           </div>
         </van-form>
       </van-popup>
@@ -488,9 +463,161 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="less">
-.base-info-title {
-  //background-color: var(--van-primary-background-color);
-  font-weight: bold;
-  //color: white;
+.sd {
+  padding: 16px 20px 0;
+}
+
+.sd__back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sd__back-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.sd__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.sd__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.sd__side {
+  width: 360px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sd__swipe {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sd__card {
+  box-sizing: border-box;
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 10px;
+  background-color: var(--van-background-2);
+  border: 1px solid var(--van-border-color);
+}
+
+.sd__side .sd__card {
+  margin-top: 0;
+}
+
+.sd__card-title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.sd__title {
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.sd__labels {
+  margin: 8px 0;
+}
+
+.sd__price {
+  margin: 6px 0 14px;
+}
+
+.sd__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sd__attr-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.sd__attr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--van-text-color-2);
+}
+
+.sd__facility {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.sd__facility-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 72px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--van-text-color-2);
+}
+
+.sd__address {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--van-text-color-2);
+}
+
+.sd__map {
+  width: 100%;
+  height: 360px;
+  border-radius: 8px;
+  background-color: var(--van-active-color);
+}
+
+.sd__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--van-border-color);
+    color: var(--van-text-color-2);
+  }
+
+  th {
+    color: var(--van-text-color);
+    font-weight: 600;
+    background-color: var(--van-active-color);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .sd__layout {
+    flex-direction: column;
+  }
+
+  .sd__side {
+    width: 100%;
+  }
 }
 </style>

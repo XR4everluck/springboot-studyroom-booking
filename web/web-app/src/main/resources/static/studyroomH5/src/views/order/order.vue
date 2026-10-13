@@ -1,218 +1,187 @@
 <template>
   <van-skeleton :row="20" :loading="!orderDetailInfo?.seatId">
-    <div class="page-container py-[15px]">
-      <!--    预订自习室门店-->
-      <div>
-        <div class="base-info-title main-container py-[4px]">预订自习室门店</div>
-        <div class="my-[5px] px-[20px]">
-          <van-card @click="goStoreDetail()" class="rounded-xl shadow">
-            <!--      title-->
-            <template #title>
-              <h2 class="text-[16px] font-bold mt-[25px] ml-[25px]">
-                {{ `${orderDetailInfo.storeName}` }}
-              </h2>
-            </template>
-            <!--    thumb-->
-            <template #thumb>
-              <van-image
-                class="w-full h-full object-cover"
-                :src="
-                  orderDetailInfo.storeGraphVoList?.[0]?.url || '失败'
-                "
-              >
-                <template v-slot:error>加载失败</template>
-                <template v-slot:loading>
-                  <van-loading type="spinner" size="20" />
-                </template>
-              </van-image>
-            </template>
-          </van-card>
-        </div>
+    <div class="od">
+      <div class="od__back">
+        <van-button icon="arrow-left" size="small" @click="router.back()"
+          >返回</van-button
+        >
+        <span class="od__back-title">订单详情</span>
       </div>
-      <!--    预订座位-->
-      <div>
-        <div class="base-info-title main-container py-[4px]">预订座位</div>
-        <div class="my-[5px] px-[20px]">
-          <van-card @click="goSeatDetail()" class="rounded-xl shadow">
-            <!--      title-->
-            <template #title>
-              <h2 class="text-[16px] font-bold mt-[25px] ml-[25px]">
-                {{ `${orderDetailInfo.seatCode}座位` }}
-              </h2>
-            </template>
-            <!--    thumb-->
-            <template #thumb>
-              <van-image
-                class="w-full h-full object-cover"
-                :src="orderDetailInfo.seatGraphVoList?.[0]?.url || '失败'"
-              >
-                <template v-slot:error>加载失败</template>
-                <template v-slot:loading>
-                  <van-loading type="spinner" size="20" />
-                </template>
-              </van-image>
-            </template>
-          </van-card>
-        </div>
-      </div>
-      <!--    预订人信息-->
-      <div>
-        <div class="base-info-title main-container py-[4px]">预订人信息</div>
-        <div class="main-container my-[5px]">
-          <div class="rounded-xl shadow overflow-hidden">
-            <van-row>
-              <van-col span="24">
-                <van-field
-                  readonly
-                  label-width="70px"
-                  label="姓名"
-                  v-model="orderDetailInfo.name"
-                ></van-field>
-              </van-col>
-              <van-col span="24">
-                <van-field
-                  readonly
-                  label-width="70px"
-                  label="手机号"
-                  v-model="orderDetailInfo.phone"
-                ></van-field>
-              </van-col>
-              <van-col span="24">
-                <van-field
-                  readonly
-                  label-width="70px"
-                  label="身份证号"
-                  v-model="orderDetailInfo.identificationNumber"
-                ></van-field>
-              </van-col>
-            </van-row>
-          </div>
-        </div>
-      </div>
-      <!--    订单详情-->
-      <div>
-        <div class="base-info-title main-container py-[4px]">订单详情</div>
-        <div class="main-container my-[5px]">
-          <div class="rounded-xl shadow overflow-hidden">
-            <van-row>
-              <!--          预订时长-->
-              <van-col span="24">
-                <van-field
-                  v-model="bookingTermInfo.text"
-                  is-link
-                  readonly
-                  name="picker"
-                  label-width="70px"
-                  label="预订时长"
-                  placeholder="点击选择预订时长"
-                  @click="isAllowEdit && (showPickerBookingTerm = true)"
-                />
-                <van-popup v-model:show="showPickerBookingTerm" position="bottom">
-                  <van-picker
-                    title="预订时长"
-                    :columns="bookingTermColumns"
-                    @confirm="onConfirmBookingTerm"
-                    @cancel="showPickerBookingTerm = false"
-                  />
-                </van-popup>
-              </van-col>
-              <!--          预订时段-->
-              <van-col span="24">
-                <van-field
-                  readonly
-                  label-width="70px"
-                  label="预订时段"
-                  v-model="bookingDate"
-                ></van-field>
-              </van-col>
-              <!--          总价-->
-              <van-col span="24">
-                <van-field
-                  readonly
-                  label-width="70px"
-                  label="总价(元)"
-                  v-model="priceText"
-                ></van-field>
-              </van-col>
-              <!--          支付方式-->
-              <van-col span="24">
-                <van-field
-                  v-model="paymentType.text"
-                  is-link
-                  readonly
-                  name="picker"
-                  label-width="70px"
-                  label="支付方式"
-                  placeholder="点击选择支付方式"
-                  @click="isAllowEdit && (showPickerPaymentType = true)"
-                />
-                <van-popup
-                  v-model:show="showPickerPaymentType"
-                  position="bottom"
+
+      <div class="od__layout">
+        <div class="od__main">
+          <!--    预订自习室门店-->
+          <section class="od__card">
+            <h3 class="od__card-title">预订自习室门店</h3>
+            <van-card @click="goStoreDetail()" class="rounded-xl shadow od__link-card">
+              <template #title>
+                <h2 class="text-[16px] font-bold mt-[25px] ml-[25px]">
+                  {{ `${orderDetailInfo.storeName}` }}
+                </h2>
+              </template>
+              <template #thumb>
+                <van-image
+                  class="w-full h-full object-cover"
+                  :src="orderDetailInfo.storeGraphVoList?.[0]?.url || '失败'"
                 >
-                  <van-picker
-                    title="支付方式"
-                    :columns="paymentTypeColumns"
-                    @confirm="onConfirmPaymentType"
-                    @cancel="showPickerBookingTerm = false"
-                  />
-                </van-popup>
-              </van-col>
-            </van-row>
-          </div>
+                  <template v-slot:error>加载失败</template>
+                  <template v-slot:loading>
+                    <van-loading type="spinner" size="20" />
+                  </template>
+                </van-image>
+              </template>
+            </van-card>
+          </section>
+
+          <!--    预订座位-->
+          <section class="od__card">
+            <h3 class="od__card-title">预订座位</h3>
+            <van-card @click="goSeatDetail()" class="rounded-xl shadow od__link-card">
+              <template #title>
+                <h2 class="text-[16px] font-bold mt-[25px] ml-[25px]">
+                  {{ `${orderDetailInfo.seatCode}座位` }}
+                </h2>
+              </template>
+              <template #thumb>
+                <van-image
+                  class="w-full h-full object-cover"
+                  :src="orderDetailInfo.seatGraphVoList?.[0]?.url || '失败'"
+                >
+                  <template v-slot:error>加载失败</template>
+                  <template v-slot:loading>
+                    <van-loading type="spinner" size="20" />
+                  </template>
+                </van-image>
+              </template>
+            </van-card>
+          </section>
+
+          <!--    预订人信息-->
+          <section class="od__card">
+            <h3 class="od__card-title">预订人信息</h3>
+            <table class="od__table">
+              <tbody>
+                <tr>
+                  <th>姓名</th>
+                  <td>{{ orderDetailInfo.name }}</td>
+                </tr>
+                <tr>
+                  <th>手机号</th>
+                  <td>{{ orderDetailInfo.phone }}</td>
+                </tr>
+                <tr>
+                  <th>身份证号</th>
+                  <td>{{ orderDetailInfo.identificationNumber }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <!--    订单详情-->
+          <section class="od__card">
+            <h3 class="od__card-title">订单详情</h3>
+            <table class="od__table">
+              <tbody>
+                <tr>
+                  <th>预订时长</th>
+                  <td>
+                    <span
+                      class="od__editable"
+                      :class="{ 'is-disabled': !isAllowEdit }"
+                      @click="isAllowEdit && (showPickerBookingTerm = true)"
+                      >{{ bookingTermInfo.text || "点击选择预订时长" }}</span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th>预订时段</th>
+                  <td>{{ bookingDate }}</td>
+                </tr>
+                <tr>
+                  <th>总价(元)</th>
+                  <td>{{ priceText }}</td>
+                </tr>
+                <tr>
+                  <th>支付方式</th>
+                  <td>
+                    <span
+                      class="od__editable"
+                      :class="{ 'is-disabled': !isAllowEdit }"
+                      @click="isAllowEdit && (showPickerPaymentType = true)"
+                      >{{ paymentType.text || "点击选择支付方式" }}</span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <van-popup v-model:show="showPickerBookingTerm" position="center" round>
+              <van-picker
+                title="预订时长"
+                :columns="bookingTermColumns"
+                @confirm="onConfirmBookingTerm"
+                @cancel="showPickerBookingTerm = false"
+              />
+            </van-popup>
+            <van-popup v-model:show="showPickerPaymentType" position="center" round>
+              <van-picker
+                title="支付方式"
+                :columns="paymentTypeColumns"
+                @confirm="onConfirmPaymentType"
+                @cancel="showPickerPaymentType = false"
+              />
+            </van-popup>
+          </section>
         </div>
-      </div>
-      <!--    按钮-->
-      <div class="main-container py-[20px]">
-        <van-button
-          v-if="isAllowEdit && isRenew"
-          type="primary"
-          block
-          round
-          class="m-t-20"
-          @click="submitHandle"
-        >
-          {{ isAddRenew ? "确认续期" : "保存" }}
-        </van-button>
-        <!--      确认预订-->
-        <van-button
-          v-if="isConfirmOrder"
-          type="primary"
-          block
-          round
-          class="m-t-20"
-          @click="submitHandle"
-        >
-          确认预订
-        </van-button>
-        <!--      签到-->
-        <van-button
-          v-if="
-            !isAllowEdit &&
-            orderDetailInfo.status === OrderStatus.SIGNED
-          "
-          type="success"
-          block
-          round
-          class="m-t-20"
-          @click="checkInHandle"
-        >
-          签到
-        </van-button>
-        <!--      签退-->
-        <van-button
-          v-if="
-            !isAllowEdit &&
-            orderDetailInfo.status === OrderStatus.IN_USE
-          "
-          type="warning"
-          block
-          round
-          class="m-t-20"
-          @click="checkOutHandle"
-        >
-          签退
-        </van-button>
+
+        <!--    操作-->
+        <aside class="od__side">
+          <section class="od__card">
+            <h3 class="od__card-title">操作</h3>
+            <div class="od__actions">
+              <van-button
+                v-if="isAllowEdit && isRenew"
+                type="primary"
+                block
+                round
+                @click="submitHandle"
+              >
+                {{ isAddRenew ? "确认续期" : "保存" }}
+              </van-button>
+              <!--      确认预订-->
+              <van-button
+                v-if="isConfirmOrder"
+                type="primary"
+                block
+                round
+                @click="submitHandle"
+              >
+                确认预订
+              </van-button>
+              <!--      签到-->
+              <van-button
+                v-if="!isAllowEdit && orderDetailInfo.status === OrderStatus.SIGNED"
+                type="success"
+                block
+                round
+                @click="checkInHandle"
+              >
+                签到
+              </van-button>
+              <!--      签退-->
+              <van-button
+                v-if="!isAllowEdit && orderDetailInfo.status === OrderStatus.IN_USE"
+                type="warning"
+                block
+                round
+                @click="checkOutHandle"
+              >
+                签退
+              </van-button>
+              <div v-if="!hasAction" class="od__no-action">当前状态无可用操作</div>
+            </div>
+          </section>
+        </aside>
       </div>
     </div>
   </van-skeleton>
@@ -277,6 +246,14 @@ const orderDetailInfo = ref<Partial<OrderDetailInterface>>({
   // additionalInfo	备注信息
   additionalInfo: ""
 });
+// 当前是否有可用操作按钮
+const hasAction = computed(
+  () =>
+    (isAllowEdit.value && isRenew.value) ||
+    isConfirmOrder.value ||
+    (!isAllowEdit.value && orderDetailInfo.value.status === OrderStatus.SIGNED) ||
+    (!isAllowEdit.value && orderDetailInfo.value.status === OrderStatus.IN_USE)
+);
 //#region <预订时长相关>
 // 预订时段
 const bookingDate = computed(() => {
@@ -415,8 +392,7 @@ const getOrderDetailHandle = async () => {
   //   如果是新增的续期,重置id为空
   isAddRenew.value && (orderDetailInfo.value.id = "");
   //   如果是确认预订，修改状态为已预订，等待确认
-  isConfirmOrder.value &&
-    (orderDetailInfo.value.status = OrderStatus.SIGNED);
+  isConfirmOrder.value && (orderDetailInfo.value.status = OrderStatus.SIGNED);
 };
 // 更正预订时长和支付方式
 const correctBookingTermAndPaymentType = () => {
@@ -432,8 +408,7 @@ const correctBookingTermAndPaymentType = () => {
   //   修正支付方式，如果不存在就改为数组第一项
   let targetPaymentType =
     paymentTypeList.value.find(
-      item =>
-        String(item.id) === String(orderDetailInfo.value.paymentTypeId)
+      item => String(item.id) === String(orderDetailInfo.value.paymentTypeId)
     ) || paymentTypeList.value[0];
   if (targetPaymentType) {
     paymentType.value.text = targetPaymentType.name as string;
@@ -506,12 +481,142 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="less">
-.base-info-title {
-  //background-color: var(--van-primary-background-color);
-  font-weight: bold;
-  //color: white;
+.od {
+  padding: 16px 20px 0;
 }
-::v-deep .van-card {
+
+.od__back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.od__back-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.od__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.od__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.od__side {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.od__card {
+  box-sizing: border-box;
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 10px;
+  background-color: var(--van-background-2);
+  border: 1px solid var(--van-border-color);
+}
+
+.od__main > .od__card:first-child,
+.od__side .od__card {
+  margin-top: 0;
+}
+
+.od__side .od__card {
+  position: sticky;
+  top: 76px;
+}
+
+.od__card-title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.od__link-card {
+  margin: 0;
+  cursor: pointer;
+}
+
+.od__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 9px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--van-border-color);
+    color: var(--van-text-color-2);
+  }
+
+  th {
+    width: 110px;
+    color: var(--van-text-color);
+    font-weight: 600;
+    background-color: var(--van-active-color);
+  }
+
+  tr:last-child th,
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.od__editable {
+  color: var(--van-primary-color);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.is-disabled {
+    color: var(--van-text-color-2);
+    cursor: default;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.od__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.od__no-action {
+  font-size: 13px;
+  color: var(--van-text-color-3);
+  text-align: center;
+  padding: 8px 0;
+}
+
+:deep(.van-card) {
   background: var(--van-background-2) !important;
+}
+
+@media (max-width: 1100px) {
+  .od__layout {
+    flex-direction: column;
+  }
+
+  .od__side {
+    width: 100%;
+  }
+
+  .od__side .od__card {
+    position: static;
+  }
 }
 </style>
