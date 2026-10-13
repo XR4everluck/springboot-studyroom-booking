@@ -16,21 +16,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-@Tag(name = "租约管理")
+@Tag(name = "预订订单管理")
 @RestController
-@RequestMapping("/admin/agreement")
+@RequestMapping("/admin/order")
 public class BookingOrderController {
 
     @Autowired
     BookingOrderService bookingOrderService;
 
     /**
-     * 保存或修改租约信息
+     * 保存或修改预订订单信息
      *
-     * @param bookingOrder 租约信息实体
+     * @param bookingOrder 预订订单信息实体
      * @return 操作结果
      */
-    @Operation(summary = "保存或修改租约信息")
+    @Operation(summary = "保存或修改预订订单信息")
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
         bookingOrderService.saveOrUpdate(bookingOrder);
@@ -38,14 +38,14 @@ public class BookingOrderController {
     }
 
     /**
-     * 根据条件分页查询租约列表
+     * 根据条件分页查询预订订单列表
      *
      * @param current 当前页码
      * @param size    每页数量
      * @param queryVo 查询条件
      * @return 查询结果
      */
-    @Operation(summary = "根据条件分页查询租约列表")
+    @Operation(summary = "根据条件分页查询预订订单列表")
     @GetMapping("page")
     public Result<IPage<AgreementVo>> page(@RequestParam long current, @RequestParam long size, AgreementQueryVo queryVo) {
         IPage<AgreementVo> page = new Page<>(current, size);
@@ -54,12 +54,12 @@ public class BookingOrderController {
     }
 
     /**
-     * 根据id查询租约信息
+     * 根据id查询预订订单信息
      *
-     * @param id 租约ID
+     * @param id 预订订单ID
      * @return 查询结果
      */
-    @Operation(summary = "根据id查询租约信息")
+    @Operation(summary = "根据id查询预订订单信息")
     @GetMapping(name = "getById")
     public Result<AgreementVo> getById(@RequestParam Long id) {
         AgreementVo result = bookingOrderService.getAgreementById(id);
@@ -67,12 +67,12 @@ public class BookingOrderController {
     }
 
     /**
-     * 根据id删除租约信息
+     * 根据id删除预订订单信息
      *
-     * @param id 租约ID
+     * @param id 预订订单ID
      * @return 操作结果
      */
-    @Operation(summary = "根据id删除租约信息")
+    @Operation(summary = "根据id删除预订订单信息")
     @DeleteMapping("removeById")
     public Result removeById(@RequestParam Long id) {
         bookingOrderService.removeById(id);
@@ -80,13 +80,13 @@ public class BookingOrderController {
     }
 
     /**
-     * 根据id更新租约状态
+     * 根据id更新预订订单状态
      *
-     * @param id     租约ID
-     * @param status 租约状态
+     * @param id     预订订单ID
+     * @param status 预订订单状态
      * @return 操作结果
      */
-    @Operation(summary = "根据id更新租约状态")
+    @Operation(summary = "根据id更新预订订单状态")
     @PostMapping("updateStatusById")
     public Result updateStatusById(@RequestParam Long id, @RequestParam BookingStatus status) {
         LambdaUpdateWrapper<BookingOrder> updateWrapper = new LambdaUpdateWrapper<>();

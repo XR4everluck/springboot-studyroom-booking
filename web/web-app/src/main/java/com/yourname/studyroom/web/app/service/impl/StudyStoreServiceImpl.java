@@ -45,19 +45,19 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
     public ApartmentItemVo selectApartmentItemVoById(Long id) {
         StudyStore studyStore = studyStoreMapper.selectById(id);
 
-        List<StoreLabel> labelInfoList = storeLabelMapper.selectListByApartmentId(id);
+        List<StoreLabel> storeLabelList = storeLabelMapper.selectListByApartmentId(id);
 
         List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, id);
 
-        BigDecimal minRent = seatMapper.selectMinRentByApartmentId(id);
+        BigDecimal minPrice = seatMapper.selectMinRentByApartmentId(id);
 
-        ApartmentItemVo apartmentItemVo = new ApartmentItemVo();
-        BeanUtils.copyProperties(studyStore, apartmentItemVo);
+        ApartmentItemVo storeItemVo = new ApartmentItemVo();
+        BeanUtils.copyProperties(studyStore, storeItemVo);
 
-        apartmentItemVo.setGraphVoList(graphVoList);
-        apartmentItemVo.setLabelInfoList(labelInfoList);
-        apartmentItemVo.setMinRent(minRent);
-        return apartmentItemVo;
+        storeItemVo.setGraphVoList(graphVoList);
+        storeItemVo.setStoreLabelList(storeLabelList);
+        storeItemVo.setMinPrice(minPrice);
+        return storeItemVo;
     }
 
     @Override
@@ -67,19 +67,19 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
         //2.查询图片信息
         List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, id);
         //3.查询标签信息
-        List<StoreLabel> labelInfoList = storeLabelMapper.selectListByApartmentId(id);
+        List<StoreLabel> storeLabelList = storeLabelMapper.selectListByApartmentId(id);
         //4.查询配套信息
-        List<SeatFacility> facilityInfoList = seatFacilityMapper.selectListByApartmentId(id);
+        List<SeatFacility> seatFacilityList = seatFacilityMapper.selectListByApartmentId(id);
         //5.查询最低座位单价
-        BigDecimal minRent = seatMapper.selectMinRentByApartmentId(id);
+        BigDecimal minPrice = seatMapper.selectMinRentByApartmentId(id);
 
         ApartmentDetailVo apartmentDetailVo = new ApartmentDetailVo();
 
         BeanUtils.copyProperties(studyStore, apartmentDetailVo);
         apartmentDetailVo.setGraphVoList(graphVoList);
-        apartmentDetailVo.setLabelInfoList(labelInfoList);
-        apartmentDetailVo.setFacilityInfoList(facilityInfoList);
-        apartmentDetailVo.setMinRent(minRent);
+        apartmentDetailVo.setStoreLabelList(storeLabelList);
+        apartmentDetailVo.setSeatFacilityList(seatFacilityList);
+        apartmentDetailVo.setMinPrice(minPrice);
         return apartmentDetailVo;
     }
 }

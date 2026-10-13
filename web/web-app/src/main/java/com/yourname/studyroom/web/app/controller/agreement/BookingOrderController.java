@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/app/agreement")
-@Tag(name = "租约信息")
+@RequestMapping("/app/order")
+@Tag(name = "预订订单信息")
 public class BookingOrderController {
 
     @Autowired
     BookingOrderService bookingOrderService;
 
     /**
-     * 获取个人租约基本信息列表
+     * 获取个人预订订单基本信息列表
      *
-     * @return 个人租约基本信息列表
+     * @return 个人预订订单基本信息列表
      */
-    @Operation(summary = "获取个人租约基本信息列表")
+    @Operation(summary = "获取个人预订订单基本信息列表")
     @GetMapping("listItem")
     public Result<List<AgreementItemVo>> listItem() {
         List<AgreementItemVo> result = bookingOrderService.listItemByPhone(LoginUserHolder.getLoginUser().getUsername());
@@ -35,12 +35,12 @@ public class BookingOrderController {
     }
 
     /**
-     * 根据id获取租约详细信息
+     * 根据id获取预订订单详细信息
      *
-     * @param id 租约ID
-     * @return 租约详细信息对象
+     * @param id 预订订单ID
+     * @return 预订订单详细信息对象
      */
-    @Operation(summary = "根据id获取租约详细信息")
+    @Operation(summary = "根据id获取预订订单详细信息")
     @GetMapping("getDetailById")
     public Result<AgreementDetailVo> getDetailById(@RequestParam Long id) {
         AgreementDetailVo agreementDetailVo = bookingOrderService.getDetailById(id);
@@ -48,31 +48,31 @@ public class BookingOrderController {
     }
 
     /**
-     * 根据id更新租约状态
+     * 根据id更新预订订单状态
      *
-     * @param id        租约ID
-     * @param leaseStatus 租约状态
+     * @param id        预订订单ID
+     * @param status 预订订单状态
      * @return 操作结果
-     * @description 用于确认租约和提前退租
+     * @description 用于确认预订订单和提前退座
      */
-    @Operation(summary = "根据id更新租约状态", description = "用于确认租约和提前退租")
+    @Operation(summary = "根据id更新预订订单状态", description = "用于确认预订订单和提前退座")
     @PostMapping("updateStatusById")
-    public Result updateStatusById(@RequestParam Long id, @RequestParam BookingStatus leaseStatus) {
+    public Result updateStatusById(@RequestParam Long id, @RequestParam BookingStatus status) {
         LambdaUpdateWrapper<BookingOrder> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(BookingOrder::getId, id);
-        updateWrapper.set(BookingOrder::getStatus, leaseStatus);
+        updateWrapper.set(BookingOrder::getStatus, status);
         bookingOrderService.update(updateWrapper);
         return Result.ok();
     }
 
     /**
-     * 保存或更新租约
+     * 保存或更新预订订单
      *
-     * @param bookingOrder 租约对象
+     * @param bookingOrder 预订订单对象
      * @return 操作结果
-     * @description 用于续约
+     * @description 用于续期
      */
-    @Operation(summary = "保存或更新租约", description = "用于续约")
+    @Operation(summary = "保存或更新预订订单", description = "用于续期")
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
         bookingOrderService.saveOrUpdate(bookingOrder);

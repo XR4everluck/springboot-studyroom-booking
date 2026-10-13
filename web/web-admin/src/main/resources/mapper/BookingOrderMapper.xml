@@ -6,11 +6,11 @@
 
     <resultMap id="agreementVoMap" type="com.yourname.studyroom.web.admin.vo.agreement.AgreementVo" autoMapping="true">
         <id property="id" column="id"/>
-        <association property="apartmentInfo" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
+        <association property="studyStore" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
             <id property="id" column="apartment_id"/>
-            <result property="name" column="apartment_name"/>
+            <result property="name" column="store_name"/>
         </association>
-        <association property="roomInfo" javaType="com.yourname.studyroom.model.entity.Seat" autoMapping="true">
+        <association property="seat" javaType="com.yourname.studyroom.model.entity.Seat" autoMapping="true">
             <id property="id" column="room_id"/>
         </association>
         <association property="paymentType" javaType="com.yourname.studyroom.model.entity.PaymentType" autoMapping="true">
@@ -34,7 +34,7 @@
         la.source_type,
         la.additional_info,
         ai.id   apartment_id,
-        ai.name apartment_name,
+        ai.name store_name,
         ai.district_id,
         ai.district_name,
         ai.city_id,
@@ -73,11 +73,11 @@
             <if test="queryVo.districtId != null">
                 and ai.district_id = #{queryVo.districtId}
             </if>
-            <if test="queryVo.apartmentId != null">
-                and la.store_id = #{queryVo.apartmentId}
+            <if test="queryVo.storeId != null">
+                and la.store_id = #{queryVo.storeId}
             </if>
-            <if test="queryVo.roomNumber != null and queryVo.roomNumber != ''">
-                and ri.seat_code like concat('%',#{queryVo.roomNumber},'%')
+            <if test="queryVo.seatCode != null and queryVo.seatCode != ''">
+                and ri.seat_code like concat('%',#{queryVo.seatCode},'%')
             </if>
             <if test="queryVo.name != null and queryVo.name != ''">
                 and la.name like concat('%',#{queryVo.name},'%')

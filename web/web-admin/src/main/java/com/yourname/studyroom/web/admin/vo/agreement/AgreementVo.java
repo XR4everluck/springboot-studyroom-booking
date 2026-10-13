@@ -5,14 +5,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "租约信息")
+@Schema(description = "预订订单信息")
 public class AgreementVo extends BookingOrder {
 
     @Schema(description = "签约自习室门店信息")
-    private StudyStore apartmentInfo;
+    private StudyStore studyStore;
 
-    @Schema(description = "签约房间信息")
-    private Seat roomInfo;
+    @Schema(description = "签约座位信息")
+    private Seat seat;
 
     @Schema(description = "支付方式")
     private PaymentType paymentType;

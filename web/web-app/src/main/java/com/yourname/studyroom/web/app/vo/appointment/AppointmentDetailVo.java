@@ -7,9 +7,9 @@ import lombok.Data;
 
 
 @Data
-@Schema(description = "APP端预约看房详情")
+@Schema(description = "APP端到店体验预约详情")
 public class AppointmentDetailVo extends VisitAppointment {
 
     @Schema(description = "自习室门店基本信息")
-    private ApartmentItemVo apartmentItemVo;
+    private ApartmentItemVo storeItemVo;
 }

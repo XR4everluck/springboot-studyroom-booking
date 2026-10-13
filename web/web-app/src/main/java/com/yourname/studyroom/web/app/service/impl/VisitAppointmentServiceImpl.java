@@ -50,12 +50,12 @@ public class VisitAppointmentServiceImpl extends ServiceImpl<VisitAppointmentMap
     public AppointmentDetailVo getDetailById(Long id) {
         VisitAppointment visitAppointment = visitAppointmentMapper.selectById(id);
 
-        ApartmentItemVo apartmentItemVo = studyStoreService.selectApartmentItemVoById(visitAppointment.getStoreId());
+        ApartmentItemVo storeItemVo = studyStoreService.selectApartmentItemVoById(visitAppointment.getStoreId());
 
         AppointmentDetailVo agreementDetailVo = new AppointmentDetailVo();
         BeanUtils.copyProperties(visitAppointment, agreementDetailVo);
 
-        agreementDetailVo.setApartmentItemVo(apartmentItemVo);
+        agreementDetailVo.setStoreItemVo(storeItemVo);
 
         return agreementDetailVo;
     }

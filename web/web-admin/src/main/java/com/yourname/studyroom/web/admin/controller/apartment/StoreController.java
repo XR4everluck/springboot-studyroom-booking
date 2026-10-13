@@ -22,8 +22,8 @@ import java.util.List;
 
 @Tag(name = "自习室门店信息管理")
 @RestController
-@RequestMapping("/admin/apartment")
-public class ApartmentController {
+@RequestMapping("/admin/store")
+public class StoreController {
 
     @Autowired
     StudyStoreService studyStoreService;

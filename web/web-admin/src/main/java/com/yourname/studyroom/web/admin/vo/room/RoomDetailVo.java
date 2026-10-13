@@ -9,12 +9,12 @@ import lombok.Data;
 import java.util.List;
 
 
-@Schema(description = "房间信息")
+@Schema(description = "座位信息")
 @Data
 public class RoomDetailVo extends Seat {
 
     @Schema(description = "所属自习室门店信息")
-    private StudyStore apartmentInfo;
+    private StudyStore studyStore;
 
     @Schema(description = "图片列表")
     private List<GraphVo> graphVoList;
@@ -23,10 +23,10 @@ public class RoomDetailVo extends Seat {
     private List<AttrValueVo> attrValueVoList;
 
     @Schema(description = "配套信息列表")
-    private List<SeatFacility> facilityInfoList;
+    private List<SeatFacility> seatFacilityList;
 
     @Schema(description = "标签信息列表")
-    private List<StoreLabel> labelInfoList;
+    private List<StoreLabel> storeLabelList;
 
     @Schema(description = "支付方式列表")
     private List<PaymentType> paymentTypeList;

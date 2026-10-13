@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @Data
-@Schema(description = "房间信息")
+@Schema(description = "座位信息")
 public class RoomSubmitVo extends Seat {
 
     @Schema(description = "图片列表")
@@ -19,10 +19,10 @@ public class RoomSubmitVo extends Seat {
     private List<Long> attrValueIds;
 
     @Schema(description = "配套信息列表")
-    private List<Long> facilityInfoIds;
+    private List<Long> seatFacilityIds;
 
     @Schema(description = "标签信息列表")
-    private List<Long> labelInfoIds;
+    private List<Long> storeLabelIds;
 
     @Schema(description = "支付方式列表")
     private List<Long> paymentTypeIds;

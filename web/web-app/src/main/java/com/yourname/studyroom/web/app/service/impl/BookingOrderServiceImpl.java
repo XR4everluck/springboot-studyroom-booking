@@ -72,8 +72,8 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
         Seat seat = seatMapper.selectById(bookingOrder.getSeatId());
 
         //4.查询图片信息
-        List<GraphVo> roomGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, bookingOrder.getSeatId());
-        List<GraphVo> apartmentGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, bookingOrder.getStoreId());
+        List<GraphVo> seatGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, bookingOrder.getSeatId());
+        List<GraphVo> storeGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, bookingOrder.getStoreId());
 
         //5.查询支付方式
         PaymentType paymentType = paymentTypeMapper.selectById(bookingOrder.getPaymentTypeId());
@@ -83,10 +83,10 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
 
         AgreementDetailVo agreementDetailVo = new AgreementDetailVo();
         BeanUtils.copyProperties(bookingOrder, agreementDetailVo);
-        agreementDetailVo.setApartmentName(studyStore.getName());
-        agreementDetailVo.setRoomNumber(seat.getSeatCode());
-        agreementDetailVo.setApartmentGraphVoList(apartmentGraphVoList);
-        agreementDetailVo.setRoomGraphVoList(roomGraphVoList);
+        agreementDetailVo.setStoreName(studyStore.getName());
+        agreementDetailVo.setSeatCode(seat.getSeatCode());
+        agreementDetailVo.setStoreGraphVoList(storeGraphVoList);
+        agreementDetailVo.setSeatGraphVoList(seatGraphVoList);
         agreementDetailVo.setPaymentTypeName(paymentType.getName());
         agreementDetailVo.setLeaseTermMonthCount(leaseTerm.getMonthCount());
         agreementDetailVo.setLeaseTermUnit(leaseTerm.getUnit());

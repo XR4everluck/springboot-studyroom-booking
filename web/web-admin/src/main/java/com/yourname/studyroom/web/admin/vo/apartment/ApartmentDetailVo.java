@@ -19,10 +19,10 @@ public class ApartmentDetailVo extends StudyStore {
     private List<GraphVo> graphVoList;
 
     @Schema(description = "标签列表")
-    private List<StoreLabel> labelInfoList;
+    private List<StoreLabel> storeLabelList;
 
     @Schema(description = "配套列表")
-    private List<SeatFacility> facilityInfoList;
+    private List<SeatFacility> seatFacilityList;
 
     @Schema(description = "杂费列表")
     private List<FeeValueVo> feeValueVoList;

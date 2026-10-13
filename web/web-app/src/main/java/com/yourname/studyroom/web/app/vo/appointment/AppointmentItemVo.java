@@ -10,14 +10,14 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Schema(description = "APP端预约看房基本信息")
+@Schema(description = "APP端到店体验预约基本信息")
 public class AppointmentItemVo {
 
     @Schema(description = "预约Id")
     private Long id;
 
     @Schema(description = "预约自习室门店名称")
-    private String apartmentName;
+    private String storeName;
 
     @Schema(description = "自习室门店图片列表")
     private List<GraphVo> graphVoList;

@@ -45,8 +45,8 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
 
         AgreementVo agreementVo = new AgreementVo();
         BeanUtils.copyProperties(bookingOrder,agreementVo);
-        agreementVo.setApartmentInfo(studyStore);
-        agreementVo.setRoomInfo(seat);
+        agreementVo.setStudyStore(studyStore);
+        agreementVo.setSeat(seat);
         agreementVo.setPaymentType(paymentType);
         agreementVo.setLeaseTerm(leaseTerm);
 

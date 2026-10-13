@@ -48,12 +48,12 @@ public class Knife4jConfiguration {
     }
 
     @Bean
-    public GroupedOpenApi apartmentAPI() {
+    public GroupedOpenApi storeAPI() {
 
         return GroupedOpenApi.builder().group("自习室门店信息管理").
                 pathsToMatch(
-                        "/admin/apartment/**",
-                        "/admin/room/**",
+                        "/admin/store/**",
+                        "/admin/seat/**",
                         "/admin/label/**",
                         "/admin/facility/**",
                         "/admin/fee/**",
@@ -65,11 +65,11 @@ public class Knife4jConfiguration {
                 ).build();
     }
     @Bean
-    public GroupedOpenApi leaseAPI() {
-        return GroupedOpenApi.builder().group("租赁信息管理").
+    public GroupedOpenApi bookingAPI() {
+        return GroupedOpenApi.builder().group("预订订单管理").
                 pathsToMatch(
-                        "/admin/appointment/**",
-                        "/admin/agreement/**"
+                        "/admin/visit/**",
+                        "/admin/order/**"
                 ).build();
     }
     @Bean

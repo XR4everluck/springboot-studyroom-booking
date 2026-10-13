@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "自习室门店信息")
-@RequestMapping("/app/apartment")
-public class ApartmentController {
+@RequestMapping("/app/store")
+public class StoreController {
 
     @Autowired
     StudyStoreService studyStoreService;

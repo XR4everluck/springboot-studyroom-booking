@@ -23,13 +23,13 @@ public class LeaseTermController {
     LeaseTermService leaseTermService;
 
     /**
-     * 根据房间id获取可选租期列表
+     * 根据座位id获取可选租期列表
      *
-     * @param id 房间id
+     * @param id 座位id
      * @return 包含可选租期列表的响应结果
      */
     @GetMapping("listByRoomId")
-    @Operation(summary = "根据房间id获取可选获取租期列表")
+    @Operation(summary = "根据座位id获取可选获取租期列表")
     public Result<List<LeaseTerm>> list(@RequestParam Long id) {
         List<LeaseTerm> result = leaseTermService.listByRoomId(id);
         return Result.ok(result);

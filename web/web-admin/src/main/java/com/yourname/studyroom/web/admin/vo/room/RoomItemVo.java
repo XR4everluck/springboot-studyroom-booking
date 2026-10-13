@@ -9,16 +9,16 @@ import java.util.Date;
 
 
 @Data
-@Schema(description = "房间信息")
+@Schema(description = "座位信息")
 public class RoomItemVo extends Seat {
 
-    @Schema(description = "租约结束日期")
+    @Schema(description = "预订订单结束日期")
     private Date leaseEndDate;
 
-    @Schema(description = "当前入住状态")
+    @Schema(description = "当前签到状态")
     private Boolean isCheckIn;
 
     @Schema(description = "所属自习室门店信息")
-    private StudyStore apartmentInfo;
+    private StudyStore studyStore;
 
 }

@@ -22,8 +22,8 @@
         ai.business_hours,
         ai.seat_count,
         ai.is_release,
-        ifnull(tc.cnt,0) total_room_count,
-        ifnull(tc.cnt,0) - ifnull(cc.cnt,0) free_room_count
+        ifnull(tc.cnt,0) total_seat_count,
+        ifnull(tc.cnt,0) - ifnull(cc.cnt,0) free_seat_count
         from (select id,
                      name,
                      introduction,

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@Tag(name = "房间属性管理")
+@Tag(name = "座位属性管理")
 @RestController
 @RequestMapping("/admin/attr")
 public class AttrController {

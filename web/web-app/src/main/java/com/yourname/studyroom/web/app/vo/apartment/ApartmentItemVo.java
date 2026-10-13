@@ -14,9 +14,9 @@ import java.util.List;
 @Schema(description = "App端自习室门店信息")
 public class ApartmentItemVo extends StudyStore {
 
-    private List<StoreLabel> labelInfoList;
+    private List<StoreLabel> storeLabelList;
 
     private List<GraphVo> graphVoList;
 
-    private BigDecimal minRent;
+    private BigDecimal minPrice;
 }

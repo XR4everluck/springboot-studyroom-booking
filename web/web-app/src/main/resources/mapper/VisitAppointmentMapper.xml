@@ -13,7 +13,7 @@
         select va.id,
                va.appointment_time,
                va.appointment_status,
-               ai.name apartment_name,
+               ai.name store_name,
                gi.name,
                gi.url
         from visit_appointment va

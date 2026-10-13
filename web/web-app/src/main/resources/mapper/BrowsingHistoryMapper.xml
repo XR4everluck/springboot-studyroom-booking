@@ -6,7 +6,7 @@
     <resultMap id="HistoryItemVoMP" type="com.yourname.studyroom.web.app.vo.history.HistoryItemVo" autoMapping="true">
         <id column="id" property="id"/>
         <result column="room_id" property="roomId"/>
-        <collection property="roomGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"
+        <collection property="seatGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"
                     select="selectGraphVoByRoomId" column="room_id"
         />
     </resultMap>
@@ -17,7 +17,7 @@
                bh.browse_time,
                ri.seat_code,
                ri.price,
-               ai.name apartment_name,
+               ai.name store_name,
                ai.district_name,
                ai.city_name,
                ai.province_name

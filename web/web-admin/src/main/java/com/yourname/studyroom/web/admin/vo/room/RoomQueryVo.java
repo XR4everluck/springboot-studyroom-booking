@@ -3,7 +3,7 @@ package com.yourname.studyroom.web.admin.vo.room;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@Schema(description = "房间查询实体")
+@Schema(description = "座位查询实体")
 @Data
 public class RoomQueryVo {
 
@@ -17,5 +17,5 @@ public class RoomQueryVo {
     private Long districtId;
 
     @Schema(description = "自习室门店Id")
-    private Long apartmentId;
+    private Long storeId;
 }

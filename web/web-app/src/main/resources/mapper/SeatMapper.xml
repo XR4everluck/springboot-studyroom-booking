@@ -5,14 +5,14 @@
 <mapper namespace="com.yourname.studyroom.web.app.mapper.SeatMapper">
     <resultMap id="RoomItemVoMP" type="com.yourname.studyroom.web.app.vo.room.RoomItemVo" autoMapping="true">
         <id column="id" property="id"/>
-        <association property="apartmentInfo" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
+        <association property="studyStore" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
             <id column="apartment_id" property="id"/>
         </association>
         <collection property="graphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo"
                     select="selectGraphListByRoomID"
                     column="id"
         />
-        <collection property="labelInfoList" ofType="com.yourname.studyroom.model.entity.StoreLabel"
+        <collection property="storeLabelList" ofType="com.yourname.studyroom.model.entity.StoreLabel"
                     select="selectLabelListByRoomId"
                     column="id"
         />
@@ -53,8 +53,8 @@
             <if test="queryVo.districtId != null">
                 and ai.district_id = #{queryVo.districtId}
             </if>
-            <if test="queryVo.minRent != null and queryVo.maxRent != null">
-                and (ri.price &gt;= #{queryVo.minRent} and ri.price &lt;= #{queryVo.maxRent})
+            <if test="queryVo.minPrice != null and queryVo.maxPrice != null">
+                and (ri.price &gt;= #{queryVo.minPrice} and ri.price &lt;= #{queryVo.maxPrice})
             </if>
             <if test="queryVo.paymentTypeId != null">
                 and ri.id in (select

@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "看房预约信息")
+@Tag(name = "到店体验预约信息")
 @RestController
-@RequestMapping("/app/appointment")
+@RequestMapping("/app/visit")
 public class VisitAppointmentController {
     @Autowired
     private VisitAppointmentService visitAppointmentService;
 
     /**
-     * 保存或更新看房预约
+     * 保存或更新到店体验预约
      *
-     * @param visitAppointment 看房预约对象
+     * @param visitAppointment 到店体验预约对象
      * @return 操作结果
      */
-    @Operation(summary = "保存或更新看房预约")
+    @Operation(summary = "保存或更新到店体验预约")
     @PostMapping("/saveOrUpdate")
     public Result saveOrUpdate(@RequestBody VisitAppointment visitAppointment) {
         visitAppointment.setUserId(LoginUserHolder.getLoginUser().getUserId());
@@ -36,11 +36,11 @@ public class VisitAppointmentController {
     }
 
     /**
-     * 查询个人预约看房列表
+     * 查询个人到店体验预约列表
      *
-     * @return 个人预约看房列表
+     * @return 个人到店体验预约列表
      */
-    @Operation(summary = "查询个人预约看房列表")
+    @Operation(summary = "查询个人到店体验预约列表")
     @GetMapping("listItem")
     public Result<List<AppointmentItemVo>> listItem() {
         List<AppointmentItemVo> result = visitAppointmentService.listItemByUserId(LoginUserHolder.getLoginUser().getUserId());

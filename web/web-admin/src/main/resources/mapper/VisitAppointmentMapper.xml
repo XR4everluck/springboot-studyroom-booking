@@ -5,7 +5,7 @@
 <mapper namespace="com.yourname.studyroom.web.admin.mapper.VisitAppointmentMapper">
     <resultMap id="AppointmentVoMP" type="com.yourname.studyroom.web.admin.vo.appointment.AppointmentVo" autoMapping="true">
         <id property="id" column="id"/>
-        <association property="apartmentInfo" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
+        <association property="studyStore" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
             <id property="id" column="ai_id"/>
             <result property="name" column="ai_name"/>
             <result property="phone" column="ai_phone"/>
@@ -49,8 +49,8 @@
             <if test="queryVo.districtId != null">
                 and ai.district_id = #{queryVo.districtId}
             </if>
-            <if test="queryVo.apartmentId != null">
-                and va.store_id = #{queryVo.apartmentId}
+            <if test="queryVo.storeId != null">
+                and va.store_id = #{queryVo.storeId}
             </if>
             <if test="queryVo.name != null and queryVo.name != ''">
                 and va.name like concat('%',#{queryVo.name},'%')

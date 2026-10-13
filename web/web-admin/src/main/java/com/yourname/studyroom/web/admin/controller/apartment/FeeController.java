@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@Tag(name = "房间杂费管理")
+@Tag(name = "座位杂费管理")
 @RestController
 @RequestMapping("/admin/fee")
 public class FeeController {

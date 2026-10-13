@@ -9,10 +9,10 @@ import lombok.Data;
 @Schema(description = "后台管理系统自习室门店列表实体")
 public class ApartmentItemVo extends StudyStore {
 
-    @Schema(description = "房间总数")
-    private Long totalRoomCount;
+    @Schema(description = "座位总数")
+    private Long totalSeatCount;
 
-    @Schema(description = "空闲房间数")
-    private Long freeRoomCount;
+    @Schema(description = "空闲座位数")
+    private Long freeSeatCount;
 
 }

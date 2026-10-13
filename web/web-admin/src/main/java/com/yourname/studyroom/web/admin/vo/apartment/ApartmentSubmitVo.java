@@ -14,10 +14,10 @@ import java.util.List;
 public class ApartmentSubmitVo extends StudyStore {
 
     @Schema(description="自习室门店配套id")
-    private List<Long> facilityInfoIds;
+    private List<Long> seatFacilityIds;
 
     @Schema(description="自习室门店标签id")
-    private List<Long> labelIds;
+    private List<Long> storeLabelIds;
 
     @Schema(description="自习室门店杂费值id")
     private List<Long> feeValueIds;

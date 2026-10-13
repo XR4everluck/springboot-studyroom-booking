@@ -8,20 +8,20 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Schema(description = "租约详细信息")
+@Schema(description = "预订订单详细信息")
 public class AgreementDetailVo extends BookingOrder {
 
     @Schema(description = "自习室门店名称")
-    private String apartmentName;
+    private String storeName;
 
     @Schema(description = "自习室门店图片列表")
-    private List<GraphVo> apartmentGraphVoList;
+    private List<GraphVo> storeGraphVoList;
 
-    @Schema(description = "房间号")
-    private String roomNumber;
+    @Schema(description = "座位号")
+    private String seatCode;
 
-    @Schema(description = "房间图片列表")
-    private List<GraphVo> roomGraphVoList;
+    @Schema(description = "座位图片列表")
+    private List<GraphVo> seatGraphVoList;
 
     @Schema(description = "支付方式")
     private String paymentTypeName;

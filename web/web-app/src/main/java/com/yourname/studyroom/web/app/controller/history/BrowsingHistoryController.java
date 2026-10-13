@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "浏览历史管理")
+@Tag(name = "座位浏览历史管理")
 @RequestMapping("/app/history")
 public class BrowsingHistoryController {
 
@@ -26,13 +26,13 @@ public class BrowsingHistoryController {
     BrowsingHistoryService browsingHistoryService;
 
     /**
-     * 获取浏览历史
+     * 获取座位浏览历史
      *
      * @param current 当前页码
      * @param size    每页显示条数
-     * @return 浏览历史分页结果
+     * @return 座位浏览历史分页结果
      */
-    @Operation(summary = "获取浏览历史")
+    @Operation(summary = "获取座位浏览历史")
     @GetMapping("pageItem")
     private Result<IPage<HistoryItemVo>> page(@RequestParam long current, @RequestParam long size) {
         Page<HistoryItemVo> page = new Page<>(current,size);

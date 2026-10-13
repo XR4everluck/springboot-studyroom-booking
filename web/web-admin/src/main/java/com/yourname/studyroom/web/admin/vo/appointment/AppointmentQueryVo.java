@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "预约看房查询实体")
+@Schema(description = "到店体验预约查询实体")
 public class AppointmentQueryVo {
 
 
@@ -18,7 +18,7 @@ public class AppointmentQueryVo {
     private Long districtId;
 
     @Schema(description="预约自习室门店所在自习室门店")
-    private Long apartmentId;
+    private Long storeId;
 
     @Schema(description="预约用户姓名")
     private String name;

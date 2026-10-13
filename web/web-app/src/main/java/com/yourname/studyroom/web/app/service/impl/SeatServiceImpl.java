@@ -90,9 +90,9 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             //3.查询租期
             List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
             //4.查询配套
-            List<SeatFacility> facilityInfoList = seatFacilityMapper.selectListByRoomId(id);
+            List<SeatFacility> seatFacilityList = seatFacilityMapper.selectListByRoomId(id);
             //5.查询标签
-            List<StoreLabel> labelInfoList = storeLabelMapper.selectListByRoomId(id);
+            List<StoreLabel> storeLabelList = storeLabelMapper.selectListByRoomId(id);
             //6.查询支付方式
             List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
             //7.查询基本属性
@@ -100,16 +100,16 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             //8.查询杂费信息
             List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(seat.getStoreId());
             //9.查询自习室门店信息
-            ApartmentItemVo apartmentItemVo = studyStoreService.selectApartmentItemVoById(seat.getStoreId());
+            ApartmentItemVo storeItemVo = studyStoreService.selectApartmentItemVoById(seat.getStoreId());
 
             roomDetailVo = new RoomDetailVo();
             BeanUtils.copyProperties(seat, roomDetailVo);
 
-            roomDetailVo.setApartmentItemVo(apartmentItemVo);
+            roomDetailVo.setStoreItemVo(storeItemVo);
             roomDetailVo.setGraphVoList(graphVoList);
             roomDetailVo.setAttrValueVoList(attrValueVoList);
-            roomDetailVo.setFacilityInfoList(facilityInfoList);
-            roomDetailVo.setLabelInfoList(labelInfoList);
+            roomDetailVo.setSeatFacilityList(seatFacilityList);
+            roomDetailVo.setStoreLabelList(storeLabelList);
             roomDetailVo.setPaymentTypeList(paymentTypeList);
             roomDetailVo.setFeeValueVoList(feeValueVoList);
             roomDetailVo.setLeaseTermList(leaseTermList);

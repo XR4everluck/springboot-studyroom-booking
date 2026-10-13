@@ -14,17 +14,17 @@ import java.util.List;
 @Schema(description = "浏览历史基本信息")
 public class HistoryItemVo extends BrowsingHistory {
 
-    @Schema(description = "房间号")
-    private String roomNumber;
+    @Schema(description = "座位号")
+    private String seatCode;
 
-    @Schema(description = "租金")
+    @Schema(description = "座位单价")
     private BigDecimal rent;
 
-    @Schema(description = "房间图片列表")
-    private List<GraphVo> roomGraphVoList;
+    @Schema(description = "座位图片列表")
+    private List<GraphVo> seatGraphVoList;
 
     @Schema(description = "自习室门店名称")
-    private String apartmentName;
+    private String storeName;
 
     @Schema(description = "省份名称")
     private String provinceName;

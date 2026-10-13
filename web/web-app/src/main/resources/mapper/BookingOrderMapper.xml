@@ -6,7 +6,7 @@
 
     <resultMap id="AgreementItemVoMap" type="com.yourname.studyroom.web.app.vo.agreement.AgreementItemVo" autoMapping="true">
         <id property="id" column="id"/>
-        <collection property="roomGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"/>
+        <collection property="seatGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"/>
     </resultMap>
 
     <select id="listItemByPhone" resultMap="AgreementItemVoMap">
@@ -17,7 +17,7 @@
                la.payment_type_id,
                la.status lease_status,
                la.source_type,
-               ai.name apartment_name,
+               ai.name store_name,
                ri.seat_code,
                gi.name,
                gi.url

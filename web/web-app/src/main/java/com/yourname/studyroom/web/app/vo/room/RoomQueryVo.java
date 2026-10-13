@@ -6,7 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-@Schema(description = "房间查询实体")
+@Schema(description = "座位查询实体")
 public class RoomQueryVo {
 
 
@@ -19,11 +19,11 @@ public class RoomQueryVo {
     @Schema(description = "区域Id")
     private Long districtId;
 
-    @Schema(description = "最小租金")
-    private BigDecimal minRent;
+    @Schema(description = "最低座位单价")
+    private BigDecimal minPrice;
 
-    @Schema(description = "最大租金")
-    private BigDecimal maxRent;
+    @Schema(description = "最高座位单价")
+    private BigDecimal maxPrice;
 
     @Schema(description = "支付方式")
     private Long paymentTypeId;

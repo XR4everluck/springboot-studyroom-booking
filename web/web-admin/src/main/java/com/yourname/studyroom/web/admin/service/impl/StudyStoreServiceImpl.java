@@ -82,15 +82,15 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
             graphInfoService.remove(graphQueryWrapper);
             //2.删除配套列表
             LambdaQueryWrapper<ApartmentFacility> facilityQueryWrapper = new LambdaQueryWrapper<>();
-            facilityQueryWrapper.eq(ApartmentFacility::getApartmentId, apartmentSubmitVo.getId());
+            facilityQueryWrapper.eq(ApartmentFacility::getStoreId, apartmentSubmitVo.getId());
             apartmentFacilityService.remove(facilityQueryWrapper);
             //3.删除标签列表
             LambdaQueryWrapper<ApartmentLabel> labelQueryWrapper = new LambdaQueryWrapper<>();
-            labelQueryWrapper.eq(ApartmentLabel::getApartmentId, apartmentSubmitVo.getId());
+            labelQueryWrapper.eq(ApartmentLabel::getStoreId, apartmentSubmitVo.getId());
             apartmentLabelService.remove(labelQueryWrapper);
             //4.删除杂费列表
             LambdaQueryWrapper<ApartmentFeeValue> feeValueQueryWrapper = new LambdaQueryWrapper<>();
-            feeValueQueryWrapper.eq(ApartmentFeeValue::getApartmentId, apartmentSubmitVo.getId());
+            feeValueQueryWrapper.eq(ApartmentFeeValue::getStoreId, apartmentSubmitVo.getId());
             apartmentFeeValueService.remove(feeValueQueryWrapper);
         }
         //1.插入图片列表
@@ -108,24 +108,24 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
             graphInfoService.saveBatch(graphInfoList);
         }
         //2.插入配套列表
-        List<Long> facilityInfoIdList = apartmentSubmitVo.getFacilityInfoIds();
+        List<Long> facilityInfoIdList = apartmentSubmitVo.getSeatFacilityIds();
         if (!CollectionUtils.isEmpty(facilityInfoIdList)) {
             ArrayList<ApartmentFacility> apartmentFacilityList = new ArrayList<>();
             for (Long facilityInfoId : facilityInfoIdList) {
                 ApartmentFacility apartmentFacility = new ApartmentFacility();
-                apartmentFacility.setApartmentId(apartmentSubmitVo.getId());
+                apartmentFacility.setStoreId(apartmentSubmitVo.getId());
                 apartmentFacility.setFacilityId(facilityInfoId);
                 apartmentFacilityList.add(apartmentFacility);
             }
             apartmentFacilityService.saveBatch(apartmentFacilityList);
         }
         //3.插入标签列表
-        List<Long> labelIdList = apartmentSubmitVo.getLabelIds();
+        List<Long> labelIdList = apartmentSubmitVo.getStoreLabelIds();
         if (!CollectionUtils.isEmpty(labelIdList)) {
             ArrayList<ApartmentLabel> apartmentLabelList = new ArrayList<>();
             for (Long lableId : labelIdList) {
                 ApartmentLabel apartmentLabel = new ApartmentLabel();
-                apartmentLabel.setApartmentId(apartmentSubmitVo.getId());
+                apartmentLabel.setStoreId(apartmentSubmitVo.getId());
                 apartmentLabel.setLabelId(lableId);
                 apartmentLabelList.add(apartmentLabel);
             }
@@ -137,7 +137,7 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
             ArrayList<ApartmentFeeValue> apartmentFeeValueList = new ArrayList<>();
             for (Long feeValueId : feeValueIds) {
                 ApartmentFeeValue apartmentFeeValue = new ApartmentFeeValue();
-                apartmentFeeValue.setApartmentId(apartmentSubmitVo.getId());
+                apartmentFeeValue.setStoreId(apartmentSubmitVo.getId());
                 apartmentFeeValue.setFeeValueId(feeValueId);
                 apartmentFeeValueList.add(apartmentFeeValue);
             }
@@ -171,17 +171,17 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
         //2.查询配套列表
         List<GraphVo> graphVoList = graphInfoMapper.selectByItemTypeAndId(ItemType.APARTMENT, id);
         //3.查询标签列表
-        List<StoreLabel> labelInfoList = studyStoreMapper.selectListByApartmentId(id);
+        List<StoreLabel> storeLabelList = studyStoreMapper.selectListByApartmentId(id);
         //4.查询配套列表
-        List<SeatFacility> facilityInfoList = apartmentFacilityMapper.selectListByApartmentId(id);
+        List<SeatFacility> seatFacilityList = apartmentFacilityMapper.selectListByApartmentId(id);
         //5.查询杂费列表
         List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(id);
         //6.组装结果
         ApartmentDetailVo apartmentDetailVo = new ApartmentDetailVo();
         BeanUtils.copyProperties(studyStore, apartmentDetailVo);
         apartmentDetailVo.setGraphVoList(graphVoList);
-        apartmentDetailVo.setLabelInfoList(labelInfoList);
-        apartmentDetailVo.setFacilityInfoList(facilityInfoList);
+        apartmentDetailVo.setStoreLabelList(storeLabelList);
+        apartmentDetailVo.setSeatFacilityList(seatFacilityList);
         apartmentDetailVo.setFeeValueVoList(feeValueVoList);
         return apartmentDetailVo;
     }
@@ -204,15 +204,15 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
         graphInfoService.remove(graphQueryWrapper);
         //2.删除配套列表
         LambdaQueryWrapper<ApartmentFacility> facilityQueryWrapper = new LambdaQueryWrapper<>();
-        facilityQueryWrapper.eq(ApartmentFacility::getApartmentId, id);
+        facilityQueryWrapper.eq(ApartmentFacility::getStoreId, id);
         apartmentFacilityService.remove(facilityQueryWrapper);
         //3.删除标签列表
         LambdaQueryWrapper<ApartmentLabel> labelQueryWrapper = new LambdaQueryWrapper<>();
-        labelQueryWrapper.eq(ApartmentLabel::getApartmentId, id);
+        labelQueryWrapper.eq(ApartmentLabel::getStoreId, id);
         apartmentLabelService.remove(labelQueryWrapper);
         //4.删除杂费列表
         LambdaQueryWrapper<ApartmentFeeValue> feeValueQueryWrapper = new LambdaQueryWrapper<>();
-        feeValueQueryWrapper.eq(ApartmentFeeValue::getApartmentId, id);
+        feeValueQueryWrapper.eq(ApartmentFeeValue::getStoreId, id);
         apartmentFeeValueService.remove(feeValueQueryWrapper);
     }
 }

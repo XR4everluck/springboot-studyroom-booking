@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-@Tag(name = "预约看房管理")
-@RequestMapping("/admin/appointment")
+@Tag(name = "到店体验预约管理")
+@RequestMapping("/admin/visit")
 @RestController
 public class VisitAppointmentController {
 

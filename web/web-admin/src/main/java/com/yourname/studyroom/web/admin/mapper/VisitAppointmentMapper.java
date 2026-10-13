@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
 * @author liubo
-* @description 针对表【visit_appointment(预约看房信息表)】的数据库操作Mapper
+* @description 针对表【visit_appointment(到店体验预约信息表)】的数据库操作Mapper
 * @createDate 2023-07-24 15:48:00
 * @Entity com.yourname.studyroom.model.VisitAppointment
 */
