@@ -20,10 +20,21 @@
       <div class="card">
         <div class="">
           <!--      标题-->
-          <div class="font-bold">
+          <div class="font-bold flex items-center">
             {{
               `${roomDetailInfo.storeItemVo.name} ${roomDetailInfo.seatCode}座位`
             }}
+            <van-tag
+              class="ml-[8px]"
+              :type="
+                roomDetailInfo.realtimeStatus === 2
+                  ? 'danger'
+                  : roomDetailInfo.realtimeStatus === 1
+                    ? 'warning'
+                    : 'success'
+              "
+              >{{ roomDetailInfo.realtimeStatusName || "空闲" }}</van-tag
+            >
           </div>
           <!--      标签-->
           <div class="my-[7px]">

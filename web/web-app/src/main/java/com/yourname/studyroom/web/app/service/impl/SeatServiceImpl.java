@@ -5,6 +5,7 @@ import com.yourname.studyroom.common.constant.RedisConstant;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.model.entity.*;
 import com.yourname.studyroom.model.enums.ItemType;
+import com.yourname.studyroom.model.enums.SeatRealtimeStatus;
 import com.yourname.studyroom.web.app.mapper.*;
 import com.yourname.studyroom.web.app.service.StudyStoreService;
 import com.yourname.studyroom.web.app.service.BrowsingHistoryService;
@@ -70,7 +71,9 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
 
     @Override
     public IPage<RoomItemVo> pageItem(IPage<RoomItemVo> page, RoomQueryVo queryVo) {
-        return seatMapper.pageItem(page,queryVo);
+        IPage<RoomItemVo> result = seatMapper.pageItem(page, queryVo);
+        fillRealtimeStatus(result.getRecords());
+        return result;
     }
 
     @Override
@@ -119,12 +122,44 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         //异步 保存浏览历史
         browsingHistoryService.saveHistory(LoginUserHolder.getLoginUser().getUserId(),id);
 
+        //实时状态基于 Redis，始终按当前缓存回填，避免受详情缓存快照影响
+        SeatRealtimeStatus realtime = readRealtimeStatus(id);
+        roomDetailVo.setRealtimeStatus(realtime.getCode());
+        roomDetailVo.setRealtimeStatusName(realtime.getName());
+
         return roomDetailVo;
     }
 
     @Override
     public IPage<RoomItemVo> pageItemByApartmentId(IPage<RoomItemVo> page, Long id) {
-        return seatMapper.pageItemByApartmentId(page, id);
+        IPage<RoomItemVo> result = seatMapper.pageItemByApartmentId(page, id);
+        fillRealtimeStatus(result.getRecords());
+        return result;
+    }
+
+    /**
+     * 批量回填座位列表实时状态
+     */
+    private void fillRealtimeStatus(List<RoomItemVo> records) {
+        if (records == null) {
+            return;
+        }
+        for (RoomItemVo record : records) {
+            SeatRealtimeStatus realtime = readRealtimeStatus(record.getId());
+            record.setRealtimeStatus(realtime.getCode());
+            record.setRealtimeStatusName(realtime.getName());
+        }
+    }
+
+    /**
+     * 从 Redis 读取座位实时状态，缺省视为空闲
+     */
+    private SeatRealtimeStatus readRealtimeStatus(Long seatId) {
+        Object cached = redisTemplate.opsForValue().get(RedisConstant.APP_SEAT_STATUS_PREFIX + seatId);
+        if (cached instanceof Number) {
+            return SeatRealtimeStatus.ofCode(((Number) cached).intValue());
+        }
+        return SeatRealtimeStatus.FREE;
     }
 }
 

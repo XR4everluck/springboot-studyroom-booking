@@ -194,6 +194,34 @@
         >
           确认预订
         </van-button>
+        <!--      签到-->
+        <van-button
+          v-if="
+            !isAllowEdit &&
+            agreementDetailInfo.status === AgreementStatus.SIGNED
+          "
+          type="success"
+          block
+          round
+          class="m-t-20"
+          @click="checkInHandle"
+        >
+          签到
+        </van-button>
+        <!--      签退-->
+        <van-button
+          v-if="
+            !isAllowEdit &&
+            agreementDetailInfo.status === AgreementStatus.IN_USE
+          "
+          type="warning"
+          block
+          round
+          class="m-t-20"
+          @click="checkOutHandle"
+        >
+          签退
+        </van-button>
       </div>
     </div>
   </van-skeleton>
@@ -209,6 +237,8 @@ import type {
 import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import {
+  checkInOrder,
+  checkOutOrder,
   getAgreementDetailById,
   getPaymentListByRoomId,
   getTermListByRoomId,
@@ -470,6 +500,26 @@ const submitHandle = async () => {
     await saveOrUpdateAgreement(agreementDetailInfo.value);
     showToast({ type: "success", message: "操作成功" });
     router.back();
+  } catch (error) {
+    console.log(error);
+  }
+};
+// 签到
+const checkInHandle = async () => {
+  try {
+    await checkInOrder(agreementDetailInfo.value.id as string);
+    showToast({ type: "success", message: "签到成功" });
+    await getAgreementDetailHandle();
+  } catch (error) {
+    console.log(error);
+  }
+};
+// 签退
+const checkOutHandle = async () => {
+  try {
+    await checkOutOrder(agreementDetailInfo.value.id as string);
+    showToast({ type: "success", message: "签退成功" });
+    await getAgreementDetailHandle();
   } catch (error) {
     console.log(error);
   }

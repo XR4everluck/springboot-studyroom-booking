@@ -7,6 +7,17 @@
         <span class="text-[14px] font-bold">{{
           `${data.studyStore?.name || ""} ${data.seatCode}座位`
         }}</span>
+        <van-tag
+          class="ml-[6px] align-middle"
+          :type="
+            data.realtimeStatus === 2
+              ? 'danger'
+              : data.realtimeStatus === 1
+                ? 'warning'
+                : 'success'
+          "
+          >{{ data.realtimeStatusName || "空闲" }}</van-tag
+        >
       </slot>
     </template>
     <!--      desc-->

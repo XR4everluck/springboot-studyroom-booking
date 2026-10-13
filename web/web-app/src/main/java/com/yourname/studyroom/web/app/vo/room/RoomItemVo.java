@@ -33,4 +33,10 @@ public class RoomItemVo {
     @Schema(description = "座位所属自习室门店信息")
     private StudyStore studyStore;
 
+    @Schema(description = "座位实时状态编码：0-空闲 1-已预订 2-使用中")
+    private Integer realtimeStatus;
+
+    @Schema(description = "座位实时状态名称")
+    private String realtimeStatusName;
+
 }

@@ -199,6 +199,7 @@ export enum AgreementStatus {
   TO_BE_CONFIRMED = 5,
   CONFIRMED = 6,
   RENEW_TO_BE_CONFIRMED = 7,
+  IN_USE = 8,
 }
 export const AgreementStatusMap = [
   { label: '待确认', value: AgreementStatus.WAITING },
@@ -208,6 +209,7 @@ export const AgreementStatusMap = [
   { label: '签退待确认', value: AgreementStatus.TO_BE_CONFIRMED },
   { label: '已完成', value: AgreementStatus.CONFIRMED },
   { label: '续期待确认', value: AgreementStatus.RENEW_TO_BE_CONFIRMED },
+  { label: '使用中', value: AgreementStatus.IN_USE },
 ]
 // 订单来源,可用值:1,2
 export enum AgreementSource {

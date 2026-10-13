@@ -77,7 +77,8 @@ export enum AgreementStatus {
   EXPIRED = 4,
   TO_BE_CONFIRMED = 5,
   CONFIRMED = 6,
-  RENEW_TO_BE_CONFIRMED = 7
+  RENEW_TO_BE_CONFIRMED = 7,
+  IN_USE = 8
 }
 
 export const AgreementStatusMap = [
@@ -87,7 +88,21 @@ export const AgreementStatusMap = [
   { label: "已到期", value: AgreementStatus.EXPIRED },
   { label: "签退待确认", value: AgreementStatus.TO_BE_CONFIRMED },
   { label: "已完成", value: AgreementStatus.CONFIRMED },
-  { label: "续期待确认", value: AgreementStatus.RENEW_TO_BE_CONFIRMED }
+  { label: "续期待确认", value: AgreementStatus.RENEW_TO_BE_CONFIRMED },
+  { label: "使用中", value: AgreementStatus.IN_USE }
+];
+
+// 座位实时状态：0-空闲 1-已预订 2-使用中
+export enum SeatRealtimeStatus {
+  FREE = 0,
+  BOOKED = 1,
+  IN_USE = 2
+}
+
+export const SeatRealtimeStatusMap = [
+  { label: "空闲", value: SeatRealtimeStatus.FREE },
+  { label: "已预订", value: SeatRealtimeStatus.BOOKED },
+  { label: "使用中", value: SeatRealtimeStatus.IN_USE }
 ];
 
 // 订单来源,可用值:1,2

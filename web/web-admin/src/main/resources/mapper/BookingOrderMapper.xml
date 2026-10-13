@@ -87,4 +87,18 @@
             </if>
         </where>
     </select>
+
+    <!-- 统计同一座位在指定时段内的有效预订冲突数量（时间区间重叠即冲突） -->
+    <select id="countTimeConflict" resultType="int">
+        select count(1)
+        from booking_order bo
+        where bo.is_deleted = 0
+          and bo.seat_id = #{seatId}
+          and bo.status in (1, 2, 5, 7, 8)
+          and bo.start_date &lt; #{endDate}
+          and bo.end_date &gt; #{startDate}
+        <if test="excludeId != null">
+            and bo.id != #{excludeId}
+        </if>
+    </select>
 </mapper>

@@ -82,6 +82,10 @@ public class BookingOrder extends BaseEntity {
     @TableField(value = "payment_type_id")
     private Long paymentTypeId;
 
+    @Schema(description = "抵扣所用会员卡id")
+    @TableField(value = "member_card_id")
+    private Long memberCardId;
+
     @Schema(description = "预订状态")
     @TableField(value = "status")
     private BookingStatus status;

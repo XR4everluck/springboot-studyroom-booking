@@ -82,7 +82,8 @@ CREATE TABLE `booking_order` (
     `lease_term_id`          BIGINT                 DEFAULT NULL COMMENT '租期id',
     `total_amount`           DECIMAL(10,2) NOT NULL COMMENT '订单总金额（原 rent，已删除 deposit 押金列）',
     `payment_type_id`        BIGINT                 DEFAULT NULL COMMENT '支付类型id',
-    `status`                 TINYINT       NOT NULL DEFAULT 1 COMMENT '预订状态 BookingStatus: 1待确认 2已预订 3已取消 4已到期 5签退待确认 6已完成 7续期待确认',
+    `member_card_id`         BIGINT                 DEFAULT NULL COMMENT '抵扣所用会员卡id（新增，可空）',
+    `status`                 TINYINT       NOT NULL DEFAULT 1 COMMENT '预订状态 BookingStatus: 1待确认 2已预订 3已取消 4已到期 5签退待确认 6已完成 7续期待确认 8使用中',
     `source_type`            TINYINT                DEFAULT NULL COMMENT '订单来源 LeaseSourceType',
     `additional_info`        VARCHAR(255)           DEFAULT NULL COMMENT '备注信息',
     `create_time`            DATETIME               DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -115,6 +116,49 @@ CREATE TABLE `visit_appointment` (
     KEY `idx_visit_store` (`store_id`),
     KEY `idx_visit_user` (`user_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '到店体验预约表';
+
+-- -------------------------------------------------------------
+-- 会员卡表（阶段六新增，自习室专属扩展：次卡/小时卡/月卡）
+-- -------------------------------------------------------------
+DROP TABLE IF EXISTS `member_card`;
+CREATE TABLE `member_card` (
+    `id`                 BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `card_no`            VARCHAR(64)            DEFAULT NULL COMMENT '会员卡号',
+    `user_id`            BIGINT        NOT NULL COMMENT '持卡用户id',
+    `store_id`           BIGINT                 DEFAULT NULL COMMENT '归属自习室门店id，NULL 表示通用卡',
+    `card_type`          TINYINT       NOT NULL COMMENT '卡类型 CardType: 1次卡 2小时卡 3月卡',
+    `total_quantity`     INT           NOT NULL DEFAULT 0 COMMENT '总额度（次卡=次数，小时卡=小时数，月卡=有效天数）',
+    `remaining_quantity` INT           NOT NULL DEFAULT 0 COMMENT '剩余额度（月卡表示剩余有效天数字节，签到签退时按预订时长扣减）',
+    `valid_until`        DATETIME               DEFAULT NULL COMMENT '有效期至（月卡/小时卡到期时间，次卡可为空）',
+    `status`             TINYINT       NOT NULL DEFAULT 1 COMMENT '状态 0停用 1正常',
+    `create_time`        DATETIME               DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`        DATETIME               DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `is_deleted`         TINYINT       NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+    PRIMARY KEY (`id`),
+    KEY `idx_card_user` (`user_id`),
+    KEY `idx_card_store` (`store_id`),
+    KEY `idx_card_type` (`card_type`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '会员卡表';
+
+-- -------------------------------------------------------------
+-- 会员卡充值记录表（阶段六新增）
+-- -------------------------------------------------------------
+DROP TABLE IF EXISTS `card_recharge_record`;
+CREATE TABLE `card_recharge_record` (
+    `id`              BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `member_card_id`  BIGINT        NOT NULL COMMENT '会员卡id',
+    `user_id`         BIGINT        NOT NULL COMMENT '用户id',
+    `recharge_type`   TINYINT       NOT NULL COMMENT '充值对应卡类型 CardType: 1次卡 2小时卡 3月卡',
+    `recharge_quantity` INT         NOT NULL DEFAULT 0 COMMENT '本次充值额度',
+    `amount`          DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '本次充值金额（元）',
+    `additional_info` VARCHAR(255)           DEFAULT NULL COMMENT '备注信息',
+    `create_time`     DATETIME               DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`     DATETIME               DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `is_deleted`      TINYINT       NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+    PRIMARY KEY (`id`),
+    KEY `idx_recharge_card` (`member_card_id`),
+    KEY `idx_recharge_user` (`user_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT '会员卡充值记录表';
 
 -- =============================================================
 -- 字典表结构与初始化数据（自习室相关内容）

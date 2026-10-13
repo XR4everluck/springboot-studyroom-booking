@@ -1,5 +1,9 @@
 package com.yourname.studyroom.web.app.service.impl;
 
+import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.result.ResultCodeEnum;
+import com.yourname.studyroom.common.utils.BusinessHoursUtil;
+import com.yourname.studyroom.model.entity.StudyStore;
 import com.yourname.studyroom.model.entity.VisitAppointment;
 import com.yourname.studyroom.web.app.mapper.VisitAppointmentMapper;
 import com.yourname.studyroom.web.app.service.StudyStoreService;
@@ -58,6 +62,24 @@ public class VisitAppointmentServiceImpl extends ServiceImpl<VisitAppointmentMap
         agreementDetailVo.setStoreItemVo(storeItemVo);
 
         return agreementDetailVo;
+    }
+
+    /**
+     * 创建或更新到店体验预约：预约时间需落在门店营业时间内
+     */
+    @Override
+    public void createOrUpdateAppointment(VisitAppointment visitAppointment) {
+        StudyStore studyStore = studyStoreService.getById(visitAppointment.getStoreId());
+        if (studyStore == null) {
+            throw new LeaseException(ResultCodeEnum.DATA_ERROR);
+        }
+        boolean withinBusinessHours = BusinessHoursUtil.isWithin(
+                studyStore.getBusinessHours(),
+                visitAppointment.getAppointmentTime());
+        if (!withinBusinessHours) {
+            throw new LeaseException(ResultCodeEnum.APPOINTMENT_NOT_IN_BUSINESS_HOURS);
+        }
+        this.saveOrUpdate(visitAppointment);
     }
 }
 

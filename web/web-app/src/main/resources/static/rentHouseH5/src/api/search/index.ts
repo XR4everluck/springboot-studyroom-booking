@@ -8,6 +8,7 @@ import type {
   AppointmentItemInterface,
   AppointmentQueryInterface,
   HistoryItemInterface,
+  MemberCardInterface,
   PaymentInfoInterface,
   RegionInterface,
   RoomDetailInterface,
@@ -134,6 +135,29 @@ export function saveOrUpdateAgreement(
   params: Partial<AgreementQueryInterface>
 ) {
   return http.post(`/app/order/saveOrUpdate`, params);
+}
+
+/**
+ * @description 订单签到：已预订 → 使用中
+ * @param id
+ */
+export function checkInOrder(id: number | string) {
+  return http.post(`/app/order/checkIn?id=${id}`);
+}
+
+/**
+ * @description 订单签退：使用中 → 已完成
+ * @param id
+ */
+export function checkOutOrder(id: number | string) {
+  return http.post(`/app/order/checkOut?id=${id}`);
+}
+
+/**
+ * @description 获取我的可用会员卡列表
+ */
+export function getMyMemberCards() {
+  return http.get<MemberCardInterface[]>(`/app/card/listMine`);
 }
 
 /**

@@ -5,6 +5,9 @@ import com.yourname.studyroom.web.admin.vo.agreement.AgreementQueryVo;
 import com.yourname.studyroom.web.admin.vo.agreement.AgreementVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 
 /**
 * @author liubo
@@ -15,6 +18,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 public interface BookingOrderMapper extends BaseMapper<BookingOrder> {
 
     IPage<AgreementVo> pageAgreementByQuery(IPage<AgreementVo> page, AgreementQueryVo queryVo);
+
+    /**
+     * 统计同一座位在指定时段内的有效预订冲突数量
+     *
+     * @param seatId    座位id
+     * @param startDate 预订开始时间
+     * @param endDate   预订结束时间
+     * @param excludeId 需要排除的订单id（修改场景传当前订单id，新建传 null）
+     * @return 冲突订单数量
+     */
+    int countTimeConflict(@Param("seatId") Long seatId,
+                          @Param("startDate") Date startDate,
+                          @Param("endDate") Date endDate,
+                          @Param("excludeId") Long excludeId);
 }
 
 

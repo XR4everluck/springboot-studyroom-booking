@@ -76,6 +76,21 @@
                   @cancel="showDate = false"
                   :columns-type="['hour', 'minute', 'second']"
               /></van-popup>
+              <!--            营业时间提示-->
+              <van-field
+                v-if="apartmentDetailInfo?.businessHours"
+                label="营业时间"
+                readonly
+                :input-align="'right'"
+              >
+                <template #input>
+                  <span class="text-[12px] --van-gray-6">
+                    {{
+                      `门店营业时间 ${apartmentDetailInfo.businessHours}，预约时间需在此范围内`
+                    }}
+                  </span>
+                </template>
+              </van-field>
               <!--            备注信息-->
               <van-field
                 v-model.trim="formData.additionalInfo"

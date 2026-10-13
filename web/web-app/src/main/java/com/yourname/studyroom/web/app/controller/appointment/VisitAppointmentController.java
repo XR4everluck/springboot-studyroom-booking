@@ -27,11 +27,11 @@ public class VisitAppointmentController {
      * @param visitAppointment 到店体验预约对象
      * @return 操作结果
      */
-    @Operation(summary = "保存或更新到店体验预约")
+    @Operation(summary = "保存或更新到店体验预约", description = "预约时间需在门店营业时间范围内")
     @PostMapping("/saveOrUpdate")
     public Result saveOrUpdate(@RequestBody VisitAppointment visitAppointment) {
         visitAppointment.setUserId(LoginUserHolder.getLoginUser().getUserId());
-        visitAppointmentService.saveOrUpdate(visitAppointment);
+        visitAppointmentService.createOrUpdateAppointment(visitAppointment);
         return Result.ok();
     }
 

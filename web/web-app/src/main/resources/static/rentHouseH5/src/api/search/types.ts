@@ -49,6 +49,10 @@ export interface RoomInterface {
   leaseEndDate: string;
   checkInStatus: string;
   studyStore: ApartmentInterface;
+  // 座位实时状态：0-空闲 1-已预订 2-使用中
+  realtimeStatus?: number;
+  // 座位实时状态名称
+  realtimeStatusName?: string;
   // 	属性信息列表
   attrValueVoList?: any[];
   // 	自习室门店配套信息
@@ -130,6 +134,9 @@ export interface RoomDetailInterface {
   leaseEndDate: string;
   checkInStatus: string;
   storeItemVo: ApartmentInterface;
+  // 座位实时状态：0-空闲 1-已预订 2-使用中
+  realtimeStatus?: number;
+  realtimeStatusName?: string;
   // 	属性信息列表
   attrValueVoList?: AttrValueInfoInterface[];
   // 	自习室门店配套信息
@@ -236,6 +243,8 @@ export interface AgreementQueryInterface {
   totalAmount: number | string;
   // paymentTypeId	支付类型id
   paymentTypeId: number | string;
+  // memberCardId	抵扣所用会员卡id（可空）
+  memberCardId?: number | string;
   // status	订单状态,可用值:1,2,3,4,5,6
   status: AgreementStatus;
   // sourceType	订单来源,可用值:1,2
@@ -275,4 +284,17 @@ export interface HistoryItemInterface {
   provinceName: string;
   cityName: string;
   districtName: string;
+}
+// 会员卡（次卡/小时卡/月卡）
+export interface MemberCardInterface {
+  id?: number | string;
+  cardNo?: string;
+  userId?: number | string;
+  storeId?: number | string | null;
+  // 1次卡 2小时卡 3月卡
+  cardType: number;
+  totalQuantity?: number;
+  remainingQuantity?: number;
+  validUntil?: string;
+  status?: number;
 }

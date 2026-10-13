@@ -38,6 +38,22 @@
           确认预订
         </el-button>
         <el-button
+          type="success"
+          icon="Finished"
+          v-if="scope.row.status === AgreementStatus.SIGNED"
+          @click="checkInHandle(scope.row)"
+        >
+          签到
+        </el-button>
+        <el-button
+          type="warning"
+          icon="Clock"
+          v-if="scope.row.status === AgreementStatus.IN_USE"
+          @click="checkOutHandle(scope.row)"
+        >
+          签退
+        </el-button>
+        <el-button
           type="warning"
           icon="Warning"
           v-if="scope.row.status === AgreementStatus.WAITING"
@@ -81,6 +97,8 @@ import {
   getLabelByValue,
 } from '@/enums/constEnums'
 import {
+  checkInOrderById,
+  checkOutOrderById,
   deleteAgreementInfoById,
   getAgreementInfoList,
   updateAgreementStatusById,
@@ -291,6 +309,12 @@ const columns: ColumnProps[] = [
               {getLabelByValue(AgreementStatusMap, row.status)}
             </el-tag>
           )
+        case AgreementStatus.IN_USE:
+          return (
+            <el-tag type="primary">
+              {getLabelByValue(AgreementStatusMap, row.status)}
+            </el-tag>
+          )
         case AgreementStatus.TO_BE_CONFIRMED:
           return (
             <el-tag type="danger">
@@ -485,6 +509,18 @@ const confirmBookingHandle = async (row: AgreementInfoInterface) => {
     { id: row.id, status: AgreementStatus.SIGNED },
     `确认预订`,
   )
+  // 修改row
+  proTable.value?.getTableList()
+}
+// 签到
+const checkInHandle = async (row: AgreementInfoInterface) => {
+  await useHandleData(checkInOrderById, row.id, `签到`)
+  // 修改row
+  proTable.value?.getTableList()
+}
+// 签退
+const checkOutHandle = async (row: AgreementInfoInterface) => {
+  await useHandleData(checkOutOrderById, row.id, `签退`)
   // 修改row
   proTable.value?.getTableList()
 }

@@ -38,4 +38,10 @@ public class RoomDetailVo extends Seat {
     @Schema(description = "租期列表")
     private List<LeaseTerm> leaseTermList;
 
+    @Schema(description = "座位实时状态编码：0-空闲 1-已预订 2-使用中")
+    private Integer realtimeStatus;
+
+    @Schema(description = "座位实时状态名称")
+    private String realtimeStatusName;
+
 }

@@ -30,10 +30,10 @@ public class BookingOrderController {
      * @param bookingOrder 预订订单信息实体
      * @return 操作结果
      */
-    @Operation(summary = "保存或修改预订订单信息")
+    @Operation(summary = "保存或修改预订订单信息", description = "含营业时间校验与时段冲突校验")
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
-        bookingOrderService.saveOrUpdate(bookingOrder);
+        bookingOrderService.createOrUpdateOrder(bookingOrder);
         return Result.ok();
     }
 
@@ -93,6 +93,32 @@ public class BookingOrderController {
         updateWrapper.eq(BookingOrder::getId,id);
         updateWrapper.set(BookingOrder::getStatus,status);
         bookingOrderService.update(updateWrapper);
+        return Result.ok();
+    }
+
+    /**
+     * 订单签到：已预订 → 使用中
+     *
+     * @param id 预订订单ID
+     * @return 操作结果
+     */
+    @Operation(summary = "订单签到", description = "已预订订单签到后转为使用中")
+    @PostMapping("checkIn")
+    public Result checkIn(@RequestParam Long id) {
+        bookingOrderService.checkIn(id);
+        return Result.ok();
+    }
+
+    /**
+     * 订单签退：使用中 → 已完成
+     *
+     * @param id 预订订单ID
+     * @return 操作结果
+     */
+    @Operation(summary = "订单签退", description = "使用中订单签退后转为已完成并释放座位")
+    @PostMapping("checkOut")
+    public Result checkOut(@RequestParam Long id) {
+        bookingOrderService.checkOut(id);
         return Result.ok();
     }
 

@@ -87,6 +87,20 @@ export function saveOrUpdateAgreementInfo(data: AgreementInterface) {
   return http.post(`/admin/order/saveOrUpdate`, data)
 }
 /**
+ * @description 订单签到：已预订 → 使用中
+ * @param id
+ */
+export function checkInOrderById(id: number | string) {
+  return http.post(`/admin/order/checkIn?id=${id}`)
+}
+/**
+ * @description 订单签退：使用中 → 已完成
+ * @param id
+ */
+export function checkOutOrderById(id: number | string) {
+  return http.post(`/admin/order/checkOut?id=${id}`)
+}
+/**
  * @description 根据id删除订单信息
  * @param id
  */

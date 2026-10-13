@@ -31,6 +31,16 @@ public enum ResultCodeEnum {
 
     ADMIN_APARTMENT_DELETE_ERROR(310,"请先删除房间"),
 
+    // 自习室预订相关
+    SEAT_TIME_CONFLICT(401, "该座位所选时段已被预订，请选择其他时段"),
+    STORE_BUSINESS_HOURS_CONFIG_ERROR(402, "门店营业时间配置异常"),
+    BOOKING_NOT_IN_BUSINESS_HOURS(403, "预订时间超出门店营业时间，请重新选择"),
+    APPOINTMENT_NOT_IN_BUSINESS_HOURS(404, "预约时间需在门店营业时间范围内"),
+    BOOKING_ORDER_NOT_EXIST(405, "预订订单不存在"),
+    BOOKING_STATUS_NOT_ALLOW_CHECK_IN(406, "当前订单状态不可签到，仅已预订订单可签到"),
+    BOOKING_STATUS_NOT_ALLOW_CHECK_OUT(407, "当前订单状态不可签退，仅使用中订单可签退"),
+    MEMBER_CARD_NOT_ENOUGH(408, "会员卡余次/时长不足，无法抵扣本次预订"),
+
     APP_LOGIN_AUTH(501, "未登陆"),
     APP_LOGIN_PHONE_EMPTY(502, "手机号码为空"),
     APP_LOGIN_CODE_EMPTY(503, "验证码为空"),

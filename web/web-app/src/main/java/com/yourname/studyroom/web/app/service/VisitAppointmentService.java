@@ -16,4 +16,11 @@ public interface VisitAppointmentService extends IService<VisitAppointment> {
     List<AppointmentItemVo> listItemByUserId(Long userId);
 
     AppointmentDetailVo getDetailById(Long id);
+
+    /**
+     * 创建或更新到店体验预约，校验预约时间是否落在门店营业时间内
+     *
+     * @param visitAppointment 到店体验预约
+     */
+    void createOrUpdateAppointment(VisitAppointment visitAppointment);
 }
