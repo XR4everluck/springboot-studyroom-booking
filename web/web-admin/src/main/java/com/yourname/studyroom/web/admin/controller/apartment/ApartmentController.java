@@ -26,7 +26,7 @@ import java.util.List;
 public class ApartmentController {
 
     @Autowired
-    StudyStoreService apartmentInfoService;
+    StudyStoreService studyStoreService;
     /**
      * 保存或更新自习室门店信息
      * <p/>
@@ -39,7 +39,7 @@ public class ApartmentController {
     @Operation(summary = "保存或更新自习室门店信息")
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody ApartmentSubmitVo apartmentSubmitVo) {
-        apartmentInfoService.saveOrUpdateApartment(apartmentSubmitVo);
+        studyStoreService.saveOrUpdateApartment(apartmentSubmitVo);
         return Result.ok();
     }
 
@@ -55,7 +55,7 @@ public class ApartmentController {
     @GetMapping("pageItem")
     public Result<IPage<ApartmentItemVo>> pageItem(@RequestParam long current, @RequestParam long size, ApartmentQueryVo queryVo) {
         Page<ApartmentItemVo> page = new Page<>(current,size);
-        IPage<ApartmentItemVo> result = apartmentInfoService.pageItem(page,queryVo);
+        IPage<ApartmentItemVo> result = studyStoreService.pageItem(page,queryVo);
         return Result.ok(result);
     }
 
@@ -68,7 +68,7 @@ public class ApartmentController {
     @Operation(summary = "根据ID获取自习室门店详细信息")
     @GetMapping("getDetailById")
     public Result<ApartmentDetailVo> getDetailById(@RequestParam Long id) {
-        ApartmentDetailVo result = apartmentInfoService.getDetailById(id);
+        ApartmentDetailVo result = studyStoreService.getDetailById(id);
         return Result.ok(result);
     }
 
@@ -81,7 +81,7 @@ public class ApartmentController {
     @Operation(summary = "根据id删除自习室门店信息")
     @DeleteMapping("removeById")
     public Result removeById(@RequestParam Long id) {
-        apartmentInfoService.removeApartmentById(id);
+        studyStoreService.removeApartmentById(id);
         return Result.ok();
     }
 
@@ -95,10 +95,10 @@ public class ApartmentController {
     @Operation(summary = "根据id修改自习室门店发布状态")
     @PostMapping("updateReleaseStatusById")
     public Result updateReleaseStatusById(@RequestParam Long id, @RequestParam ReleaseStatus status) {
-        LambdaUpdateWrapper<StudyStore> apartmentInfoUpdateWrapper = new LambdaUpdateWrapper<>();
-        apartmentInfoUpdateWrapper.eq(StudyStore::getId,id);
-        apartmentInfoUpdateWrapper.set(StudyStore::getIsRelease,status);
-        apartmentInfoService.update(apartmentInfoUpdateWrapper);
+        LambdaUpdateWrapper<StudyStore> studyStoreUpdateWrapper = new LambdaUpdateWrapper<>();
+        studyStoreUpdateWrapper.eq(StudyStore::getId,id);
+        studyStoreUpdateWrapper.set(StudyStore::getIsRelease,status);
+        studyStoreService.update(studyStoreUpdateWrapper);
         return Result.ok();
     }
 
@@ -111,9 +111,9 @@ public class ApartmentController {
     @Operation(summary = "根据区县id查询自习室门店信息列表")
     @GetMapping("listInfoByDistrictId")
     public Result<List<StudyStore>> listInfoByDistrictId(@RequestParam Long id) {
-        LambdaQueryWrapper<StudyStore> apartmentInfoQueryWrapper = new LambdaQueryWrapper<>();
-        apartmentInfoQueryWrapper.eq(StudyStore::getDistrictId,id);
-        List<StudyStore> list = apartmentInfoService.list(apartmentInfoQueryWrapper);
+        LambdaQueryWrapper<StudyStore> studyStoreQueryWrapper = new LambdaQueryWrapper<>();
+        studyStoreQueryWrapper.eq(StudyStore::getDistrictId,id);
+        List<StudyStore> list = studyStoreService.list(studyStoreQueryWrapper);
         return Result.ok(list);
     }
 }

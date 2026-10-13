@@ -19,19 +19,19 @@ import java.util.List;
 @RequestMapping("/app/appointment")
 public class VisitAppointmentController {
     @Autowired
-    private VisitAppointmentService viewAppointmentService;
+    private VisitAppointmentService visitAppointmentService;
 
     /**
      * 保存或更新看房预约
      *
-     * @param viewAppointment 看房预约对象
+     * @param visitAppointment 看房预约对象
      * @return 操作结果
      */
     @Operation(summary = "保存或更新看房预约")
     @PostMapping("/saveOrUpdate")
-    public Result saveOrUpdate(@RequestBody VisitAppointment viewAppointment) {
-        viewAppointment.setUserId(LoginUserHolder.getLoginUser().getUserId());
-        viewAppointmentService.saveOrUpdate(viewAppointment);
+    public Result saveOrUpdate(@RequestBody VisitAppointment visitAppointment) {
+        visitAppointment.setUserId(LoginUserHolder.getLoginUser().getUserId());
+        visitAppointmentService.saveOrUpdate(visitAppointment);
         return Result.ok();
     }
 
@@ -43,7 +43,7 @@ public class VisitAppointmentController {
     @Operation(summary = "查询个人预约看房列表")
     @GetMapping("listItem")
     public Result<List<AppointmentItemVo>> listItem() {
-        List<AppointmentItemVo> result = viewAppointmentService.listItemByUserId(LoginUserHolder.getLoginUser().getUserId());
+        List<AppointmentItemVo> result = visitAppointmentService.listItemByUserId(LoginUserHolder.getLoginUser().getUserId());
         return Result.ok(result);
     }
 
@@ -56,7 +56,7 @@ public class VisitAppointmentController {
     @GetMapping("getDetailById")
     @Operation(summary = "根据ID查询预约详情信息")
     public Result<AppointmentDetailVo> getDetailById(Long id) {
-        AppointmentDetailVo result = viewAppointmentService.getDetailById(id);
+        AppointmentDetailVo result = visitAppointmentService.getDetailById(id);
         return Result.ok(result);
     }
 

@@ -27,35 +27,35 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
         implements StudyStoreService {
 
     @Autowired
-    StudyStoreMapper apartmentInfoMapper;
+    StudyStoreMapper studyStoreMapper;
 
     @Autowired
-    StoreLabelMapper labelInfoMapper;
+    StoreLabelMapper storeLabelMapper;
 
     @Autowired
     GraphInfoMapper graphInfoMapper;
 
     @Autowired
-    SeatMapper roomInfoMapper;
+    SeatMapper seatMapper;
 
     @Autowired
-    SeatFacilityMapper facilityInfoMapper;
+    SeatFacilityMapper seatFacilityMapper;
 
     @Override
     public ApartmentItemVo selectApartmentItemVoById(Long id) {
-        StudyStore apartmentInfo = apartmentInfoMapper.selectById(id);
+        StudyStore studyStore = studyStoreMapper.selectById(id);
 
-        List<StoreLabel> labelInfoList = labelInfoMapper.selectListByApartmentId(id);
+        List<StoreLabel> labelInfoList = storeLabelMapper.selectListByApartmentId(id);
 
         List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, id);
 
-        BigDecimal minRent = roomInfoMapper.selectMinRentByApartmentId(id);
+        BigDecimal minRent = seatMapper.selectMinRentByApartmentId(id);
 
         ApartmentItemVo apartmentItemVo = new ApartmentItemVo();
-        BeanUtils.copyProperties(apartmentInfo, apartmentItemVo);
+        BeanUtils.copyProperties(studyStore, apartmentItemVo);
 
         apartmentItemVo.setGraphVoList(graphVoList);
-        apartmentItemVo.setStoreLabelList(labelInfoList);
+        apartmentItemVo.setLabelInfoList(labelInfoList);
         apartmentItemVo.setMinRent(minRent);
         return apartmentItemVo;
     }
@@ -63,22 +63,22 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
     @Override
     public ApartmentDetailVo getDetailById(Long id) {
         //1.查询自习室门店信息
-        StudyStore apartmentInfo = apartmentInfoMapper.selectById(id);
+        StudyStore studyStore = studyStoreMapper.selectById(id);
         //2.查询图片信息
         List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, id);
         //3.查询标签信息
-        List<StoreLabel> labelInfoList = labelInfoMapper.selectListByApartmentId(id);
+        List<StoreLabel> labelInfoList = storeLabelMapper.selectListByApartmentId(id);
         //4.查询配套信息
-        List<SeatFacility> facilityInfoList = facilityInfoMapper.selectListByApartmentId(id);
-        //5.查询最小租金
-        BigDecimal minRent = roomInfoMapper.selectMinRentByApartmentId(id);
+        List<SeatFacility> facilityInfoList = seatFacilityMapper.selectListByApartmentId(id);
+        //5.查询最低座位单价
+        BigDecimal minRent = seatMapper.selectMinRentByApartmentId(id);
 
         ApartmentDetailVo apartmentDetailVo = new ApartmentDetailVo();
 
-        BeanUtils.copyProperties(apartmentInfo, apartmentDetailVo);
+        BeanUtils.copyProperties(studyStore, apartmentDetailVo);
         apartmentDetailVo.setGraphVoList(graphVoList);
-        apartmentDetailVo.setStoreLabelList(labelInfoList);
-        apartmentDetailVo.setSeatFacilityList(facilityInfoList);
+        apartmentDetailVo.setLabelInfoList(labelInfoList);
+        apartmentDetailVo.setFacilityInfoList(facilityInfoList);
         apartmentDetailVo.setMinRent(minRent);
         return apartmentDetailVo;
     }

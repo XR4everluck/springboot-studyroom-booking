@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * @author liubo
- * @description 针对表【visit_appointment(预约看房信息表)】的数据库操作Service实现
+ * @description 针对表【visit_appointment(到店体验预约信息表)】的数据库操作Service实现
  * @createDate 2023-07-26 11:12:39
  */
 @Service
@@ -24,36 +24,36 @@ public class VisitAppointmentServiceImpl extends ServiceImpl<VisitAppointmentMap
         implements VisitAppointmentService {
 
     @Autowired
-    private VisitAppointmentMapper viewAppointmentMapper;
+    private VisitAppointmentMapper visitAppointmentMapper;
 
     @Autowired
-    private StudyStoreService apartmentInfoService;
+    private StudyStoreService studyStoreService;
 
     /**
-     * 根据用户ID查询个人预约看房列表
+     * 根据用户ID查询个人到店体验预约列表
      *
      * @param userId 用户ID
-     * @return 个人预约看房列表
+     * @return 个人到店体验预约列表
      */
     @Override
     public List<AppointmentItemVo> listItemByUserId(Long userId) {
-        return viewAppointmentMapper.listItemByUserId(userId);
+        return visitAppointmentMapper.listItemByUserId(userId);
     }
 
     /**
-     * 根据ID获取预约看房详情
+     * 根据ID获取到店体验预约详情
      *
-     * @param id 预约看房ID
-     * @return 预约看房详情对象
+     * @param id 到店体验预约ID
+     * @return 到店体验预约详情对象
      */
     @Override
     public AppointmentDetailVo getDetailById(Long id) {
-        VisitAppointment viewAppointment = viewAppointmentMapper.selectById(id);
+        VisitAppointment visitAppointment = visitAppointmentMapper.selectById(id);
 
-        ApartmentItemVo apartmentItemVo = apartmentInfoService.selectApartmentItemVoById(viewAppointment.getStoreId());
+        ApartmentItemVo apartmentItemVo = studyStoreService.selectApartmentItemVoById(visitAppointment.getStoreId());
 
         AppointmentDetailVo agreementDetailVo = new AppointmentDetailVo();
-        BeanUtils.copyProperties(viewAppointment, agreementDetailVo);
+        BeanUtils.copyProperties(visitAppointment, agreementDetailVo);
 
         agreementDetailVo.setApartmentItemVo(apartmentItemVo);
 

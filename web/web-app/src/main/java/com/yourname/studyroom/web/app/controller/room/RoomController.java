@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoomController {
 
     @Autowired
-    SeatService roomInfoService;
+    SeatService seatService;
 
     /**
      * 分页查询房间列表
@@ -36,7 +36,7 @@ public class RoomController {
     @GetMapping("pageItem")
     public Result<IPage<RoomItemVo>> pageItem(@RequestParam long current, @RequestParam long size, RoomQueryVo queryVo) {
         IPage<RoomItemVo> page = new Page<>(current, size);
-        IPage<RoomItemVo> result = roomInfoService.pageItem(page,queryVo);
+        IPage<RoomItemVo> result = seatService.pageItem(page,queryVo);
         return Result.ok(result);
     }
 
@@ -49,7 +49,7 @@ public class RoomController {
     @Operation(summary = "根据id获取房间的详细信息")
     @GetMapping("getDetailById")
     public Result<RoomDetailVo> getDetailById(@RequestParam Long id) {
-        RoomDetailVo result = roomInfoService.getDetailById(id);
+        RoomDetailVo result = seatService.getDetailById(id);
         return Result.ok(result);
     }
 
@@ -65,7 +65,7 @@ public class RoomController {
     @GetMapping("pageItemByApartmentId")
     public Result<IPage<RoomItemVo>> pageItemByApartmentId(@RequestParam long current, @RequestParam long size, @RequestParam Long id) {
         IPage<RoomItemVo> page = new Page<>();
-        IPage<RoomItemVo> result = roomInfoService.pageItemByApartmentId(page,id);
+        IPage<RoomItemVo> result = seatService.pageItemByApartmentId(page,id);
         return Result.ok(result);
     }
 }

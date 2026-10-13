@@ -50,21 +50,21 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     RoomLeaseTermService roomLeaseTermService;
 
     @Autowired
-    SeatMapper roomInfoMapper;
+    SeatMapper seatMapper;
 
     @Autowired
     GraphInfoMapper graphInfoMapper;
     @Autowired
-    StudyStoreMapper apartmentInfoMapper;
+    StudyStoreMapper studyStoreMapper;
 
     @Autowired
     AttrValueMapper attrValueMapper;
 
     @Autowired
-    SeatFacilityMapper facilityInfoMapper;
+    SeatFacilityMapper seatFacilityMapper;
 
     @Autowired
-    StoreLabelMapper labelInfoMapper;
+    StoreLabelMapper storeLabelMapper;
 
     @Autowired
     PaymentTypeMapper paymentTypeMapper;
@@ -146,7 +146,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         }
 
         //3.保存新的facilityInfoList
-        List<Long> facilityInfoIds = roomSubmitVo.getSeatFacilityIds();
+        List<Long> facilityInfoIds = roomSubmitVo.getFacilityInfoIds();
         if (!CollectionUtils.isEmpty(facilityInfoIds)) {
             List<RoomFacility> roomFacilityList = new ArrayList<>();
             for (Long facilityInfoId : facilityInfoIds) {
@@ -157,7 +157,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         }
 
         //4.保存新的labelInfoList
-        List<Long> labelInfoIds = roomSubmitVo.getStoreLabelIds();
+        List<Long> labelInfoIds = roomSubmitVo.getLabelInfoIds();
         if (!CollectionUtils.isEmpty(labelInfoIds)) {
             ArrayList<RoomLabel> roomLabelList = new ArrayList<>();
             for (Long labelInfoId : labelInfoIds) {
@@ -192,16 +192,16 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
 
     @Override
     public IPage<RoomItemVo> pageRoomItemByQuery(IPage<RoomItemVo> page, RoomQueryVo queryVo) {
-        return roomInfoMapper.pageRoomItemByQuery(page, queryVo);
+        return seatMapper.pageRoomItemByQuery(page, queryVo);
     }
 
     @Override
     public RoomDetailVo getRoomDetailById(Long id) {
         //1.查询Seat
-        Seat roomInfo = roomInfoMapper.selectById(id);
+        Seat seat = seatMapper.selectById(id);
 
         //2.查询所属自习室门店信息
-        StudyStore apartmentInfo = apartmentInfoMapper.selectById(roomInfo.getStoreId());
+        StudyStore studyStore = studyStoreMapper.selectById(seat.getStoreId());
 
         //3.查询graphInfoList
         List<GraphVo> graphVoList = graphInfoMapper.selectByItemTypeAndId(ItemType.ROOM, id);
@@ -210,10 +210,10 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         List<AttrValueVo> attrvalueVoList = attrValueMapper.selectListByRoomId(id);
 
         //5.查询facilityInfoList
-        List<SeatFacility> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
+        List<SeatFacility> facilityInfoList = seatFacilityMapper.selectListByRoomId(id);
 
         //6.查询labelInfoList
-        List<StoreLabel> labelInfoList = labelInfoMapper.selectListByRoomId(id);
+        List<StoreLabel> labelInfoList = storeLabelMapper.selectListByRoomId(id);
 
         //7.查询paymentTypeList
         List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
@@ -223,13 +223,13 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
 
 
         RoomDetailVo adminRoomDetailVo = new RoomDetailVo();
-        BeanUtils.copyProperties(roomInfo, adminRoomDetailVo);
+        BeanUtils.copyProperties(seat, adminRoomDetailVo);
 
-        adminRoomDetailVo.setStudyStore(apartmentInfo);
+        adminRoomDetailVo.setApartmentInfo(studyStore);
         adminRoomDetailVo.setGraphVoList(graphVoList);
         adminRoomDetailVo.setAttrValueVoList(attrvalueVoList);
-        adminRoomDetailVo.setSeatFacilityList(facilityInfoList);
-        adminRoomDetailVo.setStoreLabelList(labelInfoList);
+        adminRoomDetailVo.setFacilityInfoList(facilityInfoList);
+        adminRoomDetailVo.setLabelInfoList(labelInfoList);
         adminRoomDetailVo.setPaymentTypeList(paymentTypeList);
         adminRoomDetailVo.setLeaseTermList(leaseTermList);
 

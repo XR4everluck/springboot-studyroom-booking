@@ -22,18 +22,18 @@ import org.springframework.web.bind.annotation.*;
 public class BookingOrderController {
 
     @Autowired
-    BookingOrderService leaseAgreementService;
+    BookingOrderService bookingOrderService;
 
     /**
      * 保存或修改租约信息
      *
-     * @param leaseAgreement 租约信息实体
+     * @param bookingOrder 租约信息实体
      * @return 操作结果
      */
     @Operation(summary = "保存或修改租约信息")
     @PostMapping("saveOrUpdate")
-    public Result saveOrUpdate(@RequestBody BookingOrder leaseAgreement) {
-        leaseAgreementService.saveOrUpdate(leaseAgreement);
+    public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
+        bookingOrderService.saveOrUpdate(bookingOrder);
         return Result.ok();
     }
 
@@ -49,7 +49,7 @@ public class BookingOrderController {
     @GetMapping("page")
     public Result<IPage<AgreementVo>> page(@RequestParam long current, @RequestParam long size, AgreementQueryVo queryVo) {
         IPage<AgreementVo> page = new Page<>(current, size);
-        IPage<AgreementVo> result = leaseAgreementService.pageAgreementByQuery(page, queryVo);
+        IPage<AgreementVo> result = bookingOrderService.pageAgreementByQuery(page, queryVo);
         return Result.ok(result);
     }
 
@@ -62,7 +62,7 @@ public class BookingOrderController {
     @Operation(summary = "根据id查询租约信息")
     @GetMapping(name = "getById")
     public Result<AgreementVo> getById(@RequestParam Long id) {
-        AgreementVo result = leaseAgreementService.getAgreementById(id);
+        AgreementVo result = bookingOrderService.getAgreementById(id);
         return Result.ok(result);
     }
 
@@ -75,7 +75,7 @@ public class BookingOrderController {
     @Operation(summary = "根据id删除租约信息")
     @DeleteMapping("removeById")
     public Result removeById(@RequestParam Long id) {
-        leaseAgreementService.removeById(id);
+        bookingOrderService.removeById(id);
         return Result.ok();
     }
 
@@ -92,7 +92,7 @@ public class BookingOrderController {
         LambdaUpdateWrapper<BookingOrder> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(BookingOrder::getId,id);
         updateWrapper.set(BookingOrder::getStatus,status);
-        leaseAgreementService.update(updateWrapper);
+        bookingOrderService.update(updateWrapper);
         return Result.ok();
     }
 

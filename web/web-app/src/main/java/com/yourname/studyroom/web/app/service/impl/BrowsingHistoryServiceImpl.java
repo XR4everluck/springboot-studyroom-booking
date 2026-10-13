@@ -36,7 +36,7 @@ public class BrowsingHistoryServiceImpl extends ServiceImpl<BrowsingHistoryMappe
      * 保存浏览历史记录
      *
      * @param userId 用户ID
-     * @param id     房间ID
+     * @param id     座位ID
      */
     @Override
     @Async //异步操作

@@ -46,7 +46,7 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
     ApartmentFeeValueService apartmentFeeValueService;
 
     @Autowired
-    StudyStoreMapper apartmentInfoMapper;
+    StudyStoreMapper studyStoreMapper;
 
     @Autowired
     GraphInfoMapper graphInfoMapper;
@@ -58,7 +58,7 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
     FeeValueMapper feeValueMapper;
 
     @Autowired
-    SeatMapper roomInfoMapper;
+    SeatMapper seatMapper;
 
     /**
      * 保存或更新自习室门店信息
@@ -108,7 +108,7 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
             graphInfoService.saveBatch(graphInfoList);
         }
         //2.插入配套列表
-        List<Long> facilityInfoIdList = apartmentSubmitVo.getSeatFacilityIds();
+        List<Long> facilityInfoIdList = apartmentSubmitVo.getFacilityInfoIds();
         if (!CollectionUtils.isEmpty(facilityInfoIdList)) {
             ArrayList<ApartmentFacility> apartmentFacilityList = new ArrayList<>();
             for (Long facilityInfoId : facilityInfoIdList) {
@@ -155,7 +155,7 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
      */
     @Override
     public IPage<ApartmentItemVo> pageItem(Page<ApartmentItemVo> page, ApartmentQueryVo queryVo) {
-        return apartmentInfoMapper.pageItem(page, queryVo);
+        return studyStoreMapper.pageItem(page, queryVo);
     }
 
     /**
@@ -167,31 +167,31 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
     @Override
     public ApartmentDetailVo getDetailById(Long id) {
         //1.查询自习室门店信息
-        StudyStore apartmentInfo = apartmentInfoMapper.selectById(id);
+        StudyStore studyStore = studyStoreMapper.selectById(id);
         //2.查询配套列表
         List<GraphVo> graphVoList = graphInfoMapper.selectByItemTypeAndId(ItemType.APARTMENT, id);
         //3.查询标签列表
-        List<StoreLabel> labelInfoList = apartmentInfoMapper.selectListByApartmentId(id);
+        List<StoreLabel> labelInfoList = studyStoreMapper.selectListByApartmentId(id);
         //4.查询配套列表
         List<SeatFacility> facilityInfoList = apartmentFacilityMapper.selectListByApartmentId(id);
         //5.查询杂费列表
         List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(id);
         //6.组装结果
         ApartmentDetailVo apartmentDetailVo = new ApartmentDetailVo();
-        BeanUtils.copyProperties(apartmentInfo, apartmentDetailVo);
+        BeanUtils.copyProperties(studyStore, apartmentDetailVo);
         apartmentDetailVo.setGraphVoList(graphVoList);
-        apartmentDetailVo.setStoreLabelList(labelInfoList);
-        apartmentDetailVo.setSeatFacilityList(facilityInfoList);
+        apartmentDetailVo.setLabelInfoList(labelInfoList);
+        apartmentDetailVo.setFacilityInfoList(facilityInfoList);
         apartmentDetailVo.setFeeValueVoList(feeValueVoList);
         return apartmentDetailVo;
     }
 
     @Override
     public void removeApartmentById(Long id) {
-//      查询自习室门店下的房间数
-        LambdaQueryWrapper<Seat> roomInfoQueryWrapper = new LambdaQueryWrapper<>();
-        roomInfoQueryWrapper.eq(Seat::getStoreId, id);
-        Long count = roomInfoMapper.selectCount(roomInfoQueryWrapper);
+//      查询自习室门店下的座位数
+        LambdaQueryWrapper<Seat> seatQueryWrapper = new LambdaQueryWrapper<>();
+        seatQueryWrapper.eq(Seat::getStoreId, id);
+        Long count = seatMapper.selectCount(seatQueryWrapper);
         if (count > 0) {
             //终止删除 并相应提示信息
             throw new LeaseException(ResultCodeEnum.ADMIN_APARTMENT_DELETE_ERROR);

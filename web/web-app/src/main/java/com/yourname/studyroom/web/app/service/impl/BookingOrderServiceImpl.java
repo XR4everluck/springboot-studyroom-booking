@@ -24,13 +24,13 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
         implements BookingOrderService {
 
     @Autowired
-    BookingOrderMapper leaseAgreementMapper;
+    BookingOrderMapper bookingOrderMapper;
 
     @Autowired
-    StudyStoreMapper apartmentInfoMapper;
+    StudyStoreMapper studyStoreMapper;
 
     @Autowired
-    SeatMapper roomInfoMapper;
+    SeatMapper seatMapper;
 
     @Autowired
     GraphInfoMapper graphInfoMapper;
@@ -42,49 +42,49 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     LeaseTermMapper leaseTermMapper;
 
     /**
-     * 根据手机号查询租约基本信息列表
+     * 根据手机号查询预订订单基本信息列表
      *
      * @param phone 手机号
-     * @return 租约基本信息列表
+     * @return 预订订单基本信息列表
      */
     @Override
     public List<AgreementItemVo> listItemByPhone(String phone) {
-        return leaseAgreementMapper.listItemByPhone(phone);
+        return bookingOrderMapper.listItemByPhone(phone);
     }
 
     /**
-     * 根据ID获取租约详细信息
+     * 根据ID获取预订订单详细信息
      *
-     * @param id 租约ID
-     * @return 租约详细信息对象
+     * @param id 预订订单ID
+     * @return 预订订单详细信息对象
      */
     @Override
     public AgreementDetailVo getDetailById(Long id) {
-        //1.查询租约信息
-        BookingOrder leaseAgreement = leaseAgreementMapper.selectById(id);
-        if (leaseAgreement == null) {
+        //1.查询预订订单信息
+        BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
+        if (bookingOrder == null) {
             return null;
         }
         //2.查询自习室门店信息
-        StudyStore apartmentInfo = apartmentInfoMapper.selectById(leaseAgreement.getStoreId());
+        StudyStore studyStore = studyStoreMapper.selectById(bookingOrder.getStoreId());
 
-        //3.查询房间信息
-        Seat roomInfo = roomInfoMapper.selectById(leaseAgreement.getSeatId());
+        //3.查询座位信息
+        Seat seat = seatMapper.selectById(bookingOrder.getSeatId());
 
         //4.查询图片信息
-        List<GraphVo> roomGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, leaseAgreement.getSeatId());
-        List<GraphVo> apartmentGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, leaseAgreement.getStoreId());
+        List<GraphVo> roomGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, bookingOrder.getSeatId());
+        List<GraphVo> apartmentGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, bookingOrder.getStoreId());
 
         //5.查询支付方式
-        PaymentType paymentType = paymentTypeMapper.selectById(leaseAgreement.getPaymentTypeId());
+        PaymentType paymentType = paymentTypeMapper.selectById(bookingOrder.getPaymentTypeId());
 
         //6.查询租期
-        LeaseTerm leaseTerm = leaseTermMapper.selectById(leaseAgreement.getLeaseTermId());
+        LeaseTerm leaseTerm = leaseTermMapper.selectById(bookingOrder.getLeaseTermId());
 
         AgreementDetailVo agreementDetailVo = new AgreementDetailVo();
-        BeanUtils.copyProperties(leaseAgreement, agreementDetailVo);
-        agreementDetailVo.setApartmentName(apartmentInfo.getName());
-        agreementDetailVo.setRoomNumber(roomInfo.getSeatCode());
+        BeanUtils.copyProperties(bookingOrder, agreementDetailVo);
+        agreementDetailVo.setApartmentName(studyStore.getName());
+        agreementDetailVo.setRoomNumber(seat.getSeatCode());
         agreementDetailVo.setApartmentGraphVoList(apartmentGraphVoList);
         agreementDetailVo.setRoomGraphVoList(roomGraphVoList);
         agreementDetailVo.setPaymentTypeName(paymentType.getName());

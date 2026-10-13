@@ -20,7 +20,7 @@ import java.util.List;
 public class FacilityController {
 
     @Autowired
-    SeatFacilityService facilityInfoService;
+    SeatFacilityService seatFacilityService;
 
     /**
      * [根据类型]查询配套信息列表
@@ -33,20 +33,20 @@ public class FacilityController {
     public Result<List<SeatFacility>> listFacility(@RequestParam(required = false) ItemType type) {
         LambdaQueryWrapper<SeatFacility> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(type != null, SeatFacility::getType, type);
-        List<SeatFacility> facilityInfos = facilityInfoService.list(queryWrapper);
+        List<SeatFacility> facilityInfos = seatFacilityService.list(queryWrapper);
         return Result.ok(facilityInfos);
     }
 
     /**
      * 新增或修改配套信息
      *
-     * @param facilityInfo
+     * @param seatFacility
      * @return Result
      */
     @Operation(summary = "新增或修改配套信息")
     @PostMapping("saveOrUpdate")
-    public Result saveOrUpdate(@RequestBody SeatFacility facilityInfo) {
-        facilityInfoService.saveOrUpdate(facilityInfo);
+    public Result saveOrUpdate(@RequestBody SeatFacility seatFacility) {
+        seatFacilityService.saveOrUpdate(seatFacility);
         return Result.ok();
     }
 
@@ -59,7 +59,7 @@ public class FacilityController {
     @Operation(summary = "根据id删除配套信息")
     @DeleteMapping("deleteById")
     public Result removeFacilityById(@RequestParam Long id) {
-        facilityInfoService.removeById(id);
+        seatFacilityService.removeById(id);
         return Result.ok();
     }
 

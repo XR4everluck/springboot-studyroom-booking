@@ -20,7 +20,7 @@ import java.util.List;
 public class LabelController {
 
     @Autowired
-    StoreLabelService labelInfoService;
+    StoreLabelService storeLabelService;
 
     /**
      * （根据类型）查询标签列表
@@ -34,20 +34,20 @@ public class LabelController {
         System.out.println(type);
         LambdaQueryWrapper<StoreLabel> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(type != null, StoreLabel::getType, type);
-        List<StoreLabel> labelInfos = labelInfoService.list(queryWrapper);
+        List<StoreLabel> labelInfos = storeLabelService.list(queryWrapper);
         return Result.ok(labelInfos);
     }
 
     /**
      * 新增或修改标签信息
      *
-     * @param labelInfo
+     * @param storeLabel
      * @return Result
      */
     @Operation(summary = "新增或修改标签信息")
     @PostMapping("saveOrUpdate")
-    public Result saveOrUpdateLabel(@RequestBody StoreLabel labelInfo) {
-        labelInfoService.saveOrUpdate(labelInfo);
+    public Result saveOrUpdateLabel(@RequestBody StoreLabel storeLabel) {
+        storeLabelService.saveOrUpdate(storeLabel);
         return Result.ok();
     }
 
@@ -60,7 +60,7 @@ public class LabelController {
     @Operation(summary = "根据id删除标签信息")
     @DeleteMapping("deleteById")
     public Result deleteLabelById(@RequestParam Long id) {
-        labelInfoService.removeById(id);
+        storeLabelService.removeById(id);
         return Result.ok();
     }
 }

@@ -21,13 +21,13 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
         implements BookingOrderService {
 
     @Autowired
-    BookingOrderMapper leaseAgreementMapper;
+    BookingOrderMapper bookingOrderMapper;
 
     @Autowired
-    StudyStoreMapper apartmentInfoMapper;
+    StudyStoreMapper studyStoreMapper;
 
     @Autowired
-    SeatMapper roomInfoMapper;
+    SeatMapper seatMapper;
 
     @Autowired
     PaymentTypeMapper paymentTypeMapper;
@@ -37,16 +37,16 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
 
     @Override
     public AgreementVo getAgreementById(Long id) {
-        BookingOrder leaseAgreement = leaseAgreementMapper.selectById(id);
-        StudyStore apartmentInfo = apartmentInfoMapper.selectById(leaseAgreement.getStoreId());
-        Seat roomInfo = roomInfoMapper.selectById(leaseAgreement.getSeatId());
-        PaymentType paymentType = paymentTypeMapper.selectById(leaseAgreement.getPaymentTypeId());
-        LeaseTerm leaseTerm = leaseTermMapper.selectById(leaseAgreement.getLeaseTermId());
+        BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
+        StudyStore studyStore = studyStoreMapper.selectById(bookingOrder.getStoreId());
+        Seat seat = seatMapper.selectById(bookingOrder.getSeatId());
+        PaymentType paymentType = paymentTypeMapper.selectById(bookingOrder.getPaymentTypeId());
+        LeaseTerm leaseTerm = leaseTermMapper.selectById(bookingOrder.getLeaseTermId());
 
         AgreementVo agreementVo = new AgreementVo();
-        BeanUtils.copyProperties(leaseAgreement,agreementVo);
-        agreementVo.setStudyStore(apartmentInfo);
-        agreementVo.setSeat(roomInfo);
+        BeanUtils.copyProperties(bookingOrder,agreementVo);
+        agreementVo.setApartmentInfo(studyStore);
+        agreementVo.setRoomInfo(seat);
         agreementVo.setPaymentType(paymentType);
         agreementVo.setLeaseTerm(leaseTerm);
 
@@ -55,7 +55,7 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
 
     @Override
     public IPage<AgreementVo> pageAgreementByQuery(IPage<AgreementVo> page, AgreementQueryVo queryVo) {
-        return leaseAgreementMapper.pageAgreementByQuery(page, queryVo);
+        return bookingOrderMapper.pageAgreementByQuery(page, queryVo);
     }
 }
 

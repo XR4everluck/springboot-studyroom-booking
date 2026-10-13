@@ -36,7 +36,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         implements SeatService {
 
     @Autowired
-    SeatMapper roomInfoMapper;
+    SeatMapper seatMapper;
 
     @Autowired
     GraphInfoMapper graphInfoMapper;
@@ -45,10 +45,10 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     LeaseTermMapper leaseTermMapper;
 
     @Autowired
-    SeatFacilityMapper facilityInfoMapper;
+    SeatFacilityMapper seatFacilityMapper;
 
     @Autowired
-    StoreLabelMapper labelInfoMapper;
+    StoreLabelMapper storeLabelMapper;
 
     @Autowired
     PaymentTypeMapper paymentTypeMapper;
@@ -60,7 +60,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     FeeValueMapper feeValueMapper;
 
     @Autowired
-    StudyStoreService apartmentInfoService;
+    StudyStoreService studyStoreService;
 
     @Autowired
     BrowsingHistoryService browsingHistoryService;
@@ -70,7 +70,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
 
     @Override
     public IPage<RoomItemVo> pageItem(IPage<RoomItemVo> page, RoomQueryVo queryVo) {
-        return roomInfoMapper.pageItem(page,queryVo);
+        return seatMapper.pageItem(page,queryVo);
     }
 
     @Override
@@ -80,9 +80,9 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         RoomDetailVo roomDetailVo = (RoomDetailVo) redisTemplate.opsForValue().get(key);
 
         if (roomDetailVo == null){
-            //1.查询房间信息
-            Seat roomInfo = roomInfoMapper.selectById(id);
-            if (roomInfo == null) {
+            //1.查询座位信息
+            Seat seat = seatMapper.selectById(id);
+            if (seat == null) {
                 return null;
             }
             //2.查询图片
@@ -90,26 +90,26 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             //3.查询租期
             List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
             //4.查询配套
-            List<SeatFacility> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
+            List<SeatFacility> facilityInfoList = seatFacilityMapper.selectListByRoomId(id);
             //5.查询标签
-            List<StoreLabel> labelInfoList = labelInfoMapper.selectListByRoomId(id);
+            List<StoreLabel> labelInfoList = storeLabelMapper.selectListByRoomId(id);
             //6.查询支付方式
             List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
             //7.查询基本属性
             List<AttrValueVo> attrValueVoList = attrValueMapper.selectListByRoomId(id);
             //8.查询杂费信息
-            List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(roomInfo.getStoreId());
+            List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(seat.getStoreId());
             //9.查询自习室门店信息
-            ApartmentItemVo apartmentItemVo = apartmentInfoService.selectApartmentItemVoById(roomInfo.getStoreId());
+            ApartmentItemVo apartmentItemVo = studyStoreService.selectApartmentItemVoById(seat.getStoreId());
 
             roomDetailVo = new RoomDetailVo();
-            BeanUtils.copyProperties(roomInfo, roomDetailVo);
+            BeanUtils.copyProperties(seat, roomDetailVo);
 
             roomDetailVo.setApartmentItemVo(apartmentItemVo);
             roomDetailVo.setGraphVoList(graphVoList);
             roomDetailVo.setAttrValueVoList(attrValueVoList);
-            roomDetailVo.setSeatFacilityList(facilityInfoList);
-            roomDetailVo.setStoreLabelList(labelInfoList);
+            roomDetailVo.setFacilityInfoList(facilityInfoList);
+            roomDetailVo.setLabelInfoList(labelInfoList);
             roomDetailVo.setPaymentTypeList(paymentTypeList);
             roomDetailVo.setFeeValueVoList(feeValueVoList);
             roomDetailVo.setLeaseTermList(leaseTermList);
@@ -124,7 +124,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
 
     @Override
     public IPage<RoomItemVo> pageItemByApartmentId(IPage<RoomItemVo> page, Long id) {
-        return roomInfoMapper.pageItemByApartmentId(page, id);
+        return seatMapper.pageItemByApartmentId(page, id);
     }
 }
 

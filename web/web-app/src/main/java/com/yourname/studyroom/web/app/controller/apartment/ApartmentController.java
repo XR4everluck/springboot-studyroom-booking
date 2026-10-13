@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApartmentController {
 
     @Autowired
-    StudyStoreService apartmentInfoService;
+    StudyStoreService studyStoreService;
 
     @Operation(summary = "根据id获取自习室门店信息")
     @GetMapping("getDetailById")
     public Result<ApartmentDetailVo> getDetailById(@RequestParam Long id) {
-        ApartmentDetailVo result = apartmentInfoService.getDetailById(id);
+        ApartmentDetailVo result = studyStoreService.getDetailById(id);
         return Result.ok(result);
     }
 }

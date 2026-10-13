@@ -26,7 +26,7 @@ import java.util.List;
 public class RoomController {
 
     @Autowired
-    SeatService roomInfoService;
+    SeatService seatService;
 
     /**
      * 保存或更新房间信息
@@ -37,7 +37,7 @@ public class RoomController {
     @Operation(summary = "保存或更新房间信息")
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody RoomSubmitVo roomSubmitVo) {
-        roomInfoService.saveOrUpdateRoom(roomSubmitVo);
+        seatService.saveOrUpdateRoom(roomSubmitVo);
         return Result.ok();
     }
 
@@ -53,7 +53,7 @@ public class RoomController {
     @GetMapping("pageItem")
     public Result<IPage<RoomItemVo>> pageItem(@RequestParam long current, @RequestParam long size, RoomQueryVo queryVo) {
         IPage<RoomItemVo> page = new Page<>(current, size);
-        IPage<RoomItemVo> result = roomInfoService.pageRoomItemByQuery(page, queryVo);
+        IPage<RoomItemVo> result = seatService.pageRoomItemByQuery(page, queryVo);
         return Result.ok(result);
     }
 
@@ -66,8 +66,8 @@ public class RoomController {
     @Operation(summary = "根据id获取房间详细信息")
     @GetMapping("getDetailById")
     public Result<RoomDetailVo> getDetailById(@RequestParam Long id) {
-        RoomDetailVo roomInfo = roomInfoService.getRoomDetailById(id);
-        return Result.ok(roomInfo);
+        RoomDetailVo seat = seatService.getRoomDetailById(id);
+        return Result.ok(seat);
     }
 
     /**
@@ -79,7 +79,7 @@ public class RoomController {
     @Operation(summary = "根据id删除房间信息")
     @DeleteMapping("removeById")
     public Result removeById(@RequestParam Long id) {
-        roomInfoService.removeRoomById(id);
+        seatService.removeRoomById(id);
         return Result.ok();
     }
 
@@ -96,7 +96,7 @@ public class RoomController {
         LambdaUpdateWrapper<Seat> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Seat::getId, id);
         updateWrapper.set(Seat::getIsRelease, status);
-        roomInfoService.update(updateWrapper);
+        seatService.update(updateWrapper);
         return Result.ok();
     }
 
@@ -112,8 +112,8 @@ public class RoomController {
         LambdaQueryWrapper<Seat> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Seat::getStoreId, id);
         queryWrapper.eq(Seat::getIsRelease, ReleaseStatus.RELEASED);
-        List<Seat> roomInfoList = roomInfoService.list(queryWrapper);
-        return Result.ok(roomInfoList);
+        List<Seat> seatList = seatService.list(queryWrapper);
+        return Result.ok(seatList);
     }
 
 }

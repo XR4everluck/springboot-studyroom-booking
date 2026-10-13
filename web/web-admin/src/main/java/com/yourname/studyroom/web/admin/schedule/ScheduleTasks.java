@@ -21,13 +21,13 @@ import java.util.Date;
 public class ScheduleTasks {
 
     @Autowired
-    private BookingOrderService leaseAgreementService;
+    private BookingOrderService bookingOrderService;
 
     /**
-     * 定时任务：检查租约状态
+     * 定时任务：检查预订订单状态
      * <p>
      * 使用cron表达式设置任务执行时间，每天午夜执行一次。
-     * 检查所有已签订或正在退租的租约，如果租约结束日期早于当前日期，则更新租约状态。
+     * 检查所有已确认或正在退座的预订订单，如果订单结束日期早于当前日期，则更新预订订单状态。
      * ┌───────────── second (0-59)
      * │ ┌───────────── minute (0 - 59)
      * │ │ ┌───────────── hour (0 - 23)
@@ -45,6 +45,6 @@ public class ScheduleTasks {
         updateWrapper.le(BookingOrder::getEndDate, now);
         updateWrapper.in(BookingOrder::getStatus, BookingStatus.BOOKED, BookingStatus.CHECKOUT_PENDING);
         updateWrapper.set(BookingOrder::getStatus, BookingStatus.EXPIRED);
-        leaseAgreementService.update(updateWrapper);
+        bookingOrderService.update(updateWrapper);
     }
 }

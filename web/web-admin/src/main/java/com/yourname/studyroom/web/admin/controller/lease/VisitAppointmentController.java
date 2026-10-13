@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class VisitAppointmentController {
 
     @Autowired
-    VisitAppointmentService viewAppointmentService;
+    VisitAppointmentService visitAppointmentService;
 
     /**
      * 分页查询预约信息
@@ -36,7 +36,7 @@ public class VisitAppointmentController {
     @GetMapping("page")
     public Result<IPage<AppointmentVo>> page(@RequestParam long current, @RequestParam long size, AppointmentQueryVo queryVo) {
         Page<AppointmentVo> page = new Page<>(current, size);
-        IPage<AppointmentVo> result = viewAppointmentService.pageAppointment(page,queryVo);
+        IPage<AppointmentVo> result = visitAppointmentService.pageAppointment(page,queryVo);
         return Result.ok(result);
     }
 
@@ -53,7 +53,7 @@ public class VisitAppointmentController {
         LambdaUpdateWrapper<VisitAppointment> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(VisitAppointment::getId,id);
         updateWrapper.set(VisitAppointment::getAppointmentStatus,status);
-        viewAppointmentService.update(updateWrapper);
+        visitAppointmentService.update(updateWrapper);
         return Result.ok();
     }
 

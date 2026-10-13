@@ -20,7 +20,7 @@ import java.util.List;
 public class BookingOrderController {
 
     @Autowired
-    BookingOrderService leaseAgreementService;
+    BookingOrderService bookingOrderService;
 
     /**
      * 获取个人租约基本信息列表
@@ -30,7 +30,7 @@ public class BookingOrderController {
     @Operation(summary = "获取个人租约基本信息列表")
     @GetMapping("listItem")
     public Result<List<AgreementItemVo>> listItem() {
-        List<AgreementItemVo> result = leaseAgreementService.listItemByPhone(LoginUserHolder.getLoginUser().getUsername());
+        List<AgreementItemVo> result = bookingOrderService.listItemByPhone(LoginUserHolder.getLoginUser().getUsername());
         return Result.ok(result);
     }
 
@@ -43,7 +43,7 @@ public class BookingOrderController {
     @Operation(summary = "根据id获取租约详细信息")
     @GetMapping("getDetailById")
     public Result<AgreementDetailVo> getDetailById(@RequestParam Long id) {
-        AgreementDetailVo agreementDetailVo = leaseAgreementService.getDetailById(id);
+        AgreementDetailVo agreementDetailVo = bookingOrderService.getDetailById(id);
         return Result.ok(agreementDetailVo);
     }
 
@@ -61,21 +61,21 @@ public class BookingOrderController {
         LambdaUpdateWrapper<BookingOrder> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(BookingOrder::getId, id);
         updateWrapper.set(BookingOrder::getStatus, leaseStatus);
-        leaseAgreementService.update(updateWrapper);
+        bookingOrderService.update(updateWrapper);
         return Result.ok();
     }
 
     /**
      * 保存或更新租约
      *
-     * @param leaseAgreement 租约对象
+     * @param bookingOrder 租约对象
      * @return 操作结果
      * @description 用于续约
      */
     @Operation(summary = "保存或更新租约", description = "用于续约")
     @PostMapping("saveOrUpdate")
-    public Result saveOrUpdate(@RequestBody BookingOrder leaseAgreement) {
-        leaseAgreementService.saveOrUpdate(leaseAgreement);
+    public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
+        bookingOrderService.saveOrUpdate(bookingOrder);
         return Result.ok();
     }
 
