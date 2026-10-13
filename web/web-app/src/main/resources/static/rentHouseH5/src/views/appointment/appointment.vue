@@ -92,7 +92,7 @@
             </van-cell-group>
             <div class="mt-[50px] main-container">
               <van-button round block type="primary" native-type="submit">
-                {{ formData.id ? "重新预约" : "预约看房" }}
+                {{ formData.id ? "重新预约" : "到店体验" }}
               </van-button>
             </div>
           </van-form>
@@ -125,7 +125,7 @@ const apartmentDetailInfo = ref<ApartmentInterface>({} as ApartmentInterface);
 // 获取自习室门店的详情信息
 const getApartmentDetailHandle = async () => {
   const { data } = await getApartmentDetailById(
-    route.query.apartmentId as string
+    route.query.storeId as string
   );
   apartmentDetailInfo.value = data;
 };
@@ -136,7 +136,7 @@ const formData = ref<
   id: "",
   name: "",
   phone: "",
-  apartmentId: (route.query.apartmentId as string) || "",
+  storeId: (route.query.storeId as string) || "",
   appointmentTime: "",
   additionalInfo: "",
   appointmentStatus: AppointmentStatus.WAITING,
@@ -185,8 +185,8 @@ async function onSubmit(values: any) {
   console.log("submit", values);
   await saveOrUpdateAppointment(formData.value);
   showToast("操作成功");
-  route.query.apartmentId
-    ? await router.replace("/myAppointment")
+  route.query.storeId
+    ? await router.replace("/myVisit")
     : await router.back();
 }
 
@@ -202,10 +202,10 @@ async function getAppointmentDetailHandle() {
   // 单独处理日期
   dateInfo.value.date = data.appointmentTime.split(" ")[0].split("-");
   dateInfo.value.time = data.appointmentTime.split(" ")[1].split(":");
-  apartmentDetailInfo.value = data.apartmentItemVo;
+  apartmentDetailInfo.value = data.storeItemVo;
 }
 onMounted(async () => {
-  route.query.apartmentId && (await getApartmentDetailHandle());
+  route.query.storeId && (await getApartmentDetailHandle());
   route.query.appointmentId && (await getAppointmentDetailHandle());
 });
 </script>

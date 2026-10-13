@@ -2,7 +2,7 @@
   <el-card>
     <template #header>
       <div class="card-header">
-        <span>房间基本信息管理</span>
+        <span>座位基本信息管理</span>
       </div>
     </template>
     <el-row class="container" v-for="item in attrTypeList" :key="item">

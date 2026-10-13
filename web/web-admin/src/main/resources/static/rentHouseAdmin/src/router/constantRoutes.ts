@@ -84,13 +84,13 @@ export const staticRoutes: RouteRecordRaw[] = [
         children: [],
       },
       {
-        path: '/apartmentManagement/apartmentManagement/apartmentManagement',
+        path: '/storeManagement/store/store',
         component: () =>
           import(
             '@/views/apartmentManagement/apartmentManagement/apartmentManagement.vue'
           ),
         meta: {
-          title: '公寓管理',
+          title: '门店管理',
           icon: 'OfficeBuilding',
           isHide: false,
           activeMenu: '',
@@ -98,28 +98,28 @@ export const staticRoutes: RouteRecordRaw[] = [
         children: [],
       },
       {
-        path: '/apartmentManagement/apartmentManagement/addOrEditApartment',
+        path: '/storeManagement/store/addOrEditStore',
         component: () =>
           import(
             '@/views/apartmentManagement/apartmentManagement/components/addOrEditApartment.vue'
           ),
         meta: {
-          title: '公寓详情',
+          title: '门店详情',
           icon: 'Document',
           isHide: true,
           activeMenu:
-            '/apartmentManagement/apartmentManagement/apartmentManagement',
+            '/storeManagement/store/store',
         },
         children: [],
       },
       {
-        path: '/apartmentManagement/roomManagement/roomManagement',
+        path: '/seatManagement/seat/seat',
         component: () =>
           import(
             '@/views/apartmentManagement/roomManagement/roomManagement.vue'
           ),
         meta: {
-          title: '房间管理',
+          title: '座位管理',
           icon: 'House',
           isHide: false,
           activeMenu: null,
@@ -127,21 +127,21 @@ export const staticRoutes: RouteRecordRaw[] = [
         children: [],
       },
       {
-        path: '/apartmentManagement/roomManagement/addOrEditRoom',
+        path: '/seatManagement/seat/addOrEditSeat',
         component: () =>
           import(
             '@/views/apartmentManagement/roomManagement/components/addOrEditRoom.vue'
           ),
         meta: {
-          title: '房间详情',
+          title: '座位详情',
           icon: 'Document',
           isHide: true,
-          activeMenu: '/apartmentManagement/roomManagement/roomManagement',
+          activeMenu: '/seatManagement/seat/seat',
         },
         children: [],
       },
       {
-        path: '/apartmentManagement/attributeManagement/attributeManagement',
+        path: '/attributeManagement/attribute/attribute',
         component: () =>
           import(
             '@/views/apartmentManagement/attributeManagement/attributeManagement.vue'
@@ -155,11 +155,11 @@ export const staticRoutes: RouteRecordRaw[] = [
         children: [],
       },
       {
-        path: '/rentManagement/appointment/appointment',
+        path: '/visitManagement/visit/visit',
         component: () =>
           import('@/views/rentManagement/appointment/appointment.vue'),
         meta: {
-          title: '看房预约管理',
+          title: '体验预约管理',
           icon: 'Clock',
           isHide: false,
           activeMenu: null,
@@ -167,11 +167,11 @@ export const staticRoutes: RouteRecordRaw[] = [
         children: [],
       },
       {
-        path: '/agreementManagement/agreement/agreement',
+        path: '/orderManagement/order/order',
         component: () =>
           import('@/views/rentManagement/agreement/agreement.vue'),
         meta: {
-          title: '租约管理',
+          title: '订单管理',
           icon: 'CreditCard',
           isHide: false,
           activeMenu: null,
@@ -179,16 +179,16 @@ export const staticRoutes: RouteRecordRaw[] = [
         children: [],
       },
       {
-        path: '/rentManagement/agreement/addOrEditAgreement',
+        path: '/orderManagement/order/addOrEditOrder',
         component: () =>
           import(
             '@/views/rentManagement/agreement/components/addOrEditAgreement.vue'
           ),
         meta: {
-          title: '租约详情',
+          title: '订单详情',
           icon: null,
           isHide: true,
-          activeMenu: '/agreementManagement/agreement/agreement',
+          activeMenu: '/orderManagement/order/order',
         },
         children: [],
       },

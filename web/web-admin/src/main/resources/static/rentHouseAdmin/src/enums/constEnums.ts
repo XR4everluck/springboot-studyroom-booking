@@ -49,16 +49,16 @@ export const ButtonPermission = {
     Update: 'btn.sysPost.update',
     Remove: 'btn.sysPost.remove',
   },
-  // 公寓管理
+  // 门店管理
   Apartment: {
-    //   公寓管理
+    //   门店管理
     Apartment: {
       List: 'btn.apartment.list',
       Add: 'btn.apartment.add',
       Update: 'btn.apartment.update',
       Remove: 'btn.apartment.remove',
     },
-    //   房间管理
+    //   座位管理
     Room: {
       List: 'btn.room.list',
       Add: 'btn.room.add',
@@ -81,13 +81,13 @@ export const ButtonPermission = {
         Update: 'btn.label.update',
         Remove: 'btn.label.remove',
       },
-      //   房间 信息管理
+      //   座位 信息管理
       RoomInfo: {
-        List: 'btn.roomInfo.list',
-        Add: 'btn.roomInfo.add',
-        Update: 'btn.roomInfo.update',
-        Remove: 'btn.roomInfo.remove',
-        AddNewItem: 'btn.roomInfo.AddNewItem',
+        List: 'btn.seat.list',
+        Add: 'btn.seat.add',
+        Update: 'btn.seat.update',
+        Remove: 'btn.seat.remove',
+        AddNewItem: 'btn.seat.AddNewItem',
       },
       //   杂费信息管理
       Fee: {
@@ -113,24 +113,24 @@ export const ButtonPermission = {
       },
     },
   },
-  //   租赁管理
+  //   预订管理
   Rent: {
-    //   预约看房
+    //   到店体验
     Appointment: {
       List: 'btn.appointment.list',
       TakeLook: 'btn.appointment.TakeLook',
     },
-    //   租约管理
+    //   订单管理
     Term: {
       List: 'btn.agreement.list',
       Add: 'btn.agreement.add',
       Update: 'btn.agreement.update',
       Remove: 'btn.agreement.remove',
-      //   取消租约
+      //   取消订单
       CancelTerm: 'btn.agreement.cancelTerm',
-      //   确认退租
+      //   确认签退
       ConfirmReturnRent: 'btn.agreement.confirmReturnRent',
-      //   确认续约
+      //   确认续期
       ConfirmRenew: 'btn.agreement.confirmRenew',
     },
   },
@@ -140,17 +140,17 @@ export const ButtonPermission = {
     Update: 'btn.user.update',
   },
 }
-// 公寓的发布状态
+// 门店的发布状态
 export enum ApartmentReleaseStatus {
   NOT_RELEASED = 0,
   RELEASED = 1,
 }
-// 公寓的发布状态
+// 门店的发布状态
 export const ApartmentReleaseStatusMap = [
   { label: '未发布', value: ApartmentReleaseStatus.NOT_RELEASED },
   { label: '已发布', value: ApartmentReleaseStatus.RELEASED },
 ]
-// 房间的发布状态
+// 座位的发布状态
 export enum RoomReleaseStatus {
   NOT_RELEASED = 0,
   RELEASED = 1,
@@ -159,23 +159,23 @@ export const RoomReleaseStatusMap = [
   { label: '未发布', value: RoomReleaseStatus.NOT_RELEASED },
   { label: '已发布', value: RoomReleaseStatus.RELEASED },
 ]
-// 房间的入住状态
+// 座位的占用状态
 export const RoomCheckInStatus = {
   NOT_CHECK_IN: false,
   CHECK_IN: true,
 } as const
 export const RoomCheckInStatusMap = [
-  { label: '未入住', value: RoomCheckInStatus.NOT_CHECK_IN },
-  { label: '已入住', value: RoomCheckInStatus.CHECK_IN },
+  { label: '未占用', value: RoomCheckInStatus.NOT_CHECK_IN },
+  { label: '已占用', value: RoomCheckInStatus.CHECK_IN },
 ]
-//type: '公寓' | '房间'
+//type: '门店' | '座位'
 export enum BuildingType {
   APARTMENT = 1,
   ROOM = 2,
 }
 export const BuildingTypeTypeMap = [
-  { label: '公寓', value: BuildingType.APARTMENT },
-  { label: '房间', value: BuildingType.ROOM },
+  { label: '门店', value: BuildingType.APARTMENT },
+  { label: '座位', value: BuildingType.ROOM },
 ]
 // 预约状态,可用值:1,2,3,4
 export enum AppointmentStatus {
@@ -185,12 +185,12 @@ export enum AppointmentStatus {
   EXPIRED = 4,
 }
 export const AppointmentStatusMap = [
-  { label: '待看房', value: AppointmentStatus.WAITING },
+  { label: '待体验', value: AppointmentStatus.WAITING },
   { label: '已取消', value: AppointmentStatus.CANCELLED },
-  { label: '已看房', value: AppointmentStatus.VIEWED },
+  { label: '已体验', value: AppointmentStatus.VIEWED },
   { label: '已过期', value: AppointmentStatus.EXPIRED },
 ]
-// 	租约状态,可用值:1,2,3,4,5,6,7
+// 	订单状态,可用值:1,2,3,4,5,6,7
 export enum AgreementStatus {
   WAITING = 1,
   SIGNED = 2,
@@ -201,22 +201,22 @@ export enum AgreementStatus {
   RENEW_TO_BE_CONFIRMED = 7,
 }
 export const AgreementStatusMap = [
-  { label: '签约待确认', value: AgreementStatus.WAITING },
-  { label: '已签约', value: AgreementStatus.SIGNED },
+  { label: '待确认', value: AgreementStatus.WAITING },
+  { label: '已预订', value: AgreementStatus.SIGNED },
   { label: '已取消', value: AgreementStatus.CANCELLED },
   { label: '已到期', value: AgreementStatus.EXPIRED },
-  { label: '退租待确认', value: AgreementStatus.TO_BE_CONFIRMED },
-  { label: '已退租', value: AgreementStatus.CONFIRMED },
-  { label: '续约待确认', value: AgreementStatus.RENEW_TO_BE_CONFIRMED },
+  { label: '签退待确认', value: AgreementStatus.TO_BE_CONFIRMED },
+  { label: '已完成', value: AgreementStatus.CONFIRMED },
+  { label: '续期待确认', value: AgreementStatus.RENEW_TO_BE_CONFIRMED },
 ]
-// 租约来源,可用值:1,2
+// 订单来源,可用值:1,2
 export enum AgreementSource {
   NEW = 1,
   RENEW = 2,
 }
 export const AgreementSourceMap = [
-  { label: '新签', value: AgreementSource.NEW },
-  { label: '续约', value: AgreementSource.RENEW },
+  { label: '新建', value: AgreementSource.NEW },
+  { label: '续期', value: AgreementSource.RENEW },
 ]
 //	用户账号状态 "0": "禁用","1": "正常"
 export enum UserStatus {

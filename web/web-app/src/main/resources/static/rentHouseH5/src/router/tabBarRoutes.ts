@@ -18,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/search",
     component: () => import("@/views/search/search.vue"),
     meta: {
-      title: "找房",
+      title: "找座位",
       icon: "search"
     }
   },
@@ -32,11 +32,11 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/myRoom",
-    name: "MyRoom",
+    path: "/mySeat",
+    name: "MySeat",
     component: () => import("@/views/myRoom/myRoom.vue"),
     meta: {
-      title: "我的房间",
+      title: "我的座位",
       icon: "home-o"
     }
   },

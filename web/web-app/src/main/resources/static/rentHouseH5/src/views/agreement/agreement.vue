@@ -1,15 +1,15 @@
 <template>
-  <van-skeleton :row="20" :loading="!agreementDetailInfo?.roomId">
+  <van-skeleton :row="20" :loading="!agreementDetailInfo?.seatId">
     <div class="page-container min-h-[100vh] py-[15px]">
-      <!--    签约自习室门店-->
+      <!--    预订自习室门店-->
       <div>
-        <div class="base-info-title main-container py-[4px]">签约自习室门店</div>
+        <div class="base-info-title main-container py-[4px]">预订自习室门店</div>
         <div class="my-[5px] px-[20px]">
           <van-card @click="goApartmentDetail()" class="rounded-xl shadow">
             <!--      title-->
             <template #title>
               <h2 class="text-[16px] font-bold mt-[25px] ml-[25px]">
-                {{ `${agreementDetailInfo.apartmentName}` }}
+                {{ `${agreementDetailInfo.storeName}` }}
               </h2>
             </template>
             <!--    thumb-->
@@ -17,7 +17,7 @@
               <van-image
                 class="w-full h-full object-cover"
                 :src="
-                  agreementDetailInfo.apartmentGraphVoList?.[0]?.url || '失败'
+                  agreementDetailInfo.storeGraphVoList?.[0]?.url || '失败'
                 "
               >
                 <template v-slot:error>加载失败</template>
@@ -29,22 +29,22 @@
           </van-card>
         </div>
       </div>
-      <!--    签约房间-->
+      <!--    预订座位-->
       <div>
-        <div class="base-info-title main-container py-[4px]">签约房间</div>
+        <div class="base-info-title main-container py-[4px]">预订座位</div>
         <div class="my-[5px] px-[20px]">
           <van-card @click="goRoomDetail()" class="rounded-xl shadow">
             <!--      title-->
             <template #title>
               <h2 class="text-[16px] font-bold mt-[25px] ml-[25px]">
-                {{ `${agreementDetailInfo.roomNumber}房间` }}
+                {{ `${agreementDetailInfo.seatCode}座位` }}
               </h2>
             </template>
             <!--    thumb-->
             <template #thumb>
               <van-image
                 class="w-full h-full object-cover"
-                :src="agreementDetailInfo.roomGraphVoList?.[0]?.url || '失败'"
+                :src="agreementDetailInfo.seatGraphVoList?.[0]?.url || '失败'"
               >
                 <template v-slot:error>加载失败</template>
                 <template v-slot:loading>
@@ -55,9 +55,9 @@
           </van-card>
         </div>
       </div>
-      <!--    承租人信息-->
+      <!--    预订人信息-->
       <div>
-        <div class="base-info-title main-container py-[4px]">签约房间</div>
+        <div class="base-info-title main-container py-[4px]">预订座位</div>
         <div class="main-container my-[5px]">
           <div class="rounded-xl shadow overflow-hidden">
             <van-row>
@@ -89,13 +89,13 @@
           </div>
         </div>
       </div>
-      <!--    租约详情-->
+      <!--    订单详情-->
       <div>
-        <div class="base-info-title main-container py-[4px]">租约详情</div>
+        <div class="base-info-title main-container py-[4px]">订单详情</div>
         <div class="main-container my-[5px]">
           <div class="rounded-xl shadow overflow-hidden">
             <van-row>
-              <!--          租期-->
+              <!--          预订时长-->
               <van-col span="24">
                 <van-field
                   v-model="leaseTermInfo.text"
@@ -103,25 +103,25 @@
                   readonly
                   name="picker"
                   label-width="70px"
-                  label="租期"
-                  placeholder="点击选择租期"
+                  label="预订时长"
+                  placeholder="点击选择预订时长"
                   @click="isAllowEdit && (showPickerLeaseTerm = true)"
                 />
                 <van-popup v-model:show="showPickerLeaseTerm" position="bottom">
                   <van-picker
-                    title="租期"
+                    title="预订时长"
                     :columns="leaseTermColumns"
                     @confirm="onConfirmLeaseTerm"
                     @cancel="showPickerLeaseTerm = false"
                   />
                 </van-popup>
               </van-col>
-              <!--          合同租期-->
+              <!--          预订时段-->
               <van-col span="24">
                 <van-field
                   readonly
                   label-width="70px"
-                  label="合同租期"
+                  label="预订时段"
                   v-model="leaseDate"
                 ></van-field>
               </van-col>
@@ -134,22 +134,13 @@
                   v-model="agreementDetailInfo.identificationNumber"
                 ></van-field>
               </van-col>
-              <!--          租金-->
+              <!--          总价-->
               <van-col span="24">
                 <van-field
                   readonly
                   label-width="70px"
-                  label="租金"
+                  label="总价(元)"
                   v-model="rentText"
-                ></van-field>
-              </van-col>
-              <!--          押金-->
-              <van-col span="24">
-                <van-field
-                  readonly
-                  label-width="70px"
-                  label="押金(元)"
-                  v-model="depositText"
                 ></van-field>
               </van-col>
               <!--          支付方式-->
@@ -190,9 +181,9 @@
           class="m-t-20"
           @click="submitHandle"
         >
-          {{ isAddRenew ? "确认续约" : "保存" }}
+          {{ isAddRenew ? "确认续期" : "保存" }}
         </van-button>
-        <!--      确认签约-->
+        <!--      确认预订-->
         <van-button
           v-if="isConfirmAgreement"
           type="primary"
@@ -201,7 +192,7 @@
           class="m-t-20"
           @click="submitHandle"
         >
-          确认签约
+          确认预订
         </van-button>
       </div>
     </div>
@@ -228,52 +219,50 @@ const route = useRoute();
 const router = useRouter();
 // 是否允许修改
 const isAllowEdit = ref(route.query.isEdit === "true");
-// 是否是新增续约
+// 是否是新增续期
 const isRenew = ref(route.query.isRenew === "true");
 
 const isAddRenew = ref(route.query.isAdd === "true");
-// 是否确认签约
+// 是否确认预订
 const isConfirmAgreement = ref(route.query.isConfirm === "true");
 // 自习室门店的详情信息
 const agreementDetailInfo = ref<Partial<AgreementDetailInterface>>({
   id: "",
-  // 	承租人姓名
+  // 	预订人姓名
   name: "",
-  // phone	承租人手机号码
+  // phone	预订人手机号码
   phone: "",
-  // identificationNumber	承租人身份证号码
+  // identificationNumber	预订人身份证号码
   identificationNumber: "",
-  // apartmentId	签约自习室门店id
-  apartmentId: "",
-  // roomId	签约房间id
-  roomId: "",
-  // leaseStartDate	租约开始日期
-  leaseStartDate: "",
-  // leaseEndDate	租约结束日期
-  leaseEndDate: "",
-  // leaseTermId	租期id
+  // storeId	预订自习室门店id
+  storeId: "",
+  // seatId	预订座位id
+  seatId: "",
+  // startDate	订单开始日期
+  startDate: "",
+  // endDate	订单结束日期
+  endDate: "",
+  // leaseTermId	预订时长id
   leaseTermId: "",
-  // rent	租金（元/月）
-  rent: "",
-  // deposit	押金（元）
-  deposit: "",
+  // totalAmount	单价（元/月）
+  totalAmount: "",
   // paymentTypeId	支付类型id
   paymentTypeId: "",
-  // status	租约状态,可用值:1,2,3,4,5,6
+  // status	订单状态,可用值:1,2,3,4,5,6
   status: AgreementStatus.WAITING,
-  // sourceType	租约来源,可用值:1,2
+  // sourceType	订单来源,可用值:1,2
   sourceType: AgreementSource.NEW,
   // additionalInfo	备注信息
   additionalInfo: ""
 });
-//#region <租期相关>
-// 合同租期
+//#region <预订时长相关>
+// 预订时段
 const leaseDate = computed(() => {
-  return `${dayjs(agreementDetailInfo.value.leaseStartDate).format(
+  return `${dayjs(agreementDetailInfo.value.startDate).format(
     "YYYY-MM-DD"
-  )} 至 ${dayjs(agreementDetailInfo.value.leaseEndDate).format("YYYY-MM-DD")}`;
+  )} 至 ${dayjs(agreementDetailInfo.value.endDate).format("YYYY-MM-DD")}`;
 });
-// 租期
+// 预订时长
 const leaseTermInfo = ref({
   text: "",
   value: ""
@@ -284,7 +273,7 @@ watch(
   newValue => {
     if (newValue) {
       console.log("newValue", newValue);
-      // 重赋值租期
+      // 重赋值预订时长
       agreementDetailInfo.value.leaseTermId = newValue.value;
       agreementDetailInfo.value.leaseTermMonthCount = +newValue.text.slice(
         0,
@@ -292,8 +281,8 @@ watch(
       );
       agreementDetailInfo.value.leaseTermUnit = newValue.text.slice(-1);
       //   重新计算起止日期
-      agreementDetailInfo.value.leaseEndDate = dayjs(
-        agreementDetailInfo.value.leaseStartDate
+      agreementDetailInfo.value.endDate = dayjs(
+        agreementDetailInfo.value.startDate
       )
         .add(agreementDetailInfo.value.leaseTermMonthCount as number, "month")
         .format("YYYY-MM-DD");
@@ -301,9 +290,9 @@ watch(
   },
   { immediate: true, deep: true }
 );
-// 租期的列表
+// 预订时长的列表
 const leaseTermList = ref<TermInfoInterface[]>([]);
-// 租期的列表的列
+// 预订时长的列表的列
 const showPickerLeaseTerm = ref(false);
 const leaseTermColumns = computed(() => {
   return leaseTermList.value.map(item => ({
@@ -311,14 +300,14 @@ const leaseTermColumns = computed(() => {
     value: item.id
   }));
 });
-// 获取租期列表
+// 获取预订时长列表
 const getLeaseTermListHandle = async () => {
   const { data } = await getTermListByRoomId(
-    agreementDetailInfo.value.roomId as string
+    agreementDetailInfo.value.seatId as string
   );
   leaseTermList.value = data;
 };
-// 确认选择租期
+// 确认选择预订时长
 const onConfirmLeaseTerm = (data: {
   selectedOptions: (typeof leaseTermInfo.value)[];
 }) => {
@@ -359,7 +348,7 @@ const paymentTypeColumns = computed(() => {
 // 获取支付方式列表
 const getPaymentTypeListHandle = async () => {
   const { data } = await getPaymentListByRoomId(
-    agreementDetailInfo.value.roomId as string
+    agreementDetailInfo.value.seatId as string
   );
   paymentTypeList.value = data;
 };
@@ -372,52 +361,48 @@ const onConfirmPaymentType = (data: {
   showPickerPaymentType.value = false;
 };
 //#endregion
-//#region <租金、押金相关>
-// 租金
+//#region <单价、押金相关>
+// 总价
 const rentText = computed(() => {
-  return `${agreementDetailInfo.value.rent}元/月`;
-});
-// 押金
-const depositText = computed(() => {
-  return `${agreementDetailInfo.value.deposit}元`;
+  return `${agreementDetailInfo.value.totalAmount}元`;
 });
 //#endregion
 // 获取自习室门店的详情信息
 const getAgreementDetailHandle = async () => {
   const { data } = await getAgreementDetailById(route.query.id as string);
   agreementDetailInfo.value = data;
-  // 单独租期相关
+  // 单独预订时长相关
   leaseTermInfo.value.text = data.leaseTermMonthCount + data.leaseTermUnit;
   leaseTermInfo.value.value = data.leaseTermId as string;
   // 单独支付方式相关
   paymentTypeInfo.value.text = data.paymentTypeName as string;
   paymentTypeInfo.value.value = data.paymentTypeId as string;
-  //   如果是续约，允许修改，
+  //   如果是续期，允许修改，
   if (isAllowEdit.value) {
     // 重新计算起止日期
     // 结束日期变成开始日期
-    agreementDetailInfo.value.leaseStartDate =
-      agreementDetailInfo.value.leaseEndDate;
-    // 结束日期变成开始日期+租期
-    agreementDetailInfo.value.leaseEndDate = dayjs(
-      agreementDetailInfo.value.leaseStartDate
+    agreementDetailInfo.value.startDate =
+      agreementDetailInfo.value.endDate;
+    // 结束日期变成开始日期+预订时长
+    agreementDetailInfo.value.endDate = dayjs(
+      agreementDetailInfo.value.startDate
     )
       .add(agreementDetailInfo.value.leaseTermMonthCount as number, "month")
       .format("YYYY-MM-DD");
-    //   重置租约状态
+    //   重置订单状态
     agreementDetailInfo.value.status = AgreementStatus.RENEW_TO_BE_CONFIRMED;
-    //   重置租约来源
+    //   重置订单来源
     agreementDetailInfo.value.sourceType = AgreementSource.RENEW;
   }
-  //   如果是新增的续约,重置id为空
+  //   如果是新增的续期,重置id为空
   isAddRenew.value && (agreementDetailInfo.value.id = "");
-  //   如果是确认签约，修改状态为已签约，等待确认
+  //   如果是确认预订，修改状态为已预订，等待确认
   isConfirmAgreement.value &&
     (agreementDetailInfo.value.status = AgreementStatus.SIGNED);
 };
-// 更正租期和支付方式
+// 更正预订时长和支付方式
 const correctLeaseTermAndPaymentType = () => {
-  // 修正租期，如果不存在就改为数组第一项
+  // 修正预订时长，如果不存在就改为数组第一项
   let targetTerm =
     leaseTermList.value.find(
       item => item.id === agreementDetailInfo.value.leaseTermId
@@ -441,22 +426,22 @@ const correctLeaseTermAndPaymentType = () => {
 // 跳转到自习室门店的详情页面
 const goApartmentDetail = () => {
   router.push({
-    path: "/apartmentDetail",
-    query: { id: agreementDetailInfo.value.apartmentId }
+    path: "/storeDetail",
+    query: { id: agreementDetailInfo.value.storeId }
   });
 };
-// 跳转到房间的详情页面
+// 跳转到座位的详情页面
 const goRoomDetail = () => {
   router.push({
-    path: "/roomDetail",
-    query: { id: agreementDetailInfo.value.roomId }
+    path: "/seatDetail",
+    query: { id: agreementDetailInfo.value.seatId }
   });
 };
-// 续约,修改
+// 续期,修改
 const submitHandle = async () => {
-  console.log("确认签约");
+  console.log("确认预订");
   try {
-    // 租期时长不能小于支付方式月份长度
+    // 预订时长时长不能小于支付方式月份长度
     let leaseTermMonthCount =
       leaseTermList.value.find(
         item => item.id === agreementDetailInfo.value.leaseTermId
@@ -465,7 +450,7 @@ const submitHandle = async () => {
     console.log(leaseTermList.value);
     console.log(agreementDetailInfo.value);
     console.log("=============================");
-    console.log("租期长度：" + leaseTermMonthCount);
+    console.log("预订时长长度：" + leaseTermMonthCount);
 
     let paymentTypeMonthCount =
       paymentTypeList.value.find(
@@ -477,7 +462,7 @@ const submitHandle = async () => {
     if (+leaseTermMonthCount < +paymentTypeMonthCount) {
       showToast({
         type: "fail",
-        message: "租期时长不能小于支付方式月份长度"
+        message: "预订时长时长不能小于支付方式月份长度"
       });
       return;
     }
@@ -493,7 +478,7 @@ onMounted(async () => {
   route.query.id && (await getAgreementDetailHandle());
   await getLeaseTermListHandle();
   await getPaymentTypeListHandle();
-  //  如果允许修改，修正租期和支付方式
+  //  如果允许修改，修正预订时长和支付方式
   isAllowEdit.value && correctLeaseTermAndPaymentType();
 });
 </script>

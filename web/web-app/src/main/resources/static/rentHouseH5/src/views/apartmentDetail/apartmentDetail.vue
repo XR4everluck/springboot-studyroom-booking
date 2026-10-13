@@ -26,7 +26,7 @@
           <van-tag
             class="last:mr-0 mr-[5px]"
             plain
-            v-for="item in apartmentDetailInfo.labelInfoList"
+            v-for="item in apartmentDetailInfo.storeLabelList"
             :key="item.id"
             type="primary"
             >{{ item.name }}
@@ -36,16 +36,19 @@
         <div>
           <span class="text-red-500 text-[16px]">￥</span>
           <span class="text-red-500 text-[18px]"
-            >{{ apartmentDetailInfo.minRent }}/月起</span
+            >{{ apartmentDetailInfo.minPrice }}/月起</span
           >
         </div>
       </div>
       <!--    基本信息-->
       <div class="card">
-        <div class="base-info-title py-[4px]">社区介绍</div>
+        <div class="base-info-title py-[4px]">门店介绍</div>
         <div class="my-[5px]">
           <div>
             {{ apartmentDetailInfo.introduction }}
+          </div>
+          <div class="text-xs mt-[5px]">
+            营业时间：{{ apartmentDetailInfo.businessHours }}
           </div>
         </div>
       </div>
@@ -57,7 +60,7 @@
             <van-col
               span="4"
               class="my-[3px]"
-              v-for="item in apartmentDetailInfo.facilityInfoList"
+              v-for="item in apartmentDetailInfo.seatFacilityList"
               :key="item.id"
             >
               <div class="flex flex-col justify-center items-center">
@@ -81,9 +84,9 @@
         <!--        地图容器-->
         <div id="container" class="w-[85vw] h-[30vh]"></div>
       </div>
-      <!--    可选房间列表-->
+      <!--    可选座位列表-->
       <div class="card">
-        <div class="base-info-title py-[4px]">可选房间列表</div>
+        <div class="base-info-title py-[4px]">可选座位列表</div>
         <div class="mt-[5px]">
           <PullDownRefreshContainer
             :request="getRoomListHandler"
@@ -100,10 +103,10 @@
           </PullDownRefreshContainer>
         </div>
       </div>
-      <!--    预约看房-->
+      <!--    到店体验-->
       <van-sticky :offset-bottom="0" position="bottom">
         <van-button type="primary" block @click="appointmentToViewHandle"
-          >预约看房</van-button
+          >到店体验</van-button
         >
       </van-sticky>
     </div>
@@ -129,11 +132,11 @@ const getApartmentDetailHandle = async () => {
   const { data } = await getApartmentDetailById(route.query.id as string);
   apartmentDetailInfo.value = data;
 };
-// 房间列表
+// 座位列表
 const roomList = ref<RoomInterface[]>([]);
 const pullDownRefreshContainerRef =
   ref<InstanceType<typeof PullDownRefreshContainer>>();
-// 分页获取房间的信息
+// 分页获取座位的信息
 async function getRoomListHandler(pageInfo: ReqPage) {
   //   调用接口
   const { data } = await getRoomListByApartmentId({
@@ -141,7 +144,7 @@ async function getRoomListHandler(pageInfo: ReqPage) {
     ...pageInfo
   });
   data.records.forEach(item => {
-    item.apartmentInfo = apartmentDetailInfo.value;
+    item.studyStore = apartmentDetailInfo.value;
   });
   console.log("pageInfo.current", pageInfo.current);
   if (pageInfo.current === 1) {
@@ -176,12 +179,12 @@ function initMapPage(opts?: { lng: number; lat: number }) {
   map.add(marker);
   map.setFitView();
 }
-// 预约看房
+// 到店体验
 const appointmentToViewHandle = () => {
   console.log("appointmentToViewHandle");
   router.push({
-    path: "/appointment",
-    query: { apartmentId: apartmentDetailInfo.value.id }
+    path: "/visit",
+    query: { storeId: apartmentDetailInfo.value.id }
   });
 };
 //#endregion

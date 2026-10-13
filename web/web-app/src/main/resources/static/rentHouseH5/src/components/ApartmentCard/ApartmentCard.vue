@@ -8,7 +8,7 @@
     <template #price>
       <!--      价格-->
       <span class="text-red-500 text-[14px]">￥</span>
-      <span class="text-red-500 text-[16px]">{{ data.minRent }}/月起</span>
+      <span class="text-red-500 text-[16px]">{{ data.minPrice }}/月起</span>
     </template>
     <!--    thumb-->
     <template #thumb>
@@ -26,7 +26,7 @@
       <van-tag
         class="last:mr-0 mr-[5px]"
         plain
-        v-for="item in data.labelInfoList"
+        v-for="item in data.storeLabelList"
         :key="item.id"
         type="primary"
         >{{ item.name }}
@@ -42,7 +42,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const props = defineProps({
-  // 房间的信息数据
+  // 座位的信息数据
   data: {
     type: Object as PropType<ApartmentInterface>,
     default: () => ({}),
@@ -51,7 +51,7 @@ const props = defineProps({
 });
 // 跳转到自习室门店的详情页面
 const goApartmentDetail = () => {
-  router.push({ path: "/apartmentDetail", query: { id: props.data.id } });
+  router.push({ path: "/storeDetail", query: { id: props.data.id } });
 };
 </script>
 

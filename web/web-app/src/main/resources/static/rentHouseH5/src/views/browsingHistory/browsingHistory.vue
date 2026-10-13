@@ -30,26 +30,26 @@ import type { RoomInterface } from "@/api/search/types";
 const pullDownRefreshContainerRef =
   ref<InstanceType<typeof PullDownRefreshContainer>>();
 console.log("RoomCard.props", RoomCard);
-// 房间列表
+// 座位列表
 // 定义个type
 type RoomInterfaceWithBrowseTime = RoomInterface & { browseTime: string };
 const roomList = ref<RoomInterfaceWithBrowseTime[]>([]);
-// 分页获取房间的信息
+// 分页获取座位的信息
 async function getHistoryListHandler(pageInfo: ReqPage) {
   //   调用接口
   let { data } = await getHistoryList(pageInfo);
   console.log("pageInfo.current", pageInfo.current);
   let targetRecords = data.records.map(item => {
     return {
-      // "id" | "roomNumber" | "rent" | "graphVoList" | "labelInfoList"
+      // "id" | "seatCode" | "rent" | "graphVoList" | "storeLabelList"
       id: item.roomId,
-      roomNumber: item.roomNumber,
+      seatCode: item.seatCode,
       rent: item.rent,
-      graphVoList: item.roomGraphVoList,
-      labelInfoList: [],
-      apartmentInfo: {
+      graphVoList: item.seatGraphVoList,
+      storeLabelList: [],
+      studyStore: {
         //   "name" | "provinceName" | "cityName" | "districtName"
-        name: item.apartmentName || "",
+        name: item.storeName || "",
         provinceName: item.provinceName || "",
         cityName: item.cityName || "",
         districtName: item.districtName || ""

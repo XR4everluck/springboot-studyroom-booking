@@ -49,30 +49,30 @@
             <el-icon>
               <component is="OfficeBuilding"></component>
             </el-icon>
-            <span>公寓管理</span>
+            <span>门店管理</span>
           </template>
           <el-menu-item
-            index="/apartmentManagement/apartmentManagement/apartmentManagement"
+            index="/storeManagement/store/store"
           >
             <el-icon>
               <component is="OfficeBuilding"></component>
             </el-icon>
             <template #title>
-              <span>公寓管理</span>
+              <span>门店管理</span>
             </template>
           </el-menu-item>
           <el-menu-item
-            index="/apartmentManagement/roomManagement/roomManagement"
+            index="/seatManagement/seat/seat"
           >
             <el-icon>
               <component is="House"></component>
             </el-icon>
             <template #title>
-              <span>房间管理</span>
+              <span>座位管理</span>
             </template>
           </el-menu-item>
           <el-menu-item
-            index="/apartmentManagement/attributeManagement/attributeManagement"
+            index="/attributeManagement/attribute/attribute"
           >
             <el-icon>
               <component is="List"></component>
@@ -87,22 +87,22 @@
             <el-icon>
               <component is="Management"></component>
             </el-icon>
-            <span>租赁管理</span>
+            <span>预订管理</span>
           </template>
-          <el-menu-item index="/rentManagement/appointment/appointment">
+          <el-menu-item index="/visitManagement/visit/visit">
             <el-icon>
               <component is="Clock"></component>
             </el-icon>
             <template #title>
-              <span>看房预约管理</span>
+              <span>体验预约管理</span>
             </template>
           </el-menu-item>
-          <el-menu-item index="/agreementManagement/agreement/agreement">
+          <el-menu-item index="/orderManagement/order/order">
             <el-icon>
               <component is="Document"></component>
             </el-icon>
             <template #title>
-              <span>租约管理</span>
+              <span>订单管理</span>
             </template>
           </el-menu-item>
         </el-sub-menu>

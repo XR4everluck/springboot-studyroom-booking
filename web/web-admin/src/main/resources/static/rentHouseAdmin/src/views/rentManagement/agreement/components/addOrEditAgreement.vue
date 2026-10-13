@@ -2,7 +2,7 @@
   <el-card>
     <template #header>
       <div class="card-header">
-        <span>{{ formData.id ? '修改' : '新增' }}租约</span>
+        <span>{{ formData.id ? '修改' : '新增' }}订单</span>
       </div>
     </template>
     <el-form
@@ -25,7 +25,7 @@
           placeholder="请输入身份证号码"
         />
       </el-form-item>
-      <el-form-item label="房间" required>
+      <el-form-item label="座位" required>
         <div class="flex-center">
           <el-form-item prop="provinceId">
             <el-select
@@ -75,10 +75,10 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="apartmentId">
+          <el-form-item prop="storeId">
             <el-select
-              v-model="areaInfo.apartmentId"
-              placeholder="请选择公寓"
+              v-model="areaInfo.storeId"
+              placeholder="请选择门店"
               clearable
               filterable
               @change="apartmentChangeCallback"
@@ -92,10 +92,10 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="roomId">
+          <el-form-item prop="seatId">
             <el-select
-              v-model="areaInfo.roomId"
-              placeholder="请选择房间"
+              v-model="areaInfo.seatId"
+              placeholder="请选择座位"
               clearable
               filterable
               @change="roomChangeCallback"
@@ -104,7 +104,7 @@
               <el-option
                 v-for="item in areaInfo.roomList"
                 :key="item.id"
-                :label="item.roomNumber"
+                :label="item.seatCode"
                 :value="item.id"
               ></el-option>
             </el-select>
@@ -112,9 +112,9 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="开始时间" prop="leaseStartDate">
+      <el-form-item label="开始时间" prop="startDate">
         <el-date-picker
-          v-model="formData.leaseStartDate"
+          v-model="formData.startDate"
           type="date"
           format="YYYY-MM-DD"
           value-format="YYYY-MM-DD"
@@ -122,9 +122,9 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="结束时间" prop="leaseEndDate">
+      <el-form-item label="结束时间" prop="endDate">
         <el-date-picker
-          v-model="formData.leaseEndDate"
+          v-model="formData.endDate"
           type="date"
           format="YYYY-MM-DD"
           value-format="YYYY-MM-DD"
@@ -147,11 +147,11 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="可选租期" prop="leaseTermIds">
+      <el-form-item label="预订时长" prop="leaseTermIds">
         <el-select
           style="width: 100%"
           v-model="formData.leaseTermId"
-          placeholder="请选择租期"
+          placeholder="请选择预订时长"
           clearable
         >
           <el-option
@@ -162,11 +162,8 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="租金（元/月）" prop="rent">
-        <el-input-number v-model="formData.rent" :step="1" step-strictly />
-      </el-form-item>
-      <el-form-item label="押金（元）" prop="deposit">
-        <el-input-number v-model="formData.deposit" :step="1" step-strictly />
+      <el-form-item label="总价（元）" prop="totalAmount">
+        <el-input-number v-model="formData.totalAmount" :step="1" step-strictly />
       </el-form-item>
       <el-form-item label="备注信息" prop="additionalInfo">
         <el-input
@@ -224,13 +221,12 @@ const formData = ref<AgreementInterface>({
   name: '',
   phone: '',
   identificationNumber: '',
-  apartmentId: '',
-  roomId: '',
-  leaseStartDate: '',
-  leaseEndDate: '',
+  storeId: '',
+  seatId: '',
+  startDate: '',
+  endDate: '',
   leaseTermId: '',
-  rent: 0,
-  deposit: 0,
+  totalAmount: 0,
   paymentTypeId: '',
   status: AgreementStatus.WAITING,
   sourceType: AgreementSource.NEW,
@@ -238,7 +234,7 @@ const formData = ref<AgreementInterface>({
 })
 // 表单验证规则
 const rules = reactive({
-  roomNumber: [{ required: true, message: '请输入房间号', trigger: 'blur' }],
+  seatCode: [{ required: true, message: '请输入座位号', trigger: 'blur' }],
 })
 //#endregion
 //#region <省市区查询相关>
@@ -253,19 +249,19 @@ const areaInfo = reactive({
   // 区县数据
   districtList: [] as RegionInterface[],
   districtId: '',
-  // 公寓数据
+  // 门店数据
   apartmentList: [] as ApartmentInterface[],
-  apartmentId: '',
-  // 房间的数据
+  storeId: '',
+  // 座位的数据
   roomList: [] as RoomInfoInterface[],
-  roomId: '',
+  seatId: '',
 })
-// 监视地区信息变化,更新公寓信息
+// 监视地区信息变化,更新门店信息
 watch(
   () => areaInfo,
   (newVal) => {
-    formData.value.apartmentId = newVal.apartmentId
-    formData.value.roomId = newVal.roomId
+    formData.value.storeId = newVal.storeId
+    formData.value.seatId = newVal.seatId
   },
   { immediate: true, deep: true },
 )
@@ -300,7 +296,7 @@ async function getDistrictListHandle(
     console.log(error)
   }
 }
-// 获取公寓
+// 获取门店
 async function getApartmentListHandle(
   districtId: number | string = areaInfo.districtId,
 ) {
@@ -311,12 +307,12 @@ async function getApartmentListHandle(
     console.log(error)
   }
 }
-// 获取房间
+// 获取座位
 async function getRoomListHandle(
-  apartmentId: number | string = areaInfo.apartmentId,
+  storeId: number | string = areaInfo.storeId,
 ) {
   try {
-    const { data } = await getRoomListByApartmentId(apartmentId)
+    const { data } = await getRoomListByApartmentId(storeId)
     areaInfo.roomList = data
   } catch (error) {
     console.log(error)
@@ -332,14 +328,14 @@ function resetDistrict() {
   areaInfo.districtId = ''
   areaInfo.districtList = []
 }
-// 重置公寓数据
+// 重置门店数据
 function resetApartment() {
-  areaInfo.apartmentId = ''
+  areaInfo.storeId = ''
   areaInfo.apartmentList = []
 }
-// 重置房间的数据
+// 重置座位的数据
 function resetRoom() {
-  areaInfo.roomId = ''
+  areaInfo.seatId = ''
   areaInfo.roomList = []
 }
 // 省份改变回调
@@ -395,29 +391,29 @@ const districtClearCallback = () => {
   resetApartment()
   resetRoom()
 }
-// 公寓改变回调
+// 门店改变回调
 const apartmentChangeCallback = async () => {
-  console.log('公寓改变')
-  let apartmentId = areaInfo.apartmentId
-  if (apartmentId) {
+  console.log('门店改变')
+  let storeId = areaInfo.storeId
+  if (storeId) {
     resetRoom()
-    await getRoomListHandle(apartmentId)
+    await getRoomListHandle(storeId)
   }
 }
-// 公寓清除回调
+// 门店清除回调
 const apartmentClearCallback = () => {
-  console.log('清空公寓')
-  areaInfo.apartmentId = ''
+  console.log('清空门店')
+  areaInfo.storeId = ''
   resetRoom()
 }
-// 房间改变回调
+// 座位改变回调
 const roomChangeCallback = async () => {
-  console.log('房间改变')
+  console.log('座位改变')
 }
-// 房间清除回调
+// 座位清除回调
 const roomClearCallback = () => {
-  console.log('清空房间')
-  areaInfo.roomId = ''
+  console.log('清空座位')
+  areaInfo.seatId = ''
 }
 //#endregion
 //#region <支付方式、可选租期>
@@ -446,33 +442,33 @@ async function getLeaseTermInfoListHandle() {
 
 //#endregion
 
-// 根据id获取房间信息
+// 根据id获取座位信息
 async function getAgreementInfoByIdHandle(id: number | string) {
   try {
     const { data } = await getAgreementInfoById(id)
     formData.value = data
     // 重置省市区
     // 获取城市
-    areaInfo.provinceId = data.apartmentInfo.provinceId as string
-    areaInfo.cityId = data.apartmentInfo.cityId as string
-    areaInfo.districtId = data.apartmentInfo.districtId as string
-    areaInfo.apartmentId = data.apartmentId as string
-    areaInfo.roomId = data.roomId as string
-    data.apartmentInfo.provinceId &&
-      (await getCityListHandle(data.apartmentInfo.provinceId))
+    areaInfo.provinceId = data.studyStore.provinceId as string
+    areaInfo.cityId = data.studyStore.cityId as string
+    areaInfo.districtId = data.studyStore.districtId as string
+    areaInfo.storeId = data.storeId as string
+    areaInfo.seatId = data.seatId as string
+    data.studyStore.provinceId &&
+      (await getCityListHandle(data.studyStore.provinceId))
     // 获取区域
-    data.apartmentInfo.cityId &&
-      (await getDistrictListHandle(data.apartmentInfo.cityId))
-    // 获取公寓
-    data.apartmentInfo.districtId &&
-      (await getApartmentListHandle(data.apartmentInfo.districtId))
-    // 获取房间
-    data.apartmentId && (await getRoomListHandle(data.apartmentId))
+    data.studyStore.cityId &&
+      (await getDistrictListHandle(data.studyStore.cityId))
+    // 获取门店
+    data.studyStore.districtId &&
+      (await getApartmentListHandle(data.studyStore.districtId))
+    // 获取座位
+    data.storeId && (await getRoomListHandle(data.storeId))
   } catch (error) {
     console.log(error)
   }
 }
-// 新增或更新公寓信息
+// 新增或更新门店信息
 async function addOrUpdateAgreementInfoHandle() {
   try {
     await saveOrUpdateAgreementInfo(formData.value)

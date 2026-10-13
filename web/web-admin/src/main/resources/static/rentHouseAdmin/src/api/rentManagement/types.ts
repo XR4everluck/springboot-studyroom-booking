@@ -9,18 +9,18 @@ import {
   TermInfoInterface,
 } from '@/api/apartmentManagement/types'
 import { ReqPage } from '@/api/types'
-//#region <预约看房>
+//#region <到店体验>
 // 预约信息
 export interface AppointmentInfoInterface {
   id: number | string
   userId: number | string
   name: string
   phone: string
-  apartmentId: number | string
+  storeId: number | string
   appointmentTime: string
   additionalInfo: string
   appointmentStatus: AppointmentStatus
-  apartmentInfo: Omit<ApartmentInterface, 'totalRoomCount' | 'freeRoomCount'>
+  studyStore: Omit<ApartmentInterface, 'totalSeatCount' | 'freeSeatCount'>
 }
 export interface AppointmentInfoListQueryInterface extends ReqPage {
   // 省份id
@@ -29,15 +29,15 @@ export interface AppointmentInfoListQueryInterface extends ReqPage {
   cityId?: number | string
   // 区域id
   districtId?: number | string
-  // 公寓id
-  apartmentId?: number | string
+  // 门店id
+  storeId?: number | string
   // 预约用户姓名
   name?: string
   // 预约用户手机号码
   phone?: string
 }
 //#endregion
-//#region <租约管理>
+//#region <订单管理>
 export interface AgreementInfoListQueryInterface extends ReqPage {
   // 省份id
   provinceId?: number | string
@@ -45,19 +45,19 @@ export interface AgreementInfoListQueryInterface extends ReqPage {
   cityId?: number | string
   // 区域id
   districtId?: number | string
-  // 公寓id
-  apartmentId?: number | string
-  // 房间 号
-  roomNumber?: number | string
+  // 门店id
+  storeId?: number | string
+  // 座位 号
+  seatCode?: number | string
   // 预约用户姓名
   name?: string
   // 预约用户手机号码
   phone?: string
 }
-// 租约信息
+// 订单信息
 export interface AgreementInfoInterface extends AgreementInterface {
-  apartmentInfo: Omit<ApartmentInterface, 'totalRoomCount' | 'freeRoomCount'>
-  roomInfo: RoomInfoInterface
+  studyStore: Omit<ApartmentInterface, 'totalSeatCount' | 'freeSeatCount'>
+  seat: RoomInfoInterface
   paymentTypeInfo: PaymentTypeInterface
   leaseTerm: LeaseTermInterface
 }
@@ -66,13 +66,12 @@ export interface AgreementInterface {
   phone: string
   name: string
   identificationNumber: string
-  apartmentId: number | string
-  roomId: number | string
-  leaseStartDate: string
-  leaseEndDate: string
+  storeId: number | string
+  seatId: number | string
+  startDate: string
+  endDate: string
   leaseTermId: number | string
-  rent: number | string
-  deposit: number | string
+  totalAmount: number | string
   paymentTypeId: number | string
   status: AgreementStatus
   sourceType: AgreementSource
@@ -80,9 +79,9 @@ export interface AgreementInterface {
 }
 export interface RoomInfoInterface {
   id: number | string
-  roomNumber: number | string
-  rent: number | string
-  apartmentId: number | string
+  seatCode: number | string
+  price: number | string
+  storeId: number | string
   isRelease: RoomReleaseStatus
 }
 export interface PaymentTypeInterface {

@@ -17,11 +17,11 @@ import type {
 } from "@/api/search/types";
 import type { PageRes, ReqPage } from "@/api/types";
 /**
- * @description 分页查询房间列表
+ * @description 分页查询座位列表
  * @param params
  */
 export function getRoomList(params: Partial<RoomListQueryInterface>) {
-  return http.get<PageRes<RoomInterface>>(`/app/room/pageItem`, params);
+  return http.get<PageRes<RoomInterface>>(`/app/seat/pageItem`, params);
 }
 /**
  * @description 查询省市区列表
@@ -60,29 +60,29 @@ export function getPaymentTypeList() {
   return http.get<PaymentInfoInterface[]>(`/app/payment/list`);
 }
 /**
- * @description 根据id获取房间的详细信息
+ * @description 根据id获取座位的详细信息
  * @param id
  */
 export function getRoomDetailById(id: number | string) {
-  return http.get<RoomDetailInterface>(`/app/room/getDetailById?id=${id}`);
+  return http.get<RoomDetailInterface>(`/app/seat/getDetailById?id=${id}`);
 }
 
 /**
  * @description 根据id获取自习室门店信息
  */
 export function getApartmentDetailById(id: number | string) {
-  return http.get<ApartmentInterface>(`/app/apartment/getDetailById?id=${id}`);
+  return http.get<ApartmentInterface>(`/app/store/getDetailById?id=${id}`);
 }
 
 /**
- * @description 根据自习室门店id分页查询房间列表
+ * @description 根据自习室门店id分页查询座位列表
  * @param params
  */
 export function getRoomListByApartmentId(
   params: ReqPage & { id: number | string }
 ) {
   return http.get<PageRes<RoomInterface>>(
-    `/app/room/pageItemByApartmentId`,
+    `/app/seat/pageItemByStoreId`,
     params
   );
 }
@@ -91,7 +91,7 @@ export function getRoomListByApartmentId(
  * @description 保存或更新预约
  */
 export function saveOrUpdateAppointment(params: AppointmentQueryInterface) {
-  return http.post(`/app/appointment/saveOrUpdate`, params);
+  return http.post(`/app/visit/saveOrUpdate`, params);
 }
 
 /**
@@ -100,7 +100,7 @@ export function saveOrUpdateAppointment(params: AppointmentQueryInterface) {
  */
 export function getAppointmentDetailById(id: number | string) {
   return http.get<AppointmentInfoInterface>(
-    `/app/appointment/getDetailById?id=${id}`
+    `/app/visit/getDetailById?id=${id}`
   );
 }
 
@@ -108,43 +108,43 @@ export function getAppointmentDetailById(id: number | string) {
  * @description 查询我的预约列表
  */
 export function getMyAppointmentList() {
-  return http.get<AppointmentItemInterface[]>(`/app/appointment/listItem`);
+  return http.get<AppointmentItemInterface[]>(`/app/visit/listItem`);
 }
 
 /**
- * @description 获取个人租约基本信息列表
+ * @description 获取个人订单基本信息列表
  */
 export function getMyAgreementList() {
-  return http.get<AgreementItemInterface[]>(`/app/agreement/listItem`);
+  return http.get<AgreementItemInterface[]>(`/app/order/listItem`);
 }
 
 /**
- * @description 根据id获取租约详细信息
+ * @description 根据id获取订单详细信息
  */
 export function getAgreementDetailById(id: number | string) {
   return http.get<AgreementDetailInterface>(
-    `/app/agreement/getDetailById?id=${id}`
+    `/app/order/getDetailById?id=${id}`
   );
 }
 
 /**
- * @description 保存新租约
+ * @description 保存新订单
  */
 export function saveOrUpdateAgreement(
   params: Partial<AgreementQueryInterface>
 ) {
-  return http.post(`/app/agreement/saveOrUpdate`, params);
+  return http.post(`/app/order/saveOrUpdate`, params);
 }
 
 /**
- * @description 根据房间id获取可选获取租期列表
+ * @description 根据座位id获取可选获取租期列表
  * @param roomId
  */
 export function getTermListByRoomId(roomId: number | string) {
   return http.get<TermInfoInterface[]>(`/app/term/listByRoomId?id=${roomId}`);
 }
 /**
- * @description 根据房间id获取可选支付方式列表
+ * @description 根据座位id获取可选支付方式列表
  * @param roomId
  */
 export function getPaymentListByRoomId(roomId: number | string) {

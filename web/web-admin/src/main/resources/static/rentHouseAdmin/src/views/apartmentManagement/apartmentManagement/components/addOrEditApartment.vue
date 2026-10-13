@@ -2,7 +2,7 @@
   <el-card>
     <template #header>
       <div class="card-header">
-        <span>{{ formData.id ? '修改' : '新增' }}公寓</span>
+        <span>{{ formData.id ? '修改' : '新增' }}门店</span>
       </div>
     </template>
     <el-form
@@ -13,10 +13,10 @@
       style="max-width: 660px"
       status-icon
     >
-      <el-form-item label="公寓名称" prop="name">
+      <el-form-item label="门店名称" prop="name">
         <el-input v-model="formData.name" />
       </el-form-item>
-      <el-form-item label="公寓介绍" prop="introduction">
+      <el-form-item label="门店介绍" prop="introduction">
         <el-input type="textarea" v-model="formData.introduction" />
       </el-form-item>
       <el-form-item label="所处区域" required>
@@ -90,8 +90,11 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="公寓前台电话" prop="phone">
+      <el-form-item label="门店前台电话" prop="phone">
         <el-input v-model="formData.phone" />
+      </el-form-item>
+      <el-form-item label="营业时间" prop="businessHours">
+        <el-input v-model="formData.businessHours" placeholder="如 08:00-22:00" />
       </el-form-item>
       <el-form-item label="是否发布" prop="isRelease">
         <el-radio-group v-model="formData.isRelease" class="ml-4">
@@ -113,43 +116,43 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="公寓配套" prop="facilityInfoIds">
+      <el-form-item label="门店配套" prop="seatFacilityIds">
         <el-select
           style="width: 100%"
-          v-model="formData.facilityInfoIds"
-          placeholder="请选择公寓配套"
+          v-model="formData.seatFacilityIds"
+          placeholder="请选择门店配套"
           multiple
           clearable
         >
           <el-option
-            v-for="item in facilityInfoList"
+            v-for="item in seatFacilityList"
             :key="item.id"
             :label="item.name"
             :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="公寓标签" prop="labelIds">
+      <el-form-item label="门店标签" prop="storeLabelIds">
         <el-select
           style="width: 100%"
-          v-model="formData.labelIds"
-          placeholder="请选择公寓标签"
+          v-model="formData.storeLabelIds"
+          placeholder="请选择门店标签"
           multiple
           clearable
         >
           <el-option
-            v-for="item in labelInfoList"
+            v-for="item in storeLabelList"
             :key="item.id"
             :label="item.name"
             :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="公寓杂费" prop="feeValueIds">
+      <el-form-item label="门店杂费" prop="feeValueIds">
         <el-tree-select
           style="width: 100%"
           v-model="formData.feeValueIds"
-          placeholder="请选择公寓杂费"
+          placeholder="请选择门店杂费"
           :data="feeInfoList"
           multiple
           clearable
@@ -216,10 +219,10 @@ const router = useRouter()
 type FormDataInstance = Required<
   Omit<
     ApartmentInterface,
-    | 'totalRoomCount'
-    | 'freeRoomCount'
-    | 'facilityInfoList'
-    | 'labelInfoList'
+    | 'totalSeatCount'
+    | 'freeSeatCount'
+    | 'seatFacilityList'
+    | 'storeLabelList'
     | 'feeValueVoList'
   >
 >
@@ -238,9 +241,10 @@ const formData = ref<FormDataInstance>({
   latitude: '',
   longitude: '',
   phone: '',
+  businessHours: '',
   isRelease: ApartmentReleaseStatus.NOT_RELEASED,
-  facilityInfoIds: [],
-  labelIds: [],
+  seatFacilityIds: [],
+  storeLabelIds: [],
   feeValueIds: [],
   graphVoList: [
     // {
@@ -251,9 +255,9 @@ const formData = ref<FormDataInstance>({
 })
 // 表单验证规则
 const rules = reactive({
-  name: [{ required: true, message: '请输入公寓名称', trigger: 'blur' }],
+  name: [{ required: true, message: '请输入门店名称', trigger: 'blur' }],
   introduction: [
-    { required: true, message: '请输入公寓介绍', trigger: 'blur' },
+    { required: true, message: '请输入门店介绍', trigger: 'blur' },
   ],
   provinceId: [{ required: true, message: '请选择省份', trigger: 'change' }],
   cityId: [{ required: true, message: '请选择城市', trigger: 'change' }],
@@ -261,7 +265,7 @@ const rules = reactive({
   addressDetail: [
     { required: true, message: '请选择详细地址', trigger: 'change' },
   ],
-  phone: [{ required: true, message: '请输入公寓前台电话', trigger: 'blur' }],
+  phone: [{ required: true, message: '请输入门店前台电话', trigger: 'blur' }],
   graphVoList: [{ required: true, message: '请上传图片', trigger: 'change' }],
 })
 //#region <地区数据相关>
@@ -422,9 +426,9 @@ function addressDetailChangeCallback(value: string | number) {
 //#endregion
 //#region <配套信息、标签信息、杂费信息>
 // 配套信息
-const facilityInfoList = ref<FacilityInfoInterface[]>([])
+const seatFacilityList = ref<FacilityInfoInterface[]>([])
 // 标签信息
-const labelInfoList = ref<LabelInfoInterface[]>([])
+const storeLabelList = ref<LabelInfoInterface[]>([])
 // 杂费信息
 const feeInfoList = ref<TreeData[]>([])
 // const feeTreeSelectRef = ref<InstanceType<typeof ElTree>>()
@@ -432,7 +436,7 @@ const feeInfoList = ref<TreeData[]>([])
 async function getFacilityInfoListHandle() {
   try {
     const { data } = await getFacilityInfoList(BuildingType.APARTMENT)
-    facilityInfoList.value = data
+    seatFacilityList.value = data
   } catch (error) {
     console.log(error)
   }
@@ -441,7 +445,7 @@ async function getFacilityInfoListHandle() {
 async function getLabelInfoListHandle() {
   try {
     const { data } = await getLabelInfoList(BuildingType.APARTMENT)
-    labelInfoList.value = data
+    storeLabelList.value = data
   } catch (error) {
     console.log(error)
   }
@@ -499,17 +503,17 @@ function uploadSuccessHandle(
     }
   })
 }
-// 根据id获取公寓信息
+// 根据id获取门店信息
 async function getApartmentInfoByIdHandle(id: number | string) {
   try {
     const { data } = await getApartmentById(id)
     // 构造表单数据
-    data.facilityInfoIds = data.facilityInfoList?.map(
+    data.seatFacilityIds = data.seatFacilityList?.map(
       (item) => item.id,
     ) as number[]
-    delete data.facilityInfoList
-    data.labelIds = data.labelInfoList?.map((item) => item.id) as number[]
-    delete data.labelInfoList
+    delete data.seatFacilityList
+    data.storeLabelIds = data.storeLabelList?.map((item) => item.id) as number[]
+    delete data.storeLabelList
     data.feeValueIds = data.feeValueVoList?.map((item) => item.id) as number[]
     delete data.feeValueVoList
     addressDetailOptions.value = [
@@ -533,7 +537,7 @@ async function getApartmentInfoByIdHandle(id: number | string) {
     console.log(error)
   }
 }
-// 新增或更新公寓信息
+// 新增或更新门店信息
 async function addOrUpdateApartmentInfoHandle() {
   try {
     await saveOrUpdateApartment(formData.value)

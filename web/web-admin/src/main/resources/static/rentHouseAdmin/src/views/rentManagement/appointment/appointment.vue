@@ -66,9 +66,9 @@ const areaInfo = reactive({
   // 区县数据
   districtList: [] as RegionInterface[],
   districtId: '',
-  // 公寓数据
+  // 门店数据
   apartmentList: [] as ApartmentInterface[],
-  apartmentId: '',
+  storeId: '',
 })
 // *表格配置项
 const columns: ColumnProps[] = [
@@ -171,18 +171,18 @@ const columns: ColumnProps[] = [
     },
   },
   {
-    prop: 'apartmentId',
-    label: '公寓',
+    prop: 'storeId',
+    label: '门店',
     isShow: false,
     fieldNames: { label: 'name', value: 'id' },
     search: {
       el: 'select',
-      key: 'apartmentId',
+      key: 'storeId',
       render: () => {
         return (
           <el-select
-            v-model={areaInfo.apartmentId}
-            placeholder="请选择公寓"
+            v-model={areaInfo.storeId}
+            placeholder="请选择门店"
             clearable
             onChange={apartmentChangeCallback}
             onClear={apartmentClearCallback}
@@ -199,10 +199,10 @@ const columns: ColumnProps[] = [
       },
     },
   },
-  { prop: 'apartmentInfo.provinceName', label: '所处省份' },
-  { prop: 'apartmentInfo.cityName', label: '所处城市' },
-  { prop: 'apartmentInfo.districtName', label: '所处区域' },
-  { prop: 'apartmentInfo.name', label: '所处公寓' },
+  { prop: 'studyStore.provinceName', label: '所处省份' },
+  { prop: 'studyStore.cityName', label: '所处城市' },
+  { prop: 'studyStore.districtName', label: '所处区域' },
+  { prop: 'studyStore.name', label: '所处门店' },
   { prop: 'appointmentTime', label: '预约时间' },
   { prop: 'additionalInfo', label: '备注信息' },
   {
@@ -281,12 +281,12 @@ async function getDistrictListHandle(cityId: number) {
     console.log(error)
   }
 }
-// 获取公寓
+// 获取门店
 async function getApartmentListHandle(districtId: number) {
   try {
     const { data } = await getApartmentListByDistrictId(districtId)
     areaInfo.apartmentList = data
-    proTable.value?.enumMap.set('apartmentId', areaInfo.apartmentList)
+    proTable.value?.enumMap.set('storeId', areaInfo.apartmentList)
   } catch (error) {
     console.log(error)
   }
@@ -305,12 +305,12 @@ function resetDistrict() {
   proTable.value?.enumMap.set('districtId', [])
   proTable.value!.searchParam.districtId = ''
 }
-// 重置公寓数据
+// 重置门店数据
 function resetApartment() {
-  areaInfo.apartmentId = ''
+  areaInfo.storeId = ''
   areaInfo.apartmentList = []
-  proTable.value?.enumMap.set('apartmentId', [])
-  proTable.value!.searchParam.apartmentId = ''
+  proTable.value?.enumMap.set('storeId', [])
+  proTable.value!.searchParam.storeId = ''
 }
 // 省份改变回调
 const provinceChangeCallback = async () => {
@@ -362,15 +362,15 @@ const districtClearCallback = () => {
   proTable.value!.searchParam.districtId = ''
   resetApartment()
 }
-// 公寓改变回调
+// 门店改变回调
 const apartmentChangeCallback = async () => {
-  console.log('公寓改变')
+  console.log('门店改变')
 }
-// 公寓清除回调
+// 门店清除回调
 const apartmentClearCallback = () => {
-  console.log('清空公寓')
-  areaInfo.apartmentId = ''
-  proTable.value!.searchParam.apartmentId = ''
+  console.log('清空门店')
+  areaInfo.storeId = ''
+  proTable.value!.searchParam.storeId = ''
 }
 //#endregion
 

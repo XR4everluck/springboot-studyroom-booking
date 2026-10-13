@@ -21,7 +21,7 @@ export const ApartmentReleaseStatusMap = [
   { label: "已发布", value: ApartmentReleaseStatus.RELEASED }
 ];
 
-// 房间的发布状态
+// 座位的发布状态
 export enum RoomReleaseStatus {
   NOT_RELEASED = 0,
   RELEASED = 1
@@ -32,18 +32,18 @@ export const RoomReleaseStatusMap = [
   { label: "已发布", value: RoomReleaseStatus.RELEASED }
 ];
 
-// 房间的入住状态
+// 座位的占用状态
 export enum RoomCheckInStatus {
-  NOT_CHECK_IN = "未入住",
-  CHECK_IN = "已入住"
+  NOT_CHECK_IN = "未占用",
+  CHECK_IN = "已占用"
 }
 
 export const RoomCheckInStatusMap = [
-  { label: "未入住", value: RoomCheckInStatus.NOT_CHECK_IN },
-  { label: "已入住", value: RoomCheckInStatus.CHECK_IN }
+  { label: "未占用", value: RoomCheckInStatus.NOT_CHECK_IN },
+  { label: "已占用", value: RoomCheckInStatus.CHECK_IN }
 ];
 
-//type: '自习室门店' | '房间'
+//type: '自习室门店' | '座位'
 export enum BuildingType {
   APARTMENT = 1,
   ROOM = 2
@@ -51,7 +51,7 @@ export enum BuildingType {
 
 export const BuildingTypeTypeMap = [
   { label: "自习室门店", value: BuildingType.APARTMENT },
-  { label: "房间", value: BuildingType.ROOM }
+  { label: "座位", value: BuildingType.ROOM }
 ];
 
 // 预约状态,可用值:1,2,3,4
@@ -63,13 +63,13 @@ export enum AppointmentStatus {
 }
 
 export const AppointmentStatusMap = [
-  { label: "待看房", value: AppointmentStatus.WAITING },
+  { label: "待体验", value: AppointmentStatus.WAITING },
   { label: "已取消", value: AppointmentStatus.CANCELLED },
-  { label: "已看房", value: AppointmentStatus.VIEWED },
+  { label: "已体验", value: AppointmentStatus.VIEWED },
   { label: "已过期", value: AppointmentStatus.EXPIRED }
 ];
 
-// 	租约状态,可用值:1,2,3,4,5,6,7
+// 	订单状态,可用值:1,2,3,4,5,6,7
 export enum AgreementStatus {
   WAITING = 1,
   SIGNED = 2,
@@ -81,24 +81,24 @@ export enum AgreementStatus {
 }
 
 export const AgreementStatusMap = [
-  { label: "签约待确认", value: AgreementStatus.WAITING },
-  { label: "已签约", value: AgreementStatus.SIGNED },
+  { label: "待确认", value: AgreementStatus.WAITING },
+  { label: "已预订", value: AgreementStatus.SIGNED },
   { label: "已取消", value: AgreementStatus.CANCELLED },
   { label: "已到期", value: AgreementStatus.EXPIRED },
-  { label: "退租待确认", value: AgreementStatus.TO_BE_CONFIRMED },
-  { label: "已退租", value: AgreementStatus.CONFIRMED },
-  { label: "续约待确认", value: AgreementStatus.RENEW_TO_BE_CONFIRMED }
+  { label: "签退待确认", value: AgreementStatus.TO_BE_CONFIRMED },
+  { label: "已完成", value: AgreementStatus.CONFIRMED },
+  { label: "续期待确认", value: AgreementStatus.RENEW_TO_BE_CONFIRMED }
 ];
 
-// 租约来源,可用值:1,2
+// 订单来源,可用值:1,2
 export enum AgreementSource {
   NEW = 1,
   RENEW = 2
 }
 
 export const AgreementSourceMap = [
-  { label: "新签", value: AgreementSource.NEW },
-  { label: "续约", value: AgreementSource.RENEW }
+  { label: "新建", value: AgreementSource.NEW },
+  { label: "续期", value: AgreementSource.RENEW }
 ];
 
 //	用户账号状态 "0": "禁用","1": "正常"

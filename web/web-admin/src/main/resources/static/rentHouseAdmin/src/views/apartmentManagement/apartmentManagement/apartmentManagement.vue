@@ -10,7 +10,7 @@
     >
       <template #tableHeader>
         <el-button type="primary" icon="Plus" @click="addHandle">
-          新增公寓
+          新增门店
         </el-button>
       </template>
       <!-- 表格操作 -->
@@ -151,22 +151,23 @@ const columns: ColumnProps[] = [
       },
     },
   },
-  { prop: 'name', label: '名称' },
+  { prop: 'name', label: '门店名称' },
+  { prop: 'businessHours', label: '营业时间' },
   { prop: 'addressDetail', label: '详细地址' },
-  { prop: 'freeRoomCount', label: '空闲房间数' },
-  { prop: 'totalRoomCount', label: '房间总数' },
+  { prop: 'freeSeatCount', label: '空闲座位数' },
+  { prop: 'totalSeatCount', label: '座位总数' },
   { prop: 'provinceName', label: '所处省份' },
   { prop: 'cityName', label: '所处城市' },
   { prop: 'districtName', label: '所处区域' },
   { prop: 'phone', label: '联系方式' },
   {
-    prop: '入住状态',
-    label: '入住状态',
+    prop: '占用状态',
+    label: '占用状态',
     render: ({ row }: { row: ApartmentInterface }) => {
-      return row.freeRoomCount === 0 ? (
+      return row.freeSeatCount === 0 ? (
         <el-tag type="info">已满房</el-tag>
       ) : (
-        <el-tag type="success">可入住</el-tag>
+        <el-tag type="success">可占用</el-tag>
       )
     },
   },
@@ -295,7 +296,7 @@ const dataCallback = (data: any) => {
 const editHandle = (row: ApartmentInterface) => {
   console.log('跳转')
   router.push({
-    path: '/apartmentManagement/apartmentManagement/addOrEditApartment',
+    path: '/storeManagement/store/addOrEditStore',
     query: {
       id: row.id,
     },
@@ -304,7 +305,7 @@ const editHandle = (row: ApartmentInterface) => {
 // 新增
 const addHandle = () => {
   router.push({
-    path: '/apartmentManagement/apartmentManagement/addOrEditApartment',
+    path: '/storeManagement/store/addOrEditStore',
   })
 }
 // 通过，不通过

@@ -30,7 +30,7 @@ import RoomCard from "@/components/RoomCard/RoomCard.vue";
 const searchParams = ref<Partial<RoomListQueryInterface>>({});
 const pullDownRefreshContainerRef =
   ref<InstanceType<typeof PullDownRefreshContainer>>();
-// 房间列表
+// 座位列表
 const roomList = ref<RoomInterface[]>([]);
 // 点击查找，搜索条件
 function confirmCallback(params: RoomListQueryInterface) {
@@ -45,7 +45,7 @@ function confirmCallback(params: RoomListQueryInterface) {
   searchParams.value = targetObi;
   pullDownRefreshContainerRef.value?.onRefresh();
 }
-// 分页获取房间的信息
+// 分页获取座位的信息
 async function getRoomListHandler(pageInfo: ReqPage) {
   //   调用接口
   const { data } = await getRoomList({ ...searchParams.value, ...pageInfo });

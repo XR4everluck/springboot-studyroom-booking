@@ -10,7 +10,7 @@
     >
       <template #tableHeader>
         <el-button type="primary" icon="Plus" @click="addHandle">
-          新增租约
+          新增订单
         </el-button>
       </template>
       <!-- 表格操作 -->
@@ -27,7 +27,15 @@
           v-if="scope.row.status === AgreementStatus.RENEW_TO_BE_CONFIRMED"
           @click="confirmLeaseHandle(scope.row)"
         >
-          确认续约
+          确认续期
+        </el-button>
+        <el-button
+          type="primary"
+          icon="Select"
+          v-if="scope.row.status === AgreementStatus.WAITING"
+          @click="confirmBookingHandle(scope.row)"
+        >
+          确认预订
         </el-button>
         <el-button
           type="warning"
@@ -35,7 +43,7 @@
           v-if="scope.row.status === AgreementStatus.WAITING"
           @click="cancelLeaseHandle(scope.row)"
         >
-          取消租约
+          取消订单
         </el-button>
         <el-button
           type="danger"
@@ -43,7 +51,7 @@
           v-if="scope.row.status === AgreementStatus.TO_BE_CONFIRMED"
           @click="confirmThrowLeaseHandle(scope.row)"
         >
-          确认退租
+          确认签退
         </el-button>
       </template>
     </ProTable>
@@ -93,9 +101,9 @@ const areaInfo = reactive({
   // 区县数据
   districtList: [] as RegionInterface[],
   districtId: '',
-  // 公寓数据
+  // 门店数据
   apartmentList: [] as ApartmentInterface[],
-  apartmentId: '',
+  storeId: '',
 })
 // *表格配置项
 const columns: ColumnProps[] = [
@@ -110,11 +118,11 @@ const columns: ColumnProps[] = [
     search: { el: 'input', props: { placeholder: '请输入手机号' } },
   },
   {
-    prop: 'roomNumber',
-    label: '房间',
-    search: { el: 'input', props: { placeholder: '请输入房间号' } },
+    prop: 'seatCode',
+    label: '座位',
+    search: { el: 'input', props: { placeholder: '请输入座位号' } },
     render: ({ row }: { row: AgreementInfoInterface }) => {
-      return row.roomInfo.roomNumber
+      return row.seat.seatCode
     },
   },
   {
@@ -206,18 +214,18 @@ const columns: ColumnProps[] = [
     },
   },
   {
-    prop: 'apartmentId',
-    label: '公寓',
+    prop: 'storeId',
+    label: '门店',
     isShow: false,
     fieldNames: { label: 'name', value: 'id' },
     search: {
       el: 'select',
-      key: 'apartmentId',
+      key: 'storeId',
       render: () => {
         return (
           <el-select
-            v-model={areaInfo.apartmentId}
-            placeholder="请选择公寓"
+            v-model={areaInfo.storeId}
+            placeholder="请选择门店"
             clearable
             onChange={apartmentChangeCallback}
             onClear={apartmentClearCallback}
@@ -234,35 +242,35 @@ const columns: ColumnProps[] = [
       },
     },
   },
-  { prop: 'apartmentInfo.name', label: '签约公寓' },
-  { prop: 'apartmentInfo.provinceName', label: '所处省份' },
-  { prop: 'apartmentInfo.cityName', label: '所处城市' },
-  { prop: 'apartmentInfo.districtName', label: '所处区域' },
+  { prop: 'studyStore.name', label: '预订门店' },
+  { prop: 'seat.seatCode', label: '座位编号' },
+  { prop: 'studyStore.provinceName', label: '所处省份' },
+  { prop: 'studyStore.cityName', label: '所处城市' },
+  { prop: 'studyStore.districtName', label: '所处区域' },
   {
-    prop: 'leaseStartDate',
-    label: '租约周期',
+    prop: 'startDate',
+    label: '预订时段',
     width: 200,
     render: ({ row }: { row: AgreementInfoInterface }) => {
-      return row.leaseStartDate + ' ～ ' + row.leaseEndDate
+      return row.startDate + ' ～ ' + row.endDate
     },
   },
-  { prop: 'rent', label: '租金（元/月）' },
-  { prop: 'deposit', label: '押金（元）' },
+  { prop: 'totalAmount', label: '总价（元）' },
   {
     prop: 'paymentType.name',
     label: '支付方式',
   },
-  { prop: 'leaseTerm.monthCount', label: '租期（月）' },
+  { prop: 'leaseTerm.monthCount', label: '预订时长（月）' },
   {
     prop: 'sourceType',
-    label: '租约来源',
+    label: '订单来源',
     render: ({ row }: { row: AgreementInfoInterface }) => {
       return getLabelByValue(AgreementSourceMap, row.sourceType)
     },
   },
   {
     prop: 'status',
-    label: '租约状态',
+    label: '订单状态',
     render: ({ row }: { row: AgreementInfoInterface }) => {
       switch (row.status) {
         case AgreementStatus.WAITING:
@@ -335,12 +343,12 @@ async function getDistrictListHandle(cityId: number) {
     console.log(error)
   }
 }
-// 获取公寓
+// 获取门店
 async function getApartmentListHandle(districtId: number) {
   try {
     const { data } = await getApartmentListByDistrictId(districtId)
     areaInfo.apartmentList = data
-    proTable.value?.enumMap.set('apartmentId', areaInfo.apartmentList)
+    proTable.value?.enumMap.set('storeId', areaInfo.apartmentList)
   } catch (error) {
     console.log(error)
   }
@@ -359,12 +367,12 @@ function resetDistrict() {
   proTable.value?.enumMap.set('districtId', [])
   proTable.value!.searchParam.districtId = ''
 }
-// 重置公寓数据
+// 重置门店数据
 function resetApartment() {
-  areaInfo.apartmentId = ''
+  areaInfo.storeId = ''
   areaInfo.apartmentList = []
-  proTable.value?.enumMap.set('apartmentId', [])
-  proTable.value!.searchParam.apartmentId = ''
+  proTable.value?.enumMap.set('storeId', [])
+  proTable.value!.searchParam.storeId = ''
 }
 // 省份改变回调
 const provinceChangeCallback = async () => {
@@ -416,15 +424,15 @@ const districtClearCallback = () => {
   proTable.value!.searchParam.districtId = ''
   resetApartment()
 }
-// 公寓改变回调
+// 门店改变回调
 const apartmentChangeCallback = async () => {
-  console.log('公寓改变')
+  console.log('门店改变')
 }
-// 公寓清除回调
+// 门店清除回调
 const apartmentClearCallback = () => {
-  console.log('清空公寓')
-  areaInfo.apartmentId = ''
-  proTable.value!.searchParam.apartmentId = ''
+  console.log('清空门店')
+  areaInfo.storeId = ''
+  proTable.value!.searchParam.storeId = ''
 }
 //#endregion
 
@@ -438,7 +446,7 @@ const dataCallback = (data: any) => {
 // 查看
 const editHandle = (row: AgreementInfoInterface) => {
   router.push({
-    path: '/rentManagement/agreement/addOrEditAgreement',
+    path: '/orderManagement/order/addOrEditOrder',
     query: {
       id: row.id,
     },
@@ -447,7 +455,7 @@ const editHandle = (row: AgreementInfoInterface) => {
 // 新增
 const addHandle = () => {
   router.push({
-    path: '/rentManagement/agreement/addOrEditAgreement',
+    path: '/orderManagement/order/addOrEditOrder',
   })
 }
 // 删除
@@ -455,37 +463,47 @@ const deleteHandle = async (row: AgreementInfoInterface) => {
   await useHandleData(
     deleteAgreementInfoById,
     row.id,
-    `删除${row.name + row.apartmentInfo.name + row.roomInfo.roomNumber}房间`,
+    `删除${row.name + row.studyStore.name + row.seat.seatCode}座位`,
   )
   // 修改row
   proTable.value?.getTableList()
 }
-// 取消租约
+// 取消订单
 const cancelLeaseHandle = async (row: AgreementInfoInterface) => {
   await useHandleData(
     updateAgreementStatusById,
     { id: row.id, status: AgreementStatus.CANCELLED },
-    `取消租约`,
+    `取消订单`,
   )
   // 修改row
   proTable.value?.getTableList()
 }
-// 确认续约
+// 确认预订
+const confirmBookingHandle = async (row: AgreementInfoInterface) => {
+  await useHandleData(
+    updateAgreementStatusById,
+    { id: row.id, status: AgreementStatus.SIGNED },
+    `确认预订`,
+  )
+  // 修改row
+  proTable.value?.getTableList()
+}
+// 确认续期
 const confirmLeaseHandle = async (row: AgreementInfoInterface) => {
   await useHandleData(
     updateAgreementStatusById,
     { id: row.id, status: AgreementStatus.SIGNED },
-    `确认续约`,
+    `确认续期`,
   )
   // 修改row
   proTable.value?.getTableList()
 }
-// 确认退租
+// 确认签退
 const confirmThrowLeaseHandle = async (row: AgreementInfoInterface) => {
   await useHandleData(
     updateAgreementStatusById,
     { id: row.id, status: AgreementStatus.CONFIRMED },
-    `确认退租`,
+    `确认签退`,
   )
   // 修改row
   proTable.value?.getTableList()

@@ -1,7 +1,7 @@
-// 分页查询公寓信息列表
+// 分页查询门店信息列表
 import { ReqPage } from '@/api/types'
 import { UploadFile } from 'element-plus/es/components/upload/src/upload'
-//#region <公寓>
+//#region <门店>
 export interface ApartmentListQueryInterface extends ReqPage {
   // 省份id
   provinceId?: number | string
@@ -24,20 +24,22 @@ export interface ApartmentInterface {
   latitude: number | string
   longitude: number | string
   phone: string
+  businessHours: string
+  seatCount: number
   isRelease: string | number
-  totalRoomCount: number
-  freeRoomCount: number
-  // 	公寓配套id
-  facilityInfoIds?: number[]
-  // 	公寓配套信息
-  facilityInfoList?: FacilityInfoInterface[]
-  // 	公寓标签id
-  labelIds?: number[]
-  // 公寓标签信息
-  labelInfoList?: LabelInfoInterface[]
-  // 	公寓杂费值id
+  totalSeatCount: number
+  freeSeatCount: number
+  // 	门店配套id
+  seatFacilityIds?: number[]
+  // 	门店配套信息
+  seatFacilityList?: FacilityInfoInterface[]
+  // 	门店标签id
+  storeLabelIds?: number[]
+  // 门店标签信息
+  storeLabelList?: LabelInfoInterface[]
+  // 	门店杂费值id
   feeValueIds?: number[]
-  // 	公寓杂费值信息
+  // 	门店杂费值信息
   feeValueVoList?: FeeInfoInterface['feeValueList']
   // 图片信息
   graphVoList?:
@@ -92,8 +94,8 @@ export interface TreeData {
   children?: TreeData[]
 }
 //#endregion
-//#region <房间>
-// 房间请求参数
+//#region <座位>
+// 座位请求参数
 export interface RoomListQueryInterface extends ReqPage {
   // 省份id
   provinceId?: number | string
@@ -101,25 +103,29 @@ export interface RoomListQueryInterface extends ReqPage {
   cityId?: number | string
   // 区域id
   districtId?: number | string
-  // 公寓id
-  apartmentId?: number | string
+  // 门店id
+  storeId?: number | string
 }
-// 房间的信息
+// 座位的信息
 export interface RoomInterface {
   id: number | string
-  roomNumber: number | string
-  rent: number | string
-  apartmentId: number | string
+  seatCode: number | string
+  price: number | string
+  storeId: number | string
+  seatType: string
+  hasPower: boolean
+  hasLight: boolean
+  isQuiet: boolean
   isRelease: string | number
   leaseEndDate: string
   isCheckIn: boolean
-  apartmentInfo: Omit<ApartmentInterface, 'totalRoomCount' | 'freeRoomCount'>
+  studyStore: Omit<ApartmentInterface, 'totalSeatCount' | 'freeSeatCount'>
   // 	属性信息列表
   attrValueVoList?: any[]
-  // 	公寓配套信息
-  facilityInfoList?: FacilityInfoInterface[]
-  // 公寓标签信息
-  labelInfoList?: LabelInfoInterface[]
+  // 	门店配套信息
+  seatFacilityList?: FacilityInfoInterface[]
+  // 门店标签信息
+  storeLabelList?: LabelInfoInterface[]
   // 	支付方式列表
   paymentTypeList?: PaymentInfoInterface[]
   // 可选租期列表
@@ -132,19 +138,23 @@ export interface RoomInterface {
       }[]
     | UploadFile[]
 }
-// 保存房间的信息
+// 保存座位的信息
 export interface SaveRoomInterface {
   id: number | string
-  roomNumber: string
-  rent: number | string
-  apartmentId: number | string
+  seatCode: string
+  price: number | string
+  storeId: number | string
+  seatType: string
+  hasPower: boolean
+  hasLight: boolean
+  isQuiet: boolean
   isRelease: string | number
   // 	属性信息列表
   attrValueIds: number[]
   // 	配套id
-  facilityInfoIds: number[]
+  seatFacilityIds: number[]
   // 	标签信息列表
-  labelInfoIds: number[]
+  storeLabelIds: number[]
   // 	支付方式列表
   paymentTypeIds: number[]
   // 可选租期列表

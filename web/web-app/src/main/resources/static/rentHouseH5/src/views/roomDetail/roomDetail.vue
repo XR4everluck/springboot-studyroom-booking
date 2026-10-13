@@ -16,13 +16,13 @@
         </van-swipe-item>
       </van-swipe>
 
-      <!--  房间的信息-->
+      <!--  座位的信息-->
       <div class="card">
         <div class="">
           <!--      标题-->
           <div class="font-bold">
             {{
-              `${roomDetailInfo.apartmentItemVo.name} ${roomDetailInfo.roomNumber}房间`
+              `${roomDetailInfo.storeItemVo.name} ${roomDetailInfo.seatCode}座位`
             }}
           </div>
           <!--      标签-->
@@ -30,7 +30,7 @@
             <van-tag
               class="last:mr-0 mr-[5px]"
               plain
-              v-for="item in roomDetailInfo.labelInfoList"
+              v-for="item in roomDetailInfo.storeLabelList"
               :key="item.id"
               type="primary"
               >{{ item.name }}
@@ -40,7 +40,7 @@
           <div>
             <span class="text-red-500 text-[16px]">￥</span>
             <span class="text-red-500 text-[18px]"
-              >{{ roomDetailInfo.rent }}/月</span
+              >{{ roomDetailInfo.price }}/时</span
             >
           </div>
         </div>
@@ -84,7 +84,7 @@
             <van-col
               span="4"
               class="my-[3px]"
-              v-for="item in roomDetailInfo.facilityInfoList"
+              v-for="item in roomDetailInfo.seatFacilityList"
               :key="item.id"
             >
               <div class="flex flex-col justify-center items-center">
@@ -102,7 +102,7 @@
         <div class="base-info-title py-[4px]">位置详情</div>
         <div class="my-[5px]">
           <div class="text-xs mb-[5px] w-[300px]">
-            {{ roomDetailInfo.apartmentItemVo.addressDetail }}
+            {{ roomDetailInfo.storeItemVo.addressDetail }}
           </div>
         </div>
         <!--        地图容器-->
@@ -159,11 +159,11 @@
         </div>
       </div>
       <div class="card">
-        <div class="base-info-title py-[4px]">可选租期</div>
+        <div class="base-info-title py-[4px]">可选预订时长</div>
         <div class="my-[5px]">
           <van-row gutter="10">
             <van-col span="12">
-              <van-tag type="primary" size="medium">可选租期</van-tag>
+              <van-tag type="primary" size="medium">可选预订时长</van-tag>
             </van-col>
             <van-col span="12">
               <van-tag type="primary" size="medium">说明</van-tag>
@@ -186,13 +186,13 @@
       <div class="card">
         <div class="base-info-title py-[4px]">所属自习室门店</div>
         <div class="my-[5px] pb-[50px] px-[10px]">
-          <ApartmentCard :data="roomDetailInfo.apartmentItemVo"></ApartmentCard>
+          <ApartmentCard :data="roomDetailInfo.storeItemVo"></ApartmentCard>
         </div>
       </div>
-      <!--    预约看房-->
+      <!--    到店体验-->
       <van-sticky :offset-bottom="0" position="bottom">
         <van-button type="primary" block @click="appointmentToViewHandle"
-          >预约看房</van-button
+          >到店体验</van-button
         >
       </van-sticky>
     </div>
@@ -208,9 +208,9 @@ import ApartmentCard from "@/components/ApartmentCard/ApartmentCard.vue";
 import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const route = useRoute();
-// 房间的详情信息
+// 座位的详情信息
 const roomDetailInfo = ref<RoomDetailInterface>({} as RoomDetailInterface);
-// 获取房间的详情信息
+// 获取座位的详情信息
 const getRoomDetailHandle = async () => {
   const { data } = await getRoomDetailById(route.query.id as string);
   roomDetailInfo.value = data;
@@ -239,22 +239,22 @@ function initMapPage(opts?: { lng: number; lat: number }) {
   map.add(marker);
   map.setFitView();
 }
-// 预约看房
+// 到店体验
 const appointmentToViewHandle = () => {
   console.log("appointmentToViewHandle");
   router.push({
-    path: "/appointment",
-    query: { apartmentId: roomDetailInfo.value.apartmentId }
+    path: "/visit",
+    query: { storeId: roomDetailInfo.value.storeId }
   });
 };
 //#endregion
 onMounted(async () => {
   await getRoomDetailHandle();
-  console.log(roomDetailInfo.value.apartmentItemVo.longitude);
+  console.log(roomDetailInfo.value.storeItemVo.longitude);
   await initMap();
   initMapPage({
-    lng: +roomDetailInfo.value.apartmentItemVo.longitude,
-    lat: +roomDetailInfo.value.apartmentItemVo.latitude
+    lng: +roomDetailInfo.value.storeItemVo.longitude,
+    lat: +roomDetailInfo.value.storeItemVo.latitude
   });
 });
 </script>

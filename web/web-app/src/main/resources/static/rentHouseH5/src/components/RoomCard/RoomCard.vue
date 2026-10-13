@@ -5,7 +5,7 @@
       <slot name="title">
         <!--      标题-->
         <span class="text-[14px] font-bold">{{
-          `${data.apartmentInfo?.name || ""} ${data.roomNumber}房间`
+          `${data.studyStore?.name || ""} ${data.seatCode}座位`
         }}</span>
       </slot>
     </template>
@@ -14,9 +14,9 @@
       <slot name="desc">
         <div>
           <span class="text-[12px] --van-gray-6">{{
-            `${data?.apartmentInfo?.provinceName || ""} ${
-              data?.apartmentInfo?.cityName || ""
-            } ${data?.apartmentInfo?.districtName || ""}`
+            `${data?.studyStore?.provinceName || ""} ${
+              data?.studyStore?.cityName || ""
+            } ${data?.studyStore?.districtName || ""}`
           }}</span>
         </div>
       </slot>
@@ -49,7 +49,7 @@
         <van-tag
           class="last:mr-0 mr-[5px]"
           plain
-          v-for="item in data?.labelInfoList"
+          v-for="item in data?.storeLabelList"
           :key="item.id"
           type="primary"
           >{{ item.name }}
@@ -67,25 +67,25 @@ import { useRouter } from "vue-router";
 // export interface RoomCardDataProps
 //   extends Pick<
 //     RoomInterface,
-//     "id" | "roomNumber" | "rent" | "graphVoList" | "labelInfoList"
+//     "id" | "seatCode" | "rent" | "graphVoList" | "storeLabelList"
 //   > {
-//   apartmentInfo: Pick<
-//     RoomInterface["apartmentInfo"],
+//   studyStore: Pick<
+//     RoomInterface["studyStore"],
 //     "name" | "provinceName" | "cityName" | "districtName"
 //   >;
 // }
 const router = useRouter();
 const props = defineProps({
-  // 房间的信息数据
+  // 座位的信息数据
   data: {
     type: Object as PropType<RoomInterface>,
     default: () => ({}),
     readOnly: true
   }
 });
-// 跳转到房间的详情页面
+// 跳转到座位的详情页面
 const goRoomDetail = () => {
-  router.push({ path: "/roomDetail", query: { id: props.data.id } });
+  router.push({ path: "/seatDetail", query: { id: props.data.id } });
 };
 </script>
 

@@ -6,6 +6,6 @@ import type { DictionaryInterfaceRes } from "@/api/template/types";
  */
 export function getDictionary() {
   return http.get<DictionaryInterfaceRes[]>(
-    `/app/apartment/getDetailById?id=9`
+    `/app/store/getDetailById?id=9`
   );
 }

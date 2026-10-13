@@ -9,7 +9,7 @@
       >
         <!--      title-->
         <template #title>
-          <h2 class="text-[15px] font-bold">{{ item.apartmentName }}</h2>
+          <h2 class="text-[15px] font-bold">{{ item.storeName }}</h2>
         </template>
         <!--    thumb-->
         <template #thumb>
@@ -75,7 +75,7 @@ const getAppointmentListHandle = async () => {
 // 跳转到自习室门店的详情页面
 const goAppointmentDetail = (item: AppointmentItemInterface) => {
   router.push({
-    path: "/appointment",
+    path: "/visit",
     query: { appointmentId: item.id }
   });
 };

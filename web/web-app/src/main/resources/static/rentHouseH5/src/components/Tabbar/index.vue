@@ -27,7 +27,7 @@ const active = ref(0);
 // const tabBarData = reactive([
 //   {
 //     icon: "search",
-//     title: "找房",
+//     title: "找座位",
 //     to: {
 //       path: "/search"
 //     }
@@ -41,9 +41,9 @@ const active = ref(0);
 //   },
 //   {
 //     icon: "home-o",
-//     title: "我的房间",
+//     title: "我的座位",
 //     to: {
-//       path: "/myRoom"
+//       path: "/mySeat"
 //     }
 //   },
 //   {

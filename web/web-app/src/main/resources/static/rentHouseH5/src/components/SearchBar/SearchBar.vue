@@ -208,9 +208,9 @@ const formData = ref<Omit<RoomListQueryInterface, "current" | "size">>({
   provinceId: "",
   cityId: "",
   districtId: "",
-  minRent: "",
-  //   最大租金
-  maxRent: "",
+  minPrice: "",
+  //   最大单价
+  maxPrice: "",
   //   支付方式
   paymentTypeId: "",
   //   	价格排序方式,可用值:desc,asc
@@ -426,8 +426,8 @@ function rentClickHandle(item: LabelValueInterface<(number | string)[]>) {
   rentInfoList.value.forEach(item2 => {
     if (item.label === item2.label) {
       item.isCheck = !item.isCheck;
-      formData.value.minRent = item.isCheck ? item.value[0] : "";
-      formData.value.maxRent = item.isCheck ? item.value[1] : "";
+      formData.value.minPrice = item.isCheck ? item.value[0] : "";
+      formData.value.maxPrice = item.isCheck ? item.value[1] : "";
     } else {
       item2.isCheck = false;
     }

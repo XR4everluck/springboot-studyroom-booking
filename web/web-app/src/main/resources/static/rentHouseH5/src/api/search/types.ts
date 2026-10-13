@@ -10,10 +10,10 @@ export interface RoomListQueryInterface extends ReqPage {
   cityId: number | string;
   // 区域id
   districtId: number | string;
-  //   最小租金
-  minRent: number | string;
-  //   最大租金
-  maxRent: number | string;
+  //   最小单价
+  minPrice: number | string;
+  //   最大单价
+  maxPrice: number | string;
   //   支付方式
   paymentTypeId: number | string;
   //   	价格排序方式,可用值:desc,asc
@@ -39,22 +39,22 @@ export interface PaymentInfoInterface {
   additionalInfo: string;
   isCheck?: boolean;
 }
-// 房间的信息
+// 座位的信息
 export interface RoomInterface {
   id: number | string;
-  roomNumber: number | string;
+  seatCode: number | string;
   rent: number | string;
-  apartmentId: number | string;
+  storeId: number | string;
   isRelease: string | number;
   leaseEndDate: string;
   checkInStatus: string;
-  apartmentInfo: ApartmentInterface;
+  studyStore: ApartmentInterface;
   // 	属性信息列表
   attrValueVoList?: any[];
   // 	自习室门店配套信息
-  facilityInfoList?: FacilityInfoInterface[];
+  seatFacilityList?: FacilityInfoInterface[];
   // 自习室门店标签信息
-  labelInfoList?: LabelInfoInterface[];
+  storeLabelList?: LabelInfoInterface[];
   // 	支付方式列表
   paymentTypeList?: PaymentInfoInterface[];
   // 可选租期列表
@@ -79,14 +79,16 @@ export interface ApartmentInterface {
   latitude: number | string;
   longitude: number | string;
   phone: string;
+  businessHours?: string;
+  seatCount?: number;
   isRelease: string | number;
-  minRent?: number | string;
+  minPrice?: number | string;
   // 	自习室门店配套id
-  facilityInfoIds?: number[];
+  seatFacilityIds?: number[];
   // 	自习室门店配套信息
-  facilityInfoList?: FacilityInfoInterface[];
+  seatFacilityList?: FacilityInfoInterface[];
   // 自习室门店标签信息
-  labelInfoList?: LabelInfoInterface[];
+  storeLabelList?: LabelInfoInterface[];
   // 	自习室门店杂费值信息
   feeValueVoList?: FeeInfoInterface["feeValueList"];
   // 图片信息
@@ -114,22 +116,26 @@ export interface TermInfoInterface {
   unit: string;
   monthCount: string;
 }
-// 房间 详情信息
+// 座位 详情信息
 export interface RoomDetailInterface {
   id: number | string;
-  roomNumber: number | string;
-  rent: number | string;
-  apartmentId: number | string;
+  seatCode: number | string;
+  price: number | string;
+  storeId: number | string;
+  seatType?: string;
+  hasPower?: boolean;
+  hasLight?: boolean;
+  isQuiet?: boolean;
   isRelease: string | number;
   leaseEndDate: string;
   checkInStatus: string;
-  apartmentItemVo: ApartmentInterface;
+  storeItemVo: ApartmentInterface;
   // 	属性信息列表
   attrValueVoList?: AttrValueInfoInterface[];
   // 	自习室门店配套信息
-  facilityInfoList?: FacilityInfoInterface[];
+  seatFacilityList?: FacilityInfoInterface[];
   // 自习室门店标签信息
-  labelInfoList?: LabelInfoInterface[];
+  storeLabelList?: LabelInfoInterface[];
   // 	支付方式列表
   paymentTypeList?: PaymentInfoInterface[];
   // 可选租期列表
@@ -155,7 +161,7 @@ export interface FeeValueInfoInterface {
   feeKeyId: number | string;
   feeKeyName?: number | string;
 }
-// 房间基本信息
+// 座位基本信息
 export interface AttrValueInfoInterface {
   id: number | string;
   name: string;
@@ -169,8 +175,8 @@ export interface AppointmentQueryInterface {
   name: string;
   // phone	用户手机号码
   phone: string;
-  // apartmentId	自习室门店id
-  apartmentId: number | string;
+  // storeId	自习室门店id
+  storeId: number | string;
   // appointmentTime	预约时间
   appointmentTime: string;
   // 	备注信息
@@ -179,12 +185,12 @@ export interface AppointmentQueryInterface {
   appointmentStatus?: AppointmentStatus;
 }
 export interface AppointmentInfoInterface extends AppointmentQueryInterface {
-  apartmentItemVo: ApartmentInterface;
+  storeItemVo: ApartmentInterface;
 }
 // 预约列表
 export interface AppointmentItemInterface {
   id: number | string;
-  apartmentName: string;
+  storeName: string;
   graphVoList: {
     url: string;
     name: number;
@@ -192,65 +198,63 @@ export interface AppointmentItemInterface {
   appointmentTime: string;
   appointmentStatus: AppointmentStatus;
 }
-// 租约列表
+// 订单列表
 export interface AgreementItemInterface {
   id: number | string;
-  roomGraphVoList: {
+  seatGraphVoList: {
     url: string;
     name: number;
   }[];
-  apartmentName: string;
-  roomNumber: number | string;
+  storeName: string;
+  seatCode: number | string;
   leaseStatus: number | string;
   leaseStartDate: string;
   leaseEndDate: string;
   rent: number | string;
   sourceType: AgreementSource;
 }
-// 租约请求接口
+// 订单请求接口
 export interface AgreementQueryInterface {
   id?: number | string;
-  // 	承租人姓名
+  // 	预订人姓名
   name: string;
-  // phone	承租人手机号码
+  // phone	预订人手机号码
   phone: string;
-  // identificationNumber	承租人身份证号码
+  // identificationNumber	预订人身份证号码
   identificationNumber: string;
-  // apartmentId	签约自习室门店id
-  apartmentId: number | string;
-  // roomId	签约房间id
-  roomId: number | string;
-  // leaseStartDate	租约开始日期
-  leaseStartDate: string;
-  // leaseEndDate	租约结束日期
-  leaseEndDate: string;
-  // leaseTermId	租期id
+  // storeId	预订自习室门店id
+  storeId: number | string;
+  // seatId	预订座位id
+  seatId: number | string;
+  // startDate	预订开始日期
+  startDate: string;
+  // endDate	预订结束日期
+  endDate: string;
+  // leaseTermId	预订时长id
   leaseTermId: number | string;
-  // rent	租金（元/月）
-  rent: number | string;
-  // deposit	押金（元）
-  deposit: number | string;
+  // totalAmount	总价（元）
+  totalAmount: number | string;
   // paymentTypeId	支付类型id
   paymentTypeId: number | string;
-  // status	租约状态,可用值:1,2,3,4,5,6
+  // status	订单状态,可用值:1,2,3,4,5,6
   status: AgreementStatus;
-  // sourceType	租约来源,可用值:1,2
+  // sourceType	订单来源,可用值:1,2
   sourceType: AgreementSource;
   // additionalInfo	备注信息
   additionalInfo: string;
 }
-// 租约详情
+// 订单详情
 export interface AgreementDetailInterface extends AgreementQueryInterface {
-  apartmentName: string;
-  roomNumber: string;
+  storeName: string;
+  seatCode: string;
   paymentTypeName: string;
   leaseTermMonthCount: number;
   leaseTermUnit: string;
-  apartmentGraphVoList: {
+  storeGraphVoList: {
     url: string;
     name: number;
   }[];
-  roomGraphVoList: {
+  seatGraphVoList: {
     url: string;
     name: number;
   }[];
@@ -261,13 +265,13 @@ export interface HistoryItemInterface {
   userId: number | string;
   roomId: number | string;
   browseTime: string;
-  roomNumber: string;
+  seatCode: string;
   rent: number | string;
-  roomGraphVoList: {
+  seatGraphVoList: {
     url: string;
     name: number;
   }[];
-  apartmentName: string;
+  storeName: string;
   provinceName: string;
   cityName: string;
   districtName: string;

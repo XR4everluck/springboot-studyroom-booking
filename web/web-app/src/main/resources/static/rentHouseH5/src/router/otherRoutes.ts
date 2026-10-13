@@ -14,17 +14,17 @@ import type { RouteRecordRaw } from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    name: "RoomDetail",
-    path: "/roomDetail",
+    name: "SeatDetail",
+    path: "/seatDetail",
     component: () => import("@/views/roomDetail/roomDetail.vue"),
     meta: {
-      title: "房间详情",
+      title: "座位详情",
       noCache: true
     }
   },
   {
-    name: "ApartmentDetail",
-    path: "/apartmentDetail",
+    name: "StoreDetail",
+    path: "/storeDetail",
     component: () => import("@/views/apartmentDetail/apartmentDetail.vue"),
     meta: {
       title: "自习室门店详情",
@@ -32,17 +32,17 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    name: "Appointment",
-    path: "/appointment",
+    name: "Visit",
+    path: "/visit",
     component: () => import("@/views/appointment/appointment.vue"),
     meta: {
-      title: "预约看房",
+      title: "到店体验",
       noCache: true
     }
   },
   {
-    name: "MyAppointment",
-    path: "/myAppointment",
+    name: "MyVisit",
+    path: "/myVisit",
     component: () => import("@/views/myAppointment/myAppointment.vue"),
     meta: {
       title: "我的预约",
@@ -50,20 +50,20 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    name: "MyAgreement",
-    path: "/myAgreement",
+    name: "MyOrder",
+    path: "/myOrder",
     component: () => import("@/views/myAgreement/myAgreement.vue"),
     meta: {
-      title: "我的租约",
+      title: "我的订单",
       noCache: true
     }
   },
   {
-    name: "Agreement",
-    path: "/agreement",
+    name: "Order",
+    path: "/order",
     component: () => import("@/views/agreement/agreement.vue"),
     meta: {
-      title: "租约详情",
+      title: "订单详情",
       noCache: true
     }
   },

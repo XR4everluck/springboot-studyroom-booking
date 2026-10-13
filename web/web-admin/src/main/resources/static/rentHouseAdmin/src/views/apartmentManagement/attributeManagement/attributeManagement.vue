@@ -4,7 +4,7 @@
     <SupportFacility></SupportFacility>
     <!--    标签信息管理-->
     <SupportLabel class="m-t-20"></SupportLabel>
-    <!--    房间基本信息管理-->
+    <!--    座位基本信息管理-->
     <SupportRoomBase class="m-t-20"></SupportRoomBase>
     <!--    杂费信息管理-->
     <SupportFee class="m-t-20"></SupportFee>

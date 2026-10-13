@@ -10,7 +10,7 @@
         <!--      title-->
         <template #title>
           <h2 class="text-[15px] font-bold">
-            {{ `${item.apartmentName} ${item.roomNumber}房间` }}
+            {{ `${item.storeName} ${item.seatCode}座位` }}
           </h2>
         </template>
         <!--      desc-->
@@ -31,7 +31,7 @@
         <template #thumb>
           <van-image
             class="w-full h-full object-cover"
-            :src="item.roomGraphVoList?.[0]?.url || '失败'"
+            :src="item.seatGraphVoList?.[0]?.url || '失败'"
           >
             <template v-slot:error>加载失败</template>
             <template v-slot:loading>
@@ -105,7 +105,7 @@
                   isAdd: true
                 })
               "
-              >续约</van-button
+              >续期</van-button
             >
             <van-button
               v-if="item.leaseStatus === AgreementStatus.RENEW_TO_BE_CONFIRMED"
@@ -137,7 +137,7 @@
               plain
               type="danger"
               @click="rentRefundHandle(item)"
-              >提前退租</van-button
+              >提前签退</van-button
             >
           </div>
         </template>
@@ -161,28 +161,28 @@ import {
 } from "@/enums/constEnums";
 
 const router = useRouter();
-// 租约列表
+// 订单列表
 const agreementList = ref<AgreementItemInterface[]>();
-// 获取租约列表
+// 获取订单列表
 const getAgreementListHandle = async () => {
   const { data } = await getMyAgreementList();
   agreementList.value = data;
 };
-// 跳转到租约详情
+// 跳转到订单详情
 const goAgreementDetail = (
   item: AgreementItemInterface,
   query: object = {}
 ) => {
   router.push({
-    path: "/agreement",
+    path: "/order",
     query: { id: item.id, ...query }
   });
 };
-// 提前退租
+// 提前签退
 const rentRefundHandle = (item: AgreementItemInterface) => {
   showConfirmDialog({
-    title: "提前退租",
-    message: "确定要提前退租吗？",
+    title: "提前签退",
+    message: "确定要提前签退吗？",
     cancelButtonText: "取消",
     confirmButtonText: "确定"
   })
@@ -196,7 +196,7 @@ const rentRefundHandle = (item: AgreementItemInterface) => {
         type: "success",
         message: "操作成功"
       });
-      //   修改当前租约状态
+      //   修改当前订单状态
       item.leaseStatus = AgreementStatus.TO_BE_CONFIRMED;
     })
     .catch(() => {});
