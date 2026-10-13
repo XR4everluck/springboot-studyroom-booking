@@ -23,7 +23,7 @@
                v.unit       value_unit,
                v.fee_key_id key_id
         from fee_key k
-                 left join booking.fee_value v on k.id = v.fee_key_id and v.is_deleted = 0
+                 left join fee_value v on k.id = v.fee_key_id and v.is_deleted = 0
         where k.is_deleted = 0
     </select>
 </mapper>

@@ -12,7 +12,7 @@
                fk.id,
                fk.name fee_key_name
         from fee_value fv
-                 join booking.fee_key fk on fv.fee_key_id = fk.id
+                 join fee_key fk on fv.fee_key_id = fk.id
         where fk.is_deleted = 0
           and fv.is_deleted = 0
           and fv.id in (select fee_value_id
