@@ -70,7 +70,7 @@
               group by store_id) cc
              on ai.id = cc.store_id
     </select>
-    <select id="selectListByApartmentId" resultType="com.yourname.studyroom.model.entity.StoreLabel">
+    <select id="selectListByApartmentId" resultType="com.yourname.studyroom.model.entity.LabelInfo">
 
 
         select id, type, name

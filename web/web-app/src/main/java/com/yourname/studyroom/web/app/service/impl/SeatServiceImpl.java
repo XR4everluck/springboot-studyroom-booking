@@ -46,10 +46,10 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     LeaseTermMapper leaseTermMapper;
 
     @Autowired
-    SeatFacilityMapper seatFacilityMapper;
+    FacilityInfoMapper facilityInfoMapper;
 
     @Autowired
-    StoreLabelMapper storeLabelMapper;
+    LabelInfoMapper labelInfoMapper;
 
     @Autowired
     PaymentTypeMapper paymentTypeMapper;
@@ -93,9 +93,9 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             //3.查询租期
             List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
             //4.查询配套
-            List<SeatFacility> seatFacilityList = seatFacilityMapper.selectListByRoomId(id);
+            List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
             //5.查询标签
-            List<StoreLabel> storeLabelList = storeLabelMapper.selectListByRoomId(id);
+            List<LabelInfo> labelInfoList = labelInfoMapper.selectListByRoomId(id);
             //6.查询支付方式
             List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
             //7.查询基本属性
@@ -111,8 +111,8 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             roomDetailVo.setStoreItemVo(storeItemVo);
             roomDetailVo.setGraphVoList(graphVoList);
             roomDetailVo.setAttrValueVoList(attrValueVoList);
-            roomDetailVo.setSeatFacilityList(seatFacilityList);
-            roomDetailVo.setStoreLabelList(storeLabelList);
+            roomDetailVo.setFacilityInfoList(facilityInfoList);
+            roomDetailVo.setLabelInfoList(labelInfoList);
             roomDetailVo.setPaymentTypeList(paymentTypeList);
             roomDetailVo.setFeeValueVoList(feeValueVoList);
             roomDetailVo.setLeaseTermList(leaseTermList);

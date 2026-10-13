@@ -12,7 +12,7 @@
                     select="selectGraphListByRoomID"
                     column="id"
         />
-        <collection property="storeLabelList" ofType="com.yourname.studyroom.model.entity.StoreLabel"
+        <collection property="labelInfoList" ofType="com.yourname.studyroom.model.entity.LabelInfo"
                     select="selectLabelListByRoomId"
                     column="id"
         />
@@ -78,7 +78,7 @@
           and item_id = #{id}
     </select>
 
-    <select id="selectLabelListByRoomId" resultType="com.yourname.studyroom.model.entity.StoreLabel">
+    <select id="selectLabelListByRoomId" resultType="com.yourname.studyroom.model.entity.LabelInfo">
         select
             id,
             type,

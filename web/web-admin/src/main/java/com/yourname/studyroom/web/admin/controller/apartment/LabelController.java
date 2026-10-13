@@ -4,9 +4,9 @@ package com.yourname.studyroom.web.admin.controller.apartment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.model.entity.StoreLabel;
+import com.yourname.studyroom.model.entity.LabelInfo;
 import com.yourname.studyroom.model.enums.ItemType;
-import com.yourname.studyroom.web.admin.service.StoreLabelService;
+import com.yourname.studyroom.web.admin.service.LabelInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,34 +20,34 @@ import java.util.List;
 public class LabelController {
 
     @Autowired
-    StoreLabelService storeLabelService;
+    LabelInfoService labelInfoService;
 
     /**
      * （根据类型）查询标签列表
      *
      * @param type
-     * @return Result<List < StoreLabel>>
+     * @return Result<List < LabelInfo>>
      */
     @Operation(summary = "（根据类型）查询标签列表")
     @GetMapping("list")
-    public Result<List<StoreLabel>> labelList(@RequestParam(required = false) ItemType type) {
+    public Result<List<LabelInfo>> labelList(@RequestParam(required = false) ItemType type) {
         System.out.println(type);
-        LambdaQueryWrapper<StoreLabel> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(type != null, StoreLabel::getType, type);
-        List<StoreLabel> labelInfos = storeLabelService.list(queryWrapper);
+        LambdaQueryWrapper<LabelInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(type != null, LabelInfo::getType, type);
+        List<LabelInfo> labelInfos = labelInfoService.list(queryWrapper);
         return Result.ok(labelInfos);
     }
 
     /**
      * 新增或修改标签信息
      *
-     * @param storeLabel
+     * @param labelInfo
      * @return Result
      */
     @Operation(summary = "新增或修改标签信息")
     @PostMapping("saveOrUpdate")
-    public Result saveOrUpdateLabel(@RequestBody StoreLabel storeLabel) {
-        storeLabelService.saveOrUpdate(storeLabel);
+    public Result saveOrUpdateLabel(@RequestBody LabelInfo labelInfo) {
+        labelInfoService.saveOrUpdate(labelInfo);
         return Result.ok();
     }
 
@@ -60,7 +60,7 @@ public class LabelController {
     @Operation(summary = "根据id删除标签信息")
     @DeleteMapping("deleteById")
     public Result deleteLabelById(@RequestParam Long id) {
-        storeLabelService.removeById(id);
+        labelInfoService.removeById(id);
         return Result.ok();
     }
 }

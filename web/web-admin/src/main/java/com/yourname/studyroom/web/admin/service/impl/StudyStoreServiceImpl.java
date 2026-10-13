@@ -108,7 +108,7 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
             graphInfoService.saveBatch(graphInfoList);
         }
         //2.插入配套列表
-        List<Long> facilityInfoIdList = apartmentSubmitVo.getSeatFacilityIds();
+        List<Long> facilityInfoIdList = apartmentSubmitVo.getFacilityInfoIds();
         if (!CollectionUtils.isEmpty(facilityInfoIdList)) {
             ArrayList<ApartmentFacility> apartmentFacilityList = new ArrayList<>();
             for (Long facilityInfoId : facilityInfoIdList) {
@@ -120,7 +120,7 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
             apartmentFacilityService.saveBatch(apartmentFacilityList);
         }
         //3.插入标签列表
-        List<Long> labelIdList = apartmentSubmitVo.getStoreLabelIds();
+        List<Long> labelIdList = apartmentSubmitVo.getLabelInfoIds();
         if (!CollectionUtils.isEmpty(labelIdList)) {
             ArrayList<ApartmentLabel> apartmentLabelList = new ArrayList<>();
             for (Long lableId : labelIdList) {
@@ -171,17 +171,17 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
         //2.查询配套列表
         List<GraphVo> graphVoList = graphInfoMapper.selectByItemTypeAndId(ItemType.APARTMENT, id);
         //3.查询标签列表
-        List<StoreLabel> storeLabelList = studyStoreMapper.selectListByApartmentId(id);
+        List<LabelInfo> labelInfoList = studyStoreMapper.selectListByApartmentId(id);
         //4.查询配套列表
-        List<SeatFacility> seatFacilityList = apartmentFacilityMapper.selectListByApartmentId(id);
+        List<FacilityInfo> facilityInfoList = apartmentFacilityMapper.selectListByApartmentId(id);
         //5.查询杂费列表
         List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(id);
         //6.组装结果
         ApartmentDetailVo apartmentDetailVo = new ApartmentDetailVo();
         BeanUtils.copyProperties(studyStore, apartmentDetailVo);
         apartmentDetailVo.setGraphVoList(graphVoList);
-        apartmentDetailVo.setStoreLabelList(storeLabelList);
-        apartmentDetailVo.setSeatFacilityList(seatFacilityList);
+        apartmentDetailVo.setLabelInfoList(labelInfoList);
+        apartmentDetailVo.setFacilityInfoList(facilityInfoList);
         apartmentDetailVo.setFeeValueVoList(feeValueVoList);
         return apartmentDetailVo;
     }

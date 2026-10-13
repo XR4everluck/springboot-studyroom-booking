@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yourname.studyroom.web.app.mapper.SeatFacilityMapper">
+<mapper namespace="com.yourname.studyroom.web.app.mapper.FacilityInfoMapper">
 
-    <select id="selectListByRoomId" resultType="com.yourname.studyroom.model.entity.SeatFacility">
+    <select id="selectListByRoomId" resultType="com.yourname.studyroom.model.entity.FacilityInfo">
         select id,
                type,
                name,
@@ -16,7 +16,7 @@
                      where is_deleted = 0
                        and room_id = #{id})
     </select>
-    <select id="selectListByApartmentId" resultType="com.yourname.studyroom.model.entity.SeatFacility">
+    <select id="selectListByApartmentId" resultType="com.yourname.studyroom.model.entity.FacilityInfo">
         select id,
                type,
                name,

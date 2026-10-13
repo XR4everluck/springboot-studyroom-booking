@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.admin.mapper;
 
 import com.yourname.studyroom.model.entity.StudyStore;
-import com.yourname.studyroom.model.entity.StoreLabel;
+import com.yourname.studyroom.model.entity.LabelInfo;
 import com.yourname.studyroom.model.enums.BookingStatus;
 import com.yourname.studyroom.web.admin.vo.apartment.ApartmentItemVo;
 import com.yourname.studyroom.web.admin.vo.apartment.ApartmentQueryVo;
@@ -21,7 +21,7 @@ public interface StudyStoreMapper extends BaseMapper<StudyStore> {
 
     IPage<ApartmentItemVo> pageItem(Page<ApartmentItemVo> page, ApartmentQueryVo queryVo);
 
-    List<StoreLabel> selectListByApartmentId(Long id);
+    List<LabelInfo> selectListByApartmentId(Long id);
 }
 
 

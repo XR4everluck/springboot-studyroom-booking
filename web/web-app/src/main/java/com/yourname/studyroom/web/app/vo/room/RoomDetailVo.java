@@ -24,10 +24,10 @@ public class RoomDetailVo extends Seat {
     private List<AttrValueVo> attrValueVoList;
 
     @Schema(description = "配套信息列表")
-    private List<SeatFacility> seatFacilityList;
+    private List<FacilityInfo> facilityInfoList;
 
     @Schema(description = "标签信息列表")
-    private List<StoreLabel> storeLabelList;
+    private List<LabelInfo> labelInfoList;
 
     @Schema(description = "支付方式列表")
     private List<PaymentType> paymentTypeList;

@@ -2,7 +2,7 @@ package com.yourname.studyroom.web.admin.mapper;
 
 import com.yourname.studyroom.model.entity.ApartmentFacility;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.yourname.studyroom.model.entity.SeatFacility;
+import com.yourname.studyroom.model.entity.FacilityInfo;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 */
 public interface ApartmentFacilityMapper extends BaseMapper<ApartmentFacility> {
 
-    List<SeatFacility> selectListByApartmentId(Long id);
+    List<FacilityInfo> selectListByApartmentId(Long id);
 }
 
 

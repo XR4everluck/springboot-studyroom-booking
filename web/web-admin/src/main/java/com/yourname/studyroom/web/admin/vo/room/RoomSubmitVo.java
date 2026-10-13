@@ -19,10 +19,10 @@ public class RoomSubmitVo extends Seat {
     private List<Long> attrValueIds;
 
     @Schema(description = "配套信息列表")
-    private List<Long> seatFacilityIds;
+    private List<Long> facilityInfoIds;
 
     @Schema(description = "标签信息列表")
-    private List<Long> storeLabelIds;
+    private List<Long> labelInfoIds;
 
     @Schema(description = "支付方式列表")
     private List<Long> paymentTypeIds;

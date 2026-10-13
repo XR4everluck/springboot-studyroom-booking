@@ -1,24 +1,27 @@
 package com.yourname.studyroom.model.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.yourname.studyroom.model.enums.ItemType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@Schema(description = "门店标签信息表")
-@TableName(value = "label_info")
+@Schema(description = "座位设施标签信息表")
+@TableName(value = "facility_info")
 @Data
-public class StoreLabel extends BaseEntity {
-
+public class FacilityInfo extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "类型")
+    @Schema(description = "设施所属对象类型")
     @TableField(value = "type")
     private ItemType type;
 
-    @Schema(description = "标签名称")
+    @Schema(description = "名称")
     @TableField(value = "name")
     private String name;
+
+    @Schema(description = "图标")
+    @TableField(value = "icon")
+    private String icon;
 
 }

@@ -1,8 +1,8 @@
 package com.yourname.studyroom.web.app.vo.apartment;
 
 import com.yourname.studyroom.model.entity.StudyStore;
-import com.yourname.studyroom.model.entity.SeatFacility;
-import com.yourname.studyroom.model.entity.StoreLabel;
+import com.yourname.studyroom.model.entity.FacilityInfo;
+import com.yourname.studyroom.model.entity.LabelInfo;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -19,10 +19,10 @@ public class ApartmentDetailVo extends StudyStore {
     private List<GraphVo> graphVoList;
 
     @Schema(description = "标签列表")
-    private List<StoreLabel> storeLabelList;
+    private List<LabelInfo> labelInfoList;
 
     @Schema(description = "配套列表")
-    private List<SeatFacility> seatFacilityList;
+    private List<FacilityInfo> facilityInfoList;
 
     @Schema(description = "座位单价最小值")
     private BigDecimal minPrice;

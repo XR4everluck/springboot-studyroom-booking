@@ -2,7 +2,7 @@ package com.yourname.studyroom.web.app.vo.apartment;
 
 
 import com.yourname.studyroom.model.entity.StudyStore;
-import com.yourname.studyroom.model.entity.StoreLabel;
+import com.yourname.studyroom.model.entity.LabelInfo;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.List;
 @Schema(description = "App端自习室门店信息")
 public class ApartmentItemVo extends StudyStore {
 
-    private List<StoreLabel> storeLabelList;
+    private List<LabelInfo> labelInfoList;
 
     private List<GraphVo> graphVoList;
 

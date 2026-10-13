@@ -61,10 +61,10 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     AttrValueMapper attrValueMapper;
 
     @Autowired
-    SeatFacilityMapper seatFacilityMapper;
+    FacilityInfoMapper facilityInfoMapper;
 
     @Autowired
-    StoreLabelMapper storeLabelMapper;
+    LabelInfoMapper labelInfoMapper;
 
     @Autowired
     PaymentTypeMapper paymentTypeMapper;
@@ -145,22 +145,22 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             roomAttrValueService.saveBatch(roomAttrValueList);
         }
 
-        //3.保存新的seatFacilityList
-        List<Long> seatFacilityIds = roomSubmitVo.getSeatFacilityIds();
-        if (!CollectionUtils.isEmpty(seatFacilityIds)) {
+        //3.保存新的facilityInfoList
+        List<Long> facilityInfoIds = roomSubmitVo.getFacilityInfoIds();
+        if (!CollectionUtils.isEmpty(facilityInfoIds)) {
             List<RoomFacility> roomFacilityList = new ArrayList<>();
-            for (Long facilityInfoId : seatFacilityIds) {
+            for (Long facilityInfoId : facilityInfoIds) {
                 RoomFacility roomFacility = RoomFacility.builder().roomId(roomSubmitVo.getId()).facilityId(facilityInfoId).build();
                 roomFacilityList.add(roomFacility);
             }
             roomFacilityService.saveBatch(roomFacilityList);
         }
 
-        //4.保存新的storeLabelList
-        List<Long> storeLabelIds = roomSubmitVo.getStoreLabelIds();
-        if (!CollectionUtils.isEmpty(storeLabelIds)) {
+        //4.保存新的labelInfoList
+        List<Long> labelInfoIds = roomSubmitVo.getLabelInfoIds();
+        if (!CollectionUtils.isEmpty(labelInfoIds)) {
             ArrayList<RoomLabel> roomLabelList = new ArrayList<>();
-            for (Long labelInfoId : storeLabelIds) {
+            for (Long labelInfoId : labelInfoIds) {
                 RoomLabel roomLabel = RoomLabel.builder().roomId(roomSubmitVo.getId()).labelId(labelInfoId).build();
                 roomLabelList.add(roomLabel);
             }
@@ -209,11 +209,11 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         //4.查询attrValueList
         List<AttrValueVo> attrvalueVoList = attrValueMapper.selectListByRoomId(id);
 
-        //5.查询seatFacilityList
-        List<SeatFacility> seatFacilityList = seatFacilityMapper.selectListByRoomId(id);
+        //5.查询facilityInfoList
+        List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
 
-        //6.查询storeLabelList
-        List<StoreLabel> storeLabelList = storeLabelMapper.selectListByRoomId(id);
+        //6.查询labelInfoList
+        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByRoomId(id);
 
         //7.查询paymentTypeList
         List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
@@ -228,8 +228,8 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         adminRoomDetailVo.setStudyStore(studyStore);
         adminRoomDetailVo.setGraphVoList(graphVoList);
         adminRoomDetailVo.setAttrValueVoList(attrvalueVoList);
-        adminRoomDetailVo.setSeatFacilityList(seatFacilityList);
-        adminRoomDetailVo.setStoreLabelList(storeLabelList);
+        adminRoomDetailVo.setFacilityInfoList(facilityInfoList);
+        adminRoomDetailVo.setLabelInfoList(labelInfoList);
         adminRoomDetailVo.setPaymentTypeList(paymentTypeList);
         adminRoomDetailVo.setLeaseTermList(leaseTermList);
 
@@ -252,12 +252,12 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         attrQueryWrapper.eq(RoomAttrValue::getRoomId, id);
         roomAttrValueService.remove(attrQueryWrapper);
 
-        //4.删除seatFacilityList
+        //4.删除facilityInfoList
         LambdaQueryWrapper<RoomFacility> facilityQueryWrapper = new LambdaQueryWrapper<>();
         facilityQueryWrapper.eq(RoomFacility::getRoomId, id);
         roomFacilityService.remove(facilityQueryWrapper);
 
-        //5.删除storeLabelList
+        //5.删除labelInfoList
         LambdaQueryWrapper<RoomLabel> labelQueryWrapper = new LambdaQueryWrapper<>();
         labelQueryWrapper.eq(RoomLabel::getRoomId, id);
         roomLabelService.remove(labelQueryWrapper);
