@@ -88,13 +88,13 @@ onMounted(async () => {
 
 <style scoped lang="less">
 .ma-page {
-  padding: 16px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .ma-page__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .ma-page__card {

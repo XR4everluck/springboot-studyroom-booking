@@ -72,13 +72,14 @@ const isActive = (path: string) => route.path === path;
   z-index: 100;
   background-color: var(--van-background-2);
   border-bottom: 1px solid var(--van-border-color);
+  box-shadow: 0 2px 10px rgba(24, 34, 28, 0.04);
 }
 
 .app-header__inner {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   height: 60px;
   max-width: 1200px;
   margin: 0 auto;
@@ -100,7 +101,7 @@ const isActive = (path: string) => route.path === path;
   height: 30px;
   border-radius: 8px;
   background-color: var(--van-primary-color);
-  color: #fff;
+  color: var(--sr-text-on-primary);
   font-size: 16px;
   font-weight: 600;
 }
@@ -202,11 +203,11 @@ const isActive = (path: string) => route.path === path;
   padding: 6px 18px;
   border-radius: 16px;
   font-size: 14px;
-  color: #fff;
+  color: var(--sr-text-on-primary);
   background-color: var(--van-primary-color);
 
   &:hover {
-    opacity: 0.88;
+    background-color: var(--sr-primary-hover);
   }
 }
 
@@ -218,6 +219,44 @@ const isActive = (path: string) => route.path === path;
 
   .app-header__title {
     display: none;
+  }
+}
+
+// 窄屏：导航横向滑动，收缩次级元素，保证触控区域
+@media (max-width: 768px) {
+  .app-header__inner {
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .app-header__nav {
+    overflow-x: auto;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .app-header__nav-link {
+    flex-shrink: 0;
+    height: 56px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .app-header__actions {
+    gap: 6px;
+  }
+
+  .app-header__user {
+    padding: 4px;
+
+    .app-header__nickname {
+      display: none;
+    }
   }
 }
 </style>

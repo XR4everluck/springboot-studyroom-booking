@@ -482,7 +482,7 @@ onMounted(async () => {
 
 <style scoped lang="less">
 .od {
-  padding: 16px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .od__back {
@@ -501,7 +501,7 @@ onMounted(async () => {
 .od__layout {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 20px;
 }
 
 .od__main {
@@ -516,9 +516,9 @@ onMounted(async () => {
 
 .od__card {
   box-sizing: border-box;
-  margin-top: 14px;
+  margin-top: 16px;
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 }

@@ -45,7 +45,7 @@ const navList = ref([
 </script>
 <style lang="less" scoped>
 .my-seat-page {
-  padding: 24px 20px 0;
+  padding: 28px 24px 0;
 }
 
 .my-seat-page__title {
@@ -58,7 +58,7 @@ const navList = ref([
 .my-seat-page__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 20px;
 }
 
 .my-seat-page__entry {
@@ -66,9 +66,9 @@ const navList = ref([
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 28px 12px;
+  padding: 32px 14px;
   border: 1px solid var(--van-border-color);
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   color: var(--van-text-color);
   cursor: pointer;

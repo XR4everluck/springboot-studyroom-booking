@@ -210,13 +210,13 @@ onMounted(async () => {
 
 <style scoped lang="less">
 .order-page {
-  padding: 16px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .order-page__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .order-page__card {

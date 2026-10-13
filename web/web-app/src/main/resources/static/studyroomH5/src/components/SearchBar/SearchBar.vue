@@ -480,7 +480,9 @@ onMounted(() => {
 }
 
 .filter-panel__chip {
-  padding: 4px 10px;
+  min-height: 32px;
+  box-sizing: border-box;
+  padding: 5px 13px;
   border: 1px solid var(--van-border-color);
   border-radius: 14px;
   background: transparent;

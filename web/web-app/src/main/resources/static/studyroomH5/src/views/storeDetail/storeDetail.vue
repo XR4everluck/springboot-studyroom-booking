@@ -185,7 +185,7 @@ onMounted(async () => {
 
 <style scoped lang="less">
 .std {
-  padding: 16px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .std__back {
@@ -204,7 +204,7 @@ onMounted(async () => {
 .std__layout {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 20px;
 }
 
 .std__main {
@@ -218,15 +218,15 @@ onMounted(async () => {
 }
 
 .std__swipe {
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
 .std__card {
   box-sizing: border-box;
-  margin-top: 14px;
+  margin-top: 16px;
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 }
@@ -302,7 +302,7 @@ onMounted(async () => {
 .std__seat-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .std__seat-card {

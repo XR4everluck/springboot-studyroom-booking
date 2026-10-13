@@ -11,7 +11,10 @@
           class="search-page__card"
         ></SeatCard>
       </div>
-      <van-empty v-else-if="!loading" description="搜索不到" />
+      <div v-else-if="loading" class="search-page__loading">
+        <van-loading size="24" vertical>加载中...</van-loading>
+      </div>
+      <van-empty v-else description="未找到符合条件的座位" />
 
       <div class="search-page__pager" v-if="total > 0">
         <van-pagination
@@ -81,8 +84,8 @@ getSeatListHandler();
 .search-page {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 16px 20px 0;
+  gap: 20px;
+  padding: 24px 24px 0;
 }
 
 .search-page__main {
@@ -93,7 +96,7 @@ getSeatListHandler();
 .search-page__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .search-page__card {
@@ -107,6 +110,12 @@ getSeatListHandler();
   }
 }
 
+.search-page__loading {
+  padding: 64px 0;
+  display: flex;
+  justify-content: center;
+}
+
 .search-page__pager {
   display: flex;
   justify-content: center;
@@ -116,6 +125,17 @@ getSeatListHandler();
 @media (max-width: 1100px) {
   .search-page__grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// 窄屏：筛选面板置顶全宽，内容区纵向排布
+@media (max-width: 768px) {
+  .search-page {
+    flex-direction: column;
+  }
+
+  .search-page :deep(.filter-panel) {
+    width: 100%;
   }
 }
 </style>

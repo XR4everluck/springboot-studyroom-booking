@@ -83,8 +83,8 @@ onMounted(() => {
 .uc-page {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 24px 20px 0;
+  gap: 20px;
+  padding: 28px 24px 0;
 }
 
 .uc-page__profile {
@@ -95,8 +95,8 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 32px 20px;
-  border-radius: 10px;
+  padding: 36px 24px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 }
@@ -120,7 +120,7 @@ onMounted(() => {
   min-width: 0;
   box-sizing: border-box;
   padding: 24px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 }
@@ -135,7 +135,7 @@ onMounted(() => {
 .uc-page__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 20px;
 }
 
 .uc-page__entry {
@@ -145,7 +145,7 @@ onMounted(() => {
   gap: 10px;
   padding: 24px 12px;
   border: 1px solid var(--van-border-color);
-  border-radius: 10px;
+  border-radius: 12px;
   background: transparent;
   color: var(--van-text-color);
   font-size: 14px;

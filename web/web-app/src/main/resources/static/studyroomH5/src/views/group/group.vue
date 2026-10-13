@@ -76,12 +76,12 @@ const togglePost = (item: number) =>
 .group-page {
   max-width: 760px;
   margin: 0 auto;
-  padding: 24px 20px 0;
+  padding: 28px 24px 0;
 }
 
 .group-page__post {
-  padding: 18px 20px;
-  border-radius: 10px;
+  padding: 20px 24px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 

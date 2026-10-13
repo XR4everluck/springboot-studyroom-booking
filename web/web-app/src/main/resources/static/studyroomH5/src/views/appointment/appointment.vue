@@ -225,7 +225,7 @@ onMounted(async () => {
 
 <style scoped lang="less">
 .ap {
-  padding: 16px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .ap__back {
@@ -248,9 +248,9 @@ onMounted(async () => {
 
 .ap__card {
   box-sizing: border-box;
-  margin-top: 14px;
+  margin-top: 16px;
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 

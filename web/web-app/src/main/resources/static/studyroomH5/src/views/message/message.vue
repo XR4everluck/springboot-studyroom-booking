@@ -66,7 +66,7 @@ const navList = ref([
 .message-page {
   max-width: 760px;
   margin: 0 auto;
-  padding: 24px 20px 0;
+  padding: 28px 24px 0;
 }
 
 .message-page__cats {
@@ -74,7 +74,7 @@ const navList = ref([
   justify-content: center;
   gap: 40px;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 }
@@ -86,7 +86,7 @@ const navList = ref([
   gap: 6px;
   width: 88px;
   padding: 14px 0;
-  border-radius: 10px;
+  border-radius: 12px;
   color: #fff;
 }
 
@@ -96,7 +96,7 @@ const navList = ref([
 
 .message-page__list {
   margin-top: 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
   overflow: hidden;
@@ -105,7 +105,7 @@ const navList = ref([
 .message-page__item {
   display: flex;
   gap: 12px;
-  padding: 16px 20px;
+  padding: 18px 24px;
   cursor: pointer;
   transition: background-color 0.15s;
 

@@ -464,7 +464,7 @@ onMounted(async () => {
 
 <style scoped lang="less">
 .sd {
-  padding: 16px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .sd__back {
@@ -483,7 +483,7 @@ onMounted(async () => {
 .sd__layout {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 20px;
 }
 
 .sd__main {
@@ -496,19 +496,19 @@ onMounted(async () => {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .sd__swipe {
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
 .sd__card {
   box-sizing: border-box;
-  margin-top: 14px;
+  margin-top: 16px;
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: var(--van-background-2);
   border: 1px solid var(--van-border-color);
 }

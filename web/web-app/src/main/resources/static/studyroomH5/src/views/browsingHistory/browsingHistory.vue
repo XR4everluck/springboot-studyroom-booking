@@ -9,7 +9,10 @@
         </template>
       </SeatCard>
     </div>
-    <van-empty v-else-if="!loading" description="暂无浏览历史" />
+    <div v-else-if="loading" class="history-page__loading">
+      <van-loading size="24" vertical>加载中...</van-loading>
+    </div>
+    <van-empty v-else description="暂无浏览历史" />
 
     <div class="history-page__pager" v-if="total > 0">
       <van-pagination
@@ -72,13 +75,13 @@ getHistoryListHandler();
 
 <style scoped lang="less">
 .history-page {
-  padding: 16px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .history-page__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 
 .history-page__card {
@@ -90,6 +93,12 @@ getHistoryListHandler();
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     transform: translateY(-2px);
   }
+}
+
+.history-page__loading {
+  padding: 64px 0;
+  display: flex;
+  justify-content: center;
 }
 
 .history-page__pager {
