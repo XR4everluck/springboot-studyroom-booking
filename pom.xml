@@ -31,6 +31,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 覆盖 spring-boot-starter-parent 默认的 Lombok 1.18.26，选用支持高版本 JDK 的 Lombok -->
+        <lombok.version>1.18.48</lombok.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <swagger.version>2.9.2</swagger.version>
         <jwt.version>0.11.2</jwt.version>
@@ -104,5 +106,26 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- JDK 23+ 默认不再从 classpath 自动发现注解处理器，需显式声明 Lombok 处理器路径 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
