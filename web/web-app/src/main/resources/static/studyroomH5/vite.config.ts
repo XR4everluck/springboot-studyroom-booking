@@ -59,6 +59,13 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/app": {
           target: env.VITE_APP_BASE_URL
+        },
+        // 后端提供的静态图片与本地磁盘存储的上传文件
+        "/img": {
+          target: env.VITE_APP_BASE_URL
+        },
+        "/upload": {
+          target: env.VITE_APP_BASE_URL
         }
       }
     },

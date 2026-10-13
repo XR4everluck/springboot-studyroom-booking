@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container min-h-[100vh]">
+  <div class="main-container min-h-[calc(100vh-60px)]">
     <div class="h-[240px] flex flex-col justify-center items-center">
       <van-image round width="120px" height="120px" :src="defaultAvatarUrl" />
     </div>
