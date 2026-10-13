@@ -3,7 +3,7 @@
     <PullDownRefreshContainer
       :request="getHistoryListHandler"
       ref="pullDownRefreshContainerRef"
-      class="min-h-[70vh]"
+      class="min-h-[480px]"
     >
       <template v-if="seatList?.length">
         <SeatCard v-for="item in seatList" :key="item.id" :data="item">

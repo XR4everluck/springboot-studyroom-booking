@@ -9,7 +9,6 @@ import path from "path";
 import mockDevServerPlugin from "vite-plugin-mock-dev-server";
 import vueSetupExtend from "vite-plugin-vue-setup-extend";
 import viteCompression from "vite-plugin-compression";
-import { createHtmlPlugin } from "vite-plugin-html";
 
 // 当前工作目录路径
 const root: string = process.cwd();
@@ -48,15 +47,7 @@ export default defineConfig(({ mode }) => {
       // 允许 setup 语法糖上添加组件名属性
       vueSetupExtend(),
       // 生产环境 gzip 压缩资源
-      viteCompression(),
-      // 注入模板数据
-      createHtmlPlugin({
-        inject: {
-          data: {
-            ENABLE_ERUDA: env.VITE_ENABLE_ERUDA || "false"
-          }
-        }
-      })
+      viteCompression()
     ],
     resolve: {
       alias: {

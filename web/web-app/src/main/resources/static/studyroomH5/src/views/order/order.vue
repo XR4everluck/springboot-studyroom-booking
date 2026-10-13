@@ -1,6 +1,6 @@
 <template>
   <van-skeleton :row="20" :loading="!orderDetailInfo?.seatId">
-    <div class="page-container min-h-[100vh] py-[15px]">
+    <div class="page-container py-[15px]">
       <!--    预订自习室门店-->
       <div>
         <div class="base-info-title main-container py-[4px]">预订自习室门店</div>

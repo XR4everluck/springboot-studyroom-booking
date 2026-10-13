@@ -5,7 +5,7 @@
     <PullDownRefreshContainer
       :request="getSeatListHandler"
       ref="pullDownRefreshContainerRef"
-      class="min-h-[70vh]"
+      class="min-h-[480px]"
     >
       <template v-if="seatList?.length">
         <SeatCard

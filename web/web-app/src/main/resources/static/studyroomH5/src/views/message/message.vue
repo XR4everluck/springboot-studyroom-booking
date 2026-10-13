@@ -4,12 +4,12 @@
     <PullDownRefreshContainer
       :request="() => {}"
       ref="pullDownRefreshContainerRef"
-      class="min-h-[70vh]"
+      class="min-h-[480px]"
     >
       <!--    顶部-->
       <van-sticky offset-top="0">
         <div
-          class="main-container flex justify-around items-center bg-[--van-primary-background-color] h-[20vh] backdrop-filter backdrop-blur-xl backdrop-saturate-150"
+          class="main-container flex justify-around items-center bg-[--van-primary-background-color] h-[160px] backdrop-filter backdrop-blur-xl backdrop-saturate-150"
         >
           <div
             v-for="item in navList"
@@ -19,7 +19,7 @@
           >
             <div
               :style="{ background: item.color }"
-              class="flex flex-col justify-center items-center h-[12vw] w-[12vw] rounded-xl py-[3px]"
+              class="flex flex-col justify-center items-center h-[64px] w-[64px] rounded-xl py-[3px]"
             >
               <van-icon :name="item.icon" :badge="item.badge" size="25" />
             </div>
@@ -32,8 +32,8 @@
         <div class="flex py-[3px] mt-[20px]" v-for="item in 9" :key="item">
           <van-image
             round
-            width="15vw"
-            height="15vw"
+            width="80px"
+            height="80px"
             src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
           >
             <template v-slot:error>加载失败</template>
@@ -42,7 +42,7 @@
             </template>
           </van-image>
           <div
-            class="flex flex-col justify-center ml-[10px] text-[12px] w-[70vw]"
+            class="flex flex-col justify-center ml-[10px] text-[12px] max-w-[560px]"
           >
             <div class="flex justify-between mb-[3px]">
               <div class="font-bold">游湖123456</div>

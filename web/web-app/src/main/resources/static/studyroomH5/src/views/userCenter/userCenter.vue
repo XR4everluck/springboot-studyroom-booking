@@ -1,13 +1,13 @@
 <template>
   <div class="user-container">
-    <div class="user h-[30vh] flex flex-col justify-center items-center">
+    <div class="user h-[240px] flex flex-col justify-center items-center">
       <van-image
         @click="
           showImagePreview([userStore.userInfo?.avatarUrl || defaultAvatarUrl])
         "
         round
-        width="30vw"
-        height="30vw"
+        width="120px"
+        height="120px"
         :src="userStore.userInfo?.avatarUrl || defaultAvatarUrl"
       >
         <template v-slot:error>加载失败</template>
@@ -29,7 +29,7 @@
     </div>
     <div class="main-container flex justify-center mt-[150px]">
       <!--      退出登录-->
-      <van-button type="primary" class="w-[50vw]" @click="logoutHandle"
+      <van-button type="primary" class="w-[240px]" @click="logoutHandle"
         >退出登录</van-button
       >
     </div>

@@ -3,7 +3,7 @@
     <PullDownRefreshContainer
       :request="() => {}"
       ref="pullDownRefreshContainerRef"
-      class="min-h-[70vh]"
+      class="min-h-[480px]"
     >
       <van-image :src="bgImgUrl">
         <template v-slot:error>加载失败</template>
@@ -17,8 +17,8 @@
           <div class="flex">
             <van-image
               round
-              width="12vw"
-              height="12vw"
+              width="64px"
+              height="64px"
               src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
             >
               <template v-slot:error>加载失败</template>
@@ -35,8 +35,11 @@
           <div class="mt-[10px] flex flex-col">
             <div class="font-bold">分享楼下的一家咖啡厅</div>
             <div
-              class="van-multi-ellipsis--l3"
-              v-on-click-remove-class="['van-multi-ellipsis--l3']"
+              :class="{
+                'van-multi-ellipsis--l3': !expandedPosts.has(item),
+                'cursor-pointer': true
+              }"
+              @click="togglePost(item)"
             >
               噫吁嚱，危乎高哉！蜀道之难，难于上青天！蚕丛及鱼凫，开国何茫然！尔来四万八千岁，不与秦塞通人烟。西当太白有鸟道，可以横绝峨眉巅。地崩山摧壮士死，然后天梯石栈相钩连。上有六龙回日之高标，下有冲波逆折之回川。黄鹤之飞尚不得过，猿猱欲度愁攀援。青泥何盘盘，百步九折萦岩峦。扪参历井仰胁息，以手抚膺坐长叹。
               问君西游何时还？畏途巉岩不可攀。但见悲鸟号古木，雄飞雌从绕林间。又闻子规啼夜月，愁空山。蜀道之难，难于上青天，使人听此凋朱颜！连峰去天不盈尺，枯松倒挂倚绝壁。飞湍瀑流争喧豗，砯崖转石万壑雷。其险也如此，嗟尔远道之人胡为乎来哉！
@@ -46,8 +49,8 @@
             <van-row>
               <van-col :span="8" v-for="item in 5" :key="item">
                 <van-image
-                  width="25vw"
-                  height="25vw"
+                  width="120px"
+                  height="120px"
                   src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
                 >
                   <template v-slot:error>加载失败</template>
@@ -76,10 +79,14 @@
 </template>
 
 <script setup lang="ts" name="Group">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import bgImgUrl from "@/assets/group_bg.png";
 import PullDownRefreshContainer from "@/components/PullDownRefreshContainer/PullDownRefreshContainer.vue";
 const pullDownRefreshContainerRef =
   ref<InstanceType<typeof PullDownRefreshContainer>>();
+
+const expandedPosts = reactive(new Set<number>());
+const togglePost = (item: number) =>
+  expandedPosts.has(item) ? expandedPosts.delete(item) : expandedPosts.add(item);
 </script>
 <style lang="less" scoped></style>

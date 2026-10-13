@@ -7,7 +7,7 @@
           v-for="item in storeDetailInfo.graphVoList"
           :key="item.url"
         >
-          <van-image fit="fill" :src="item.url" width="100vw" height="35vh">
+          <van-image fit="fill" :src="item.url" width="100%" height="360px">
             <template v-slot:error>加载失败</template>
             <template v-slot:loading>
               <van-loading type="spinner" size="20" />
@@ -82,7 +82,7 @@
           </div>
         </div>
         <!--        地图容器-->
-        <div id="container" class="w-[85vw] h-[30vh]"></div>
+        <div id="container" class="w-full h-[360px]"></div>
       </div>
       <!--    可选座位列表-->
       <div class="card">
@@ -91,7 +91,7 @@
           <PullDownRefreshContainer
             :request="getSeatListHandler"
             ref="pullDownRefreshContainerRef"
-            class="min-h-[70vh] px-[10px]"
+            class="min-h-[480px] px-[10px]"
           >
             <template v-if="seatList?.length">
               <SeatCard

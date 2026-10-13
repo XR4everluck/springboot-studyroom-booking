@@ -1,7 +1,7 @@
 <template>
-  <div class="main-container h-[100vh]">
-    <div class="h-[30vh] flex flex-col justify-center items-center">
-      <van-image round width="30vw" height="30vw" :src="defaultAvatarUrl" />
+  <div class="main-container min-h-[100vh]">
+    <div class="h-[240px] flex flex-col justify-center items-center">
+      <van-image round width="120px" height="120px" :src="defaultAvatarUrl" />
     </div>
     <div>
       <van-form ref="formRef">

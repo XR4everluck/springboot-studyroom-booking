@@ -2,7 +2,7 @@
   <van-dropdown-menu ref="menuRef">
     <van-dropdown-item title="地区">
       <div class="comment-padding">
-        <div class="flex flex-row h-[30vh] mt-[5px]">
+        <div class="flex flex-row h-[240px] mt-[5px]">
           <!--        省-->
           <div class="basis-1/3" style="overflow: scroll">
             <div
