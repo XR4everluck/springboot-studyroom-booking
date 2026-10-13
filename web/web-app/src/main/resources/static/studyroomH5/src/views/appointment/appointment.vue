@@ -1,19 +1,25 @@
 <template>
   <van-skeleton :row="20" :loading="!storeDetailInfo?.id">
-    <div class="page-container py-[15px]">
-      <!--    预约自习室门店-->
-      <div>
-        <div class="base-info-title main-container py-[4px]">预约自习室门店</div>
-        <div class="my-[5px] px-[15px]">
-          <StoreCard :data="storeDetailInfo"></StoreCard>
-        </div>
+    <div class="ap">
+      <div class="ap__back">
+        <van-button icon="arrow-left" size="small" @click="router.back()"
+          >返回</van-button
+        >
+        <span class="ap__back-title">到店体验</span>
       </div>
-      <!--    预约信息-->
-      <div>
-        <div class="base-info-title main-container py-[4px]">预约信息</div>
-        <div class="my-[5px] relative">
+
+      <div class="ap__wrap">
+        <!--    预约自习室门店-->
+        <section class="ap__card">
+          <h3 class="ap__card-title">预约自习室门店</h3>
+          <StoreCard :data="storeDetailInfo"></StoreCard>
+        </section>
+
+        <!--    预约信息-->
+        <section class="ap__card">
+          <h3 class="ap__card-title">预约信息</h3>
           <van-form @submit="onSubmit">
-            <van-cell-group inset>
+            <van-cell-group>
               <!--            姓名-->
               <van-field
                 v-model.trim="formData.name"
@@ -50,7 +56,7 @@
                 @click="showDate = true"
                 :rules="[{ required: true, message: '请选择预约日期' }]"
               />
-              <van-popup v-model:show="showDate" position="bottom">
+              <van-popup v-model:show="showDate" position="center" round>
                 <van-date-picker
                   :min-date="new Date()"
                   @confirm="onConfirmAppointmentDateHandle"
@@ -68,7 +74,7 @@
                 @click="showTime = true"
                 :rules="[{ required: true, message: '请选择预约时间' }]"
               />
-              <van-popup v-model:show="showTime" position="bottom">
+              <van-popup v-model:show="showTime" position="center" round>
                 <van-time-picker
                   v-model="dateInfo.time"
                   title="选择时间"
@@ -105,15 +111,14 @@
                 maxlength="50"
               />
             </van-cell-group>
-            <div class="mt-[50px] main-container">
+            <div class="ap__submit">
               <van-button round block type="primary" native-type="submit">
                 {{ formData.id ? "重新预约" : "到店体验" }}
               </van-button>
             </div>
           </van-form>
-        </div>
+        </section>
       </div>
-      <div class="absolute bottom-0"></div>
     </div>
   </van-skeleton>
 </template>
@@ -139,9 +144,7 @@ const router = useRouter();
 const storeDetailInfo = ref<StoreInterface>({} as StoreInterface);
 // 获取自习室门店的详情信息
 const getStoreDetailHandle = async () => {
-  const { data } = await getStoreDetailById(
-    route.query.storeId as string
-  );
+  const { data } = await getStoreDetailById(route.query.storeId as string);
   storeDetailInfo.value = data;
 };
 //#region <form表单相关>
@@ -174,9 +177,7 @@ const dateInfo = ref({
 // 监视dateInfo
 watch(
   dateInfo,
-  (newVal, oldVal) => {
-    console.log("newVal", newVal);
-    console.log("oldVal", oldVal);
+  newVal => {
     formData.value.date = newVal.date.join("-");
     formData.value.time = `${newVal.time.join(":")}`;
     formData.value.appointmentTime = `${formData.value.date} ${formData.value.time}`;
@@ -185,19 +186,16 @@ watch(
 );
 const showDate = ref(false);
 const onConfirmAppointmentDateHandle = (date: any) => {
-  console.log("date", date);
   dateInfo.value.date = date.selectedValues;
   showDate.value = false;
 };
 // 时间选择器
 const showTime = ref(false);
 const onConfirmAppointmentTimeHandle = (date: any) => {
-  console.log("date", date);
   showTime.value = false;
 };
 // 提交表单
 async function onSubmit(values: any) {
-  console.log("submit", values);
   await saveOrUpdateAppointment(formData.value);
   showToast("操作成功");
   route.query.storeId
@@ -226,12 +224,53 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="less">
-.base-info-title {
-  //background-color: var(--van-primary-background-color);
-  font-weight: bold;
-  //color: white;
+.ap {
+  padding: 16px 20px 0;
 }
-::v-deep .van-card {
+
+.ap__back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ap__back-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.ap__wrap {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.ap__card {
+  box-sizing: border-box;
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 10px;
+  background-color: var(--van-background-2);
+  border: 1px solid var(--van-border-color);
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.ap__card-title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.ap__submit {
+  margin-top: 24px;
+}
+
+:deep(.van-card) {
   background: var(--van-background-2) !important;
 }
 </style>

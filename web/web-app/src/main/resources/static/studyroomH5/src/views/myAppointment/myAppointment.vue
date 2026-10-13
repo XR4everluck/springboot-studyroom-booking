@@ -1,12 +1,13 @@
 <template>
   <van-skeleton :row="20" :loading="!appointmentList">
-    <div class="p-[10px]">
-      <van-card
-        class="rounded-xl shadow"
-        v-for="item in appointmentList"
-        :key="item.id"
-        @click="goAppointmentDetail(item)"
-      >
+    <div class="ma-page">
+      <div class="ma-page__grid">
+        <van-card
+          class="rounded-xl shadow ma-page__card"
+          v-for="item in appointmentList"
+          :key="item.id"
+          @click="goAppointmentDetail(item)"
+        >
         <!--      title-->
         <template #title>
           <h2 class="text-[15px] font-bold">{{ item.storeName }}</h2>
@@ -47,10 +48,11 @@
             </div>
           </div>
         </template>
-      </van-card>
-    </div>
+        </van-card>
+      </div>
 
-    <van-empty v-if="appointmentList?.length <= 0" description="搜索不到" />
+      <van-empty v-if="appointmentList?.length <= 0" description="暂无预约" />
+    </div>
   </van-skeleton>
 </template>
 <script setup lang="ts">
@@ -85,9 +87,30 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="less">
-.base-info-title {
-  background-color: var(--van-primary-background-color);
-  font-weight: bold;
-  //color: white;
+.ma-page {
+  padding: 16px 20px 0;
+}
+
+.ma-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ma-page__card {
+  margin: 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .ma-page__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>

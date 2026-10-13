@@ -1,11 +1,13 @@
 <template>
-  <div class="main-container min-h-[calc(100vh-60px)]">
-    <div class="h-[240px] flex flex-col justify-center items-center">
-      <van-image round width="120px" height="120px" :src="defaultAvatarUrl" />
-    </div>
-    <div>
-      <van-form ref="formRef">
-        <van-cell-group inset>
+  <div class="login-page">
+    <div class="login-page__card">
+      <div class="login-page__brand">
+        <van-image round width="72px" height="72px" :src="defaultAvatarUrl" />
+        <h1 class="login-page__title">共享自习室</h1>
+        <p class="--van-gray-6 login-page__subtitle">手机号验证码登录</p>
+      </div>
+      <van-form ref="formRef" class="login-page__form">
+        <van-cell-group>
           <!--            手机号-->
           <van-field
             v-model.trim="loginInfo.phone"
@@ -36,7 +38,7 @@
               {
                 required: true,
                 pattern: /^\d{6}$/,
-                message: '请正确填写验证码'
+                message: '请填写验证码'
               }
             ]"
           >
@@ -63,7 +65,7 @@
             </template>
           </van-field>
         </van-cell-group>
-        <div class="mt-[50px]">
+        <div class="login-page__submit">
           <loading-button
             round
             block
@@ -128,7 +130,6 @@ const getCodeHandle = async () => {
   getSmsCode({ phone: loginInfo.value.phone });
 };
 const onSubmitHandle = async () => {
-  console.log("onSubmit");
   // 验证字段
   await formRef.value?.validate();
   // 登录
@@ -142,8 +143,47 @@ const onSubmitHandle = async () => {
 };
 onMounted(() => {
   console.log("route", route);
-  console.log("router-onMounted", router);
 });
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.login-page {
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px 0;
+}
+
+.login-page__card {
+  box-sizing: border-box;
+  width: 420px;
+  padding: 32px;
+  border-radius: 12px;
+  background-color: var(--van-background-2);
+  border: 1px solid var(--van-border-color);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+}
+
+.login-page__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.login-page__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.login-page__subtitle {
+  margin: 0;
+  font-size: 13px;
+}
+
+.login-page__submit {
+  margin-top: 24px;
+}
+</style>
