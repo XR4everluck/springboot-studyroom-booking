@@ -4,11 +4,11 @@
 
 ### 业务概述
 
-共享自习室预订系统是一个自习室门店预订平台项目，包含**用户移动端**和**后台管理系统**两端。移动端面向广大用户，提供自习室门店检索、座位预订、预约管理、订单与支付管理等功能；后台管理系统面向管理员，提供自习室门店管理、预订管理、用户管理等功能。下面分别介绍两端的具体业务功能。
+共享自习室预订系统是一个自习室门店预订平台项目，包含**用户端（桌面浏览器 Web）**和**后台管理系统**两端。用户端面向广大用户，提供自习室门店检索、座位预订、预约管理、订单与支付管理等功能；后台管理系统面向管理员，提供自习室门店管理、预订管理、用户管理等功能。下面分别介绍两端的具体业务功能。
 
-### 用户移动端
+### 用户端（桌面浏览器 Web）
 
-移动端主要业务功能如下：
+用户端主要业务功能如下：
 
 - **门店检索**
 
@@ -64,7 +64,7 @@
 
 - **预订管理**
 
-  该模块用于管理用户的预订请求。用户可以在移动端提交预订，管理员可以在后台查看和处理这些请求，以便安排相应的座位资源。
+  该模块用于管理用户的预订请求。用户可以在用户端提交预订，管理员可以在后台查看和处理这些请求，以便安排相应的座位资源。
 
 - **订单管理**
 
@@ -74,9 +74,9 @@
 
   该模块用于管理后台系统的用户账户信息，管理员可以创建、编辑、删除、禁用账户。
 
-- **移动端用户管理**
+- **用户端用户管理**
 
-  该模块负责管理移动端用户的信息。管理员可以查看用户信息，处理账户相关问题。
+  该模块负责管理用户端用户的信息。管理员可以查看用户信息，处理账户相关问题。
 
 ## 项目技术概述
 
@@ -122,7 +122,7 @@ studyroom-booking                     父工程（聚合模块）
 ├── model         实体模型模块：entity、enums
 └── web           Web 聚合模块
     ├── web-admin 后台管理系统启动模块
-    └── web-app   用户移动端启动模块
+    └── web-app   用户端启动模块
 ```
 
 ## 技术坐标
@@ -130,7 +130,7 @@ studyroom-booking                     父工程（聚合模块）
 - groupId：`com.yourname.studyroom`
 - artifactId：`studyroom-booking`
 - 数据库：`studyroom_booking`
-- 启动类：`StudyroomAdminApplication`（后台管理端）、`StudyroomAppApplication`（用户移动端）
+- 启动类：`StudyroomAdminApplication`（后台管理端）、`StudyroomAppApplication`（用户端）
 
 ## 缓存设计
 
@@ -139,7 +139,7 @@ studyroom-booking                     父工程（聚合模块）
 | 缓存项 | Key 前缀 / 常量 | 值 | 过期时间 |
 | --- | --- | --- | --- |
 | 后台登录验证码 | `admin:login:` + UUID | 图形验证码文本 | `ADMIN_LOGIN_CAPTCHA_TTL_SEC` = 60s |
-| 移动端登录短信码 | `app:login:` + phone | 6 位随机码 | 与重发间隔控制（`APP_LOGIN_*`） |
+| 用户端登录短信码 | `app:login:` + phone | 6 位随机码 | 与重发间隔控制（`APP_LOGIN_*`） |
 | 座位详情 | `app:seat:` + seatId | `SeatDetailVo` | 常驻（命中后回填实时状态） |
 | 座位实时状态 | `app:seat:status:` + seatId | `SeatRealtimeStatus.code`（1空闲/2已预订/3使用中） | `APP_SEAT_STATUS_TTL_SEC` = 1 天 |
 | 首页热门门店（新增） | `app:store:hot:list` | 按浏览量降序的门店 id 列表 | `APP_HOT_LIST_TTL_SEC` = 1 小时 |
@@ -179,7 +179,7 @@ studyroom-booking                     父工程（聚合模块）
 
 ## 接口清单
 
-> 完整交互式文档由 Knife4j 提供：后台 `http://<host>:<admin-port>/doc.html`、移动端 `http://<host>:<app-port>/doc.html`。下表为核心端点。
+> 完整交互式文档由 Knife4j 提供：后台 `http://<host>:<admin-port>/doc.html`、用户端 `http://<host>:<app-port>/doc.html`。下表为核心端点。
 
 ### 后台管理端（`/admin`）
 
@@ -198,7 +198,7 @@ studyroom-booking                     父工程（聚合模块）
 | 系统用户 / 岗位 | GET/POST | `/admin/system/user`、`/admin/system/post` |
 | C 端用户 | GET/POST | `/admin/user/page`、`updateStatusById` |
 
-### 用户移动端（`/app`）
+### 用户端（`/app`）
 
 | 分组 | 方法 | 路径 |
 | --- | --- | --- |
@@ -262,17 +262,17 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
    ```bash
    mvn clean package -DskipTests
    java -jar web/web-admin/target/studyroom-web-admin-1.0-SNAPSHOT.jar   # 后台管理端 8080
-   java -jar web/web-app/target/studyroom-web-app-1.0-SNAPSHOT.jar       # 用户移动端 8081
+   java -jar web/web-app/target/studyroom-web-app-1.0-SNAPSHOT.jar       # 用户端 8081
    ```
 
 ### 前端
 
-前端（`studyroomAdmin`、`studyroomH5`）以 Spring 静态资源方式内嵌于后端模块：在对应目录 `npm install && npm run build`，把 `dist` 内容拷贝到模块的 `src/main/resources/static/` 根目录后重新打包 jar。也可独立构建后由 Nginx 托管，并将 `/admin`、`/app` 反向代理至对应后端服务。
+前端（`studyroomAdmin`、`studyroomH5`）以 Spring 静态资源方式内嵌于后端模块。用户端为桌面浏览器 Web 应用（顶部导航 + 分页列表 + 弹层确认，支持 1280/720、1440/900、1920/1080 三档分辨率，内容区居中 1200px）：在对应目录 `npm install && npm run build`，把 `dist` 内容拷贝到模块的 `src/main/resources/static/` 根目录后重新打包 jar。也可独立构建后由 Nginx 托管，并将 `/admin`、`/app` 反向代理至对应后端服务。
 
 ### 测试账号
 
 - 后台管理：`admin / 123456`、`manager / 123456`（密码以 `md5Hex` 存储，密文 `e10adc3949ba59abbe56e057f20f883e`）。
-- 移动端：手机号 + 短信验证码登录，预置测试用户 `13900000001 / 13900000002 / 13900000003`（未接阿里云短信服务时，验证码会打印在 `studyroom-app` 窗口日志中，也可在 Redis 中手工写入 `app:login:<phone>` 联调）。
+- 用户端：手机号 + 短信验证码登录，预置测试用户 `13900000001 / 13900000002 / 13900000003`（未接阿里云短信服务时，验证码会打印在 `studyroom-app` 窗口日志中，也可在 Redis 中手工写入 `app:login:<phone>` 联调）。
 
 ## 测试用例清单（阶段七联调校验）
 
@@ -290,7 +290,7 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
 | A6 | 用户管理 | 系统用户增删改、C 端用户查看/禁用 | 禁用后登录被拦截（`ACCOUNT_DISABLED`） |
 | A7 | 图片上传 | 上传门店/座位图片 | 返回本地存储 URL 并写入 `graph_info` |
 
-### B. 移动端全流程
+### B. 用户端全流程
 
 | 编号 | 场景 | 步骤 | 预期 |
 | --- | --- | --- | --- |
@@ -329,7 +329,7 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
 2. **注释**：已统一清理 `@ClassName/@Description TODO/@Author` 模板注释为业务化说明；建议后续对新类沿用「一行说明」风格。
 3. **命名**：领域命名（自习室/座位/订单/预订时长）已在前序阶段全量对齐前后端与 DB；保持 VO/实体/列名一致。
 4. **可观测性**：关键校验（营业时间、时段冲突）与状态流转建议补充结构化日志，便于联调定位。
-5. **前端联调**：热门榜单接口已就绪，移动端首页可对接 `/app/store/getHotList`、`/app/seat/getHotList`。
+5. **前端联调**：热门榜单接口已就绪，用户端首页可对接 `/app/store/getHotList`、`/app/seat/getHotList`。
 
 ## 最终项目说明
 
