@@ -1,8 +1,8 @@
 package com.yourname.studyroom.web.app.mapper;
 
 import com.yourname.studyroom.model.entity.Seat;
-import com.yourname.studyroom.web.app.vo.room.RoomItemVo;
-import com.yourname.studyroom.web.app.vo.room.RoomQueryVo;
+import com.yourname.studyroom.web.app.vo.seat.SeatItemVo;
+import com.yourname.studyroom.web.app.vo.seat.SeatQueryVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,9 +17,9 @@ import java.math.BigDecimal;
 */
 public interface SeatMapper extends BaseMapper<Seat> {
 
-    IPage<RoomItemVo> pageItem(IPage<RoomItemVo> page, RoomQueryVo queryVo);
+    IPage<SeatItemVo> pageItem(IPage<SeatItemVo> page, SeatQueryVo queryVo);
 
-    BigDecimal selectMinRentByApartmentId(Long id);
+    BigDecimal selectMinPriceByStoreId(Long id);
 
-    IPage<RoomItemVo> pageItemByApartmentId(IPage<RoomItemVo> page, Long id);
+    IPage<SeatItemVo> pageItemByStoreId(IPage<SeatItemVo> page, Long id);
 }

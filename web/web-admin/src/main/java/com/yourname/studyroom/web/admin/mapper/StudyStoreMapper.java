@@ -3,8 +3,8 @@ package com.yourname.studyroom.web.admin.mapper;
 import com.yourname.studyroom.model.entity.StudyStore;
 import com.yourname.studyroom.model.entity.LabelInfo;
 import com.yourname.studyroom.model.enums.BookingStatus;
-import com.yourname.studyroom.web.admin.vo.apartment.ApartmentItemVo;
-import com.yourname.studyroom.web.admin.vo.apartment.ApartmentQueryVo;
+import com.yourname.studyroom.web.admin.vo.store.StoreItemVo;
+import com.yourname.studyroom.web.admin.vo.store.StoreQueryVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,9 +19,9 @@ import java.util.List;
 */
 public interface StudyStoreMapper extends BaseMapper<StudyStore> {
 
-    IPage<ApartmentItemVo> pageItem(Page<ApartmentItemVo> page, ApartmentQueryVo queryVo);
+    IPage<StoreItemVo> pageItem(Page<StoreItemVo> page, StoreQueryVo queryVo);
 
-    List<LabelInfo> selectListByApartmentId(Long id);
+    List<LabelInfo> selectListByStoreId(Long id);
 }
 
 

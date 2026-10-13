@@ -1,7 +1,7 @@
 package com.yourname.studyroom.model.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import com.yourname.studyroom.model.enums.LeaseSourceType;
+import com.yourname.studyroom.model.enums.BookingSourceType;
 import com.yourname.studyroom.model.enums.BookingStatus;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -70,9 +70,9 @@ public class BookingOrder extends BaseEntity {
     @TableField(value = "check_out_time")
     private Date checkOutTime;
 
-    @Schema(description = "租期id")
-    @TableField(value = "lease_term_id")
-    private Long leaseTermId;
+    @Schema(description = "预订时长id")
+    @TableField(value = "booking_term_id")
+    private Long bookingTermId;
 
     @Schema(description = "订单总金额（元）")
     @TableField(value = "total_amount")
@@ -92,7 +92,7 @@ public class BookingOrder extends BaseEntity {
 
     @Schema(description = "订单来源")
     @TableField(value = "source_type")
-    private LeaseSourceType sourceType;
+    private BookingSourceType sourceType;
 
     @Schema(description = "备注信息")
     @TableField(value = "additional_info")

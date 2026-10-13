@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.vo.appointment;
 
 import com.yourname.studyroom.model.entity.VisitAppointment;
-import com.yourname.studyroom.web.app.vo.apartment.ApartmentItemVo;
+import com.yourname.studyroom.web.app.vo.store.StoreItemVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -11,5 +11,5 @@ import lombok.Data;
 public class AppointmentDetailVo extends VisitAppointment {
 
     @Schema(description = "自习室门店基本信息")
-    private ApartmentItemVo storeItemVo;
+    private StoreItemVo storeItemVo;
 }

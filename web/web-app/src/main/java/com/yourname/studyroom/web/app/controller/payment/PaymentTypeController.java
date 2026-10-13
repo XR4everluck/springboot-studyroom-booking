@@ -29,9 +29,9 @@ public class PaymentTypeController {
      * @return 包含可选支付方式列表的响应结果
      */
     @Operation(summary = "根据座位id获取可选支付方式列表")
-    @GetMapping("listByRoomId")
+    @GetMapping("listBySeatId")
     public Result<List<PaymentType>> list(@RequestParam Long id) {
-        List<PaymentType> result = paymentTypeService.listByRoomId(id);
+        List<PaymentType> result = paymentTypeService.listBySeatId(id);
         return Result.ok(result);
     }
 

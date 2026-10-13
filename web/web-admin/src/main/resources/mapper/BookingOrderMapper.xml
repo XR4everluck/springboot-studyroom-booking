@@ -4,25 +4,25 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yourname.studyroom.web.admin.mapper.BookingOrderMapper">
 
-    <resultMap id="agreementVoMap" type="com.yourname.studyroom.web.admin.vo.agreement.AgreementVo" autoMapping="true">
+    <resultMap id="orderVoMap" type="com.yourname.studyroom.web.admin.vo.order.OrderVo" autoMapping="true">
         <id property="id" column="id"/>
         <association property="studyStore" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
-            <id property="id" column="apartment_id"/>
+            <id property="id" column="store_id"/>
             <result property="name" column="store_name"/>
         </association>
         <association property="seat" javaType="com.yourname.studyroom.model.entity.Seat" autoMapping="true">
-            <id property="id" column="room_id"/>
+            <id property="id" column="seat_id"/>
         </association>
         <association property="paymentType" javaType="com.yourname.studyroom.model.entity.PaymentType" autoMapping="true">
             <id property="id" column="payment_type_id"/>
             <result property="name" column="payment_type_name"/>
         </association>
-        <association property="leaseTerm" javaType="com.yourname.studyroom.model.entity.LeaseTerm" autoMapping="true">
-            <id property="id" column="lease_term_id"/>
+        <association property="bookingTerm" javaType="com.yourname.studyroom.model.entity.BookingTerm" autoMapping="true">
+            <id property="id" column="booking_term_id"/>
         </association>
     </resultMap>
 
-    <select id="pageAgreementByQuery" resultMap="agreementVoMap">
+    <select id="pageOrderByQuery" resultMap="orderVoMap">
         select la.id,
         la.phone,
         la.name,
@@ -33,7 +33,7 @@
         la.status,
         la.source_type,
         la.additional_info,
-        ai.id   apartment_id,
+        ai.id   store_id,
         ai.name store_name,
         ai.district_id,
         ai.district_name,
@@ -41,12 +41,12 @@
         ai.city_name,
         ai.province_id,
         ai.province_name,
-        ri.id   room_id,
+        ri.id   seat_id,
         ri.seat_code,
         pt.id   payment_type_id,
         pt.name payment_type_name,
         pt.pay_month_count,
-        lt.id   lease_term_id,
+        lt.id   booking_term_id,
         lt.month_count,
         lt.unit
         from  booking_order la
@@ -60,8 +60,8 @@
         payment_type pt
         on la.payment_type_id = pt.id and pt.is_deleted=0
         left join
-        lease_term lt
-        on la.lease_term_id = lt.id and lt.is_deleted=0
+        booking_term lt
+        on la.booking_term_id = lt.id and lt.is_deleted=0
         <where>
             la.is_deleted = 0
             <if test="queryVo.provinceId != null">

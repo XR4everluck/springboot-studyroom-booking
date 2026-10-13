@@ -26,8 +26,8 @@ public class BrowsingHistory extends BaseEntity {
     private Long userId;
 
     @Schema(description = "座位id")
-    @TableField("room_id")
-    private Long roomId;
+    @TableField("seat_id")
+    private Long seatId;
 
     @Schema(description = "浏览时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

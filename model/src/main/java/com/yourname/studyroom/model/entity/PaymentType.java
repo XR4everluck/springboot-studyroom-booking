@@ -16,7 +16,7 @@ public class PaymentType extends BaseEntity {
     @TableField(value = "name")
     private String name;
 
-    @Schema(description = "每次支付租期数")
+    @Schema(description = "每次支付预订时长数")
     @TableField(value = "pay_month_count")
     private String payMonthCount;
 

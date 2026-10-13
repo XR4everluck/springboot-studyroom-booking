@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.admin.service.impl;
 
 import com.yourname.studyroom.common.constant.RedisConstant;
-import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.JwtUtil;
 import com.yourname.studyroom.model.entity.SystemUser;
@@ -42,29 +42,29 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String login(LoginVo loginVo) {
         if (loginVo.getCaptchaCode() == null) {
-            throw new LeaseException(ResultCodeEnum.APP_LOGIN_CODE_EMPTY);
+            throw new BookingException(ResultCodeEnum.APP_LOGIN_CODE_EMPTY);
         }
 
         String code = redisTemplate.opsForValue().get(loginVo.getCaptchaKey());
         if (code == null) {
-            throw new LeaseException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_EXPIRED);
+            throw new BookingException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_EXPIRED);
         }
         if (!code.equals(loginVo.getCaptchaCode().toLowerCase())) {
-            throw new LeaseException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_ERROR);
+            throw new BookingException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_ERROR);
         }
 
         SystemUser systemUser = systemUserMapper.selectOneByUsername(loginVo.getUsername());
 
         if (systemUser == null) {
-            throw new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_NOT_EXIST_ERROR);
+            throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_NOT_EXIST_ERROR);
         }
 
         if (systemUser.getStatus() == BaseStatus.DISABLE){
-            throw new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_DISABLED_ERROR);
+            throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_DISABLED_ERROR);
         }
 
         if (!systemUser.getPassword().equals(DigestUtils.md5Hex(loginVo.getPassword()))){
-            throw new LeaseException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
+            throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
         }
 
         return JwtUtil.createToken(systemUser.getId(),systemUser.getUsername());

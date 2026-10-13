@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.mapper;
 
 import com.yourname.studyroom.model.entity.StudyStore;
-import com.yourname.studyroom.web.app.vo.apartment.ApartmentItemVo;
+import com.yourname.studyroom.web.app.vo.store.StoreItemVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

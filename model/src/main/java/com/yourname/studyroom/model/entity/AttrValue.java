@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@Schema(description = "房间基本属性值表")
+@Schema(description = "座位基本属性值表")
 @TableName(value = "attr_value")
 @Data
 public class AttrValue extends BaseEntity {

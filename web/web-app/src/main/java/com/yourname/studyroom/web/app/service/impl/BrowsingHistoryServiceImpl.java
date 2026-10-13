@@ -43,7 +43,7 @@ public class BrowsingHistoryServiceImpl extends ServiceImpl<BrowsingHistoryMappe
     public void saveHistory(Long userId, Long id) {
         LambdaQueryWrapper<BrowsingHistory> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(BrowsingHistory::getUserId,userId);
-        queryWrapper.eq(BrowsingHistory::getRoomId,id);
+        queryWrapper.eq(BrowsingHistory::getSeatId,id);
         BrowsingHistory browsingHistory = browsingHistoryMapper.selectOne(queryWrapper);
 
         if (browsingHistory != null){
@@ -52,7 +52,7 @@ public class BrowsingHistoryServiceImpl extends ServiceImpl<BrowsingHistoryMappe
         } else {
             BrowsingHistory newBrowsingHistory = new BrowsingHistory();
             newBrowsingHistory.setUserId(userId);
-            newBrowsingHistory.setRoomId(id);
+            newBrowsingHistory.setSeatId(id);
             newBrowsingHistory.setBrowseTime(new Date());
             browsingHistoryMapper.insert(newBrowsingHistory);
         }

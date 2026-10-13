@@ -3,9 +3,9 @@ package com.yourname.studyroom.web.app.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yourname.studyroom.model.entity.Seat;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yourname.studyroom.web.app.vo.room.RoomDetailVo;
-import com.yourname.studyroom.web.app.vo.room.RoomItemVo;
-import com.yourname.studyroom.web.app.vo.room.RoomQueryVo;
+import com.yourname.studyroom.web.app.vo.seat.SeatDetailVo;
+import com.yourname.studyroom.web.app.vo.seat.SeatItemVo;
+import com.yourname.studyroom.web.app.vo.seat.SeatQueryVo;
 
 /**
 * @author liubo
@@ -13,9 +13,9 @@ import com.yourname.studyroom.web.app.vo.room.RoomQueryVo;
 * @createDate 2023-07-26 11:12:39
 */
 public interface SeatService extends IService<Seat> {
-    IPage<RoomItemVo> pageItem(IPage<RoomItemVo> page, RoomQueryVo queryVo);
+    IPage<SeatItemVo> pageItem(IPage<SeatItemVo> page, SeatQueryVo queryVo);
 
-    RoomDetailVo getDetailById(Long id);
+    SeatDetailVo getDetailById(Long id);
 
-    IPage<RoomItemVo> pageItemByApartmentId(IPage<RoomItemVo> page, Long id);
+    IPage<SeatItemVo> pageItemByStoreId(IPage<SeatItemVo> page, Long id);
 }

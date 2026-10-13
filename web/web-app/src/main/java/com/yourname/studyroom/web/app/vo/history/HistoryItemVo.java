@@ -18,7 +18,7 @@ public class HistoryItemVo extends BrowsingHistory {
     private String seatCode;
 
     @Schema(description = "座位单价")
-    private BigDecimal rent;
+    private BigDecimal price;
 
     @Schema(description = "座位图片列表")
     private List<GraphVo> seatGraphVoList;

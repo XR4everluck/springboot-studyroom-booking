@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.mapper;
 
 import com.yourname.studyroom.model.entity.BookingOrder;
-import com.yourname.studyroom.web.app.vo.agreement.AgreementItemVo;
+import com.yourname.studyroom.web.app.vo.order.OrderItemVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +16,7 @@ import java.util.List;
 */
 public interface BookingOrderMapper extends BaseMapper<BookingOrder> {
 
-    List<AgreementItemVo> listItemByPhone(String phone);
+    List<OrderItemVo> listItemByPhone(String phone);
 
     /**
      * 统计同一座位在指定时段内的有效预订冲突数量

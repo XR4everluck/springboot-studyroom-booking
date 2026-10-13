@@ -1,8 +1,8 @@
 package com.yourname.studyroom.web.admin.service;
 
 import com.yourname.studyroom.model.entity.BookingOrder;
-import com.yourname.studyroom.web.admin.vo.agreement.AgreementQueryVo;
-import com.yourname.studyroom.web.admin.vo.agreement.AgreementVo;
+import com.yourname.studyroom.web.admin.vo.order.OrderQueryVo;
+import com.yourname.studyroom.web.admin.vo.order.OrderVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,9 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface BookingOrderService extends IService<BookingOrder> {
 
-    AgreementVo getAgreementById(Long id);
+    OrderVo getOrderById(Long id);
 
-    IPage<AgreementVo> pageAgreementByQuery(IPage<AgreementVo> page, AgreementQueryVo queryVo);
+    IPage<OrderVo> pageOrderByQuery(IPage<OrderVo> page, OrderQueryVo queryVo);
 
     /**
      * 创建或更新预订订单，含营业时间校验与时段冲突校验

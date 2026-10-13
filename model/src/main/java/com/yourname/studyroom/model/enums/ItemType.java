@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ItemType implements BaseEnum {
 
-    APARTMENT(1, "自习室门店"),
+    STORE(1, "自习室门店"),
 
-    ROOM(2, "房间");
+    SEAT(2, "座位");
 
-    //MybatisPlus TypeHandler 使code和枚举实例完成映射 1 <-> APARTMENT
+    //MybatisPlus TypeHandler 使code和枚举实例完成映射 1 <-> STORE
     //http参数和枚举类型之间的转换
     @EnumValue
-    //Spring Mvc HttpMessageConverter 使code和枚举实例完成映射 1 <-> APARTMENT
+    //Spring Mvc HttpMessageConverter 使code和枚举实例完成映射 1 <-> STORE
     @JsonValue
     private Integer code;
     private String name;

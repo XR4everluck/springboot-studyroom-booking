@@ -1,8 +1,8 @@
 package com.yourname.studyroom.web.admin.mapper;
 
 import com.yourname.studyroom.model.entity.Seat;
-import com.yourname.studyroom.web.admin.vo.room.RoomItemVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomQueryVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatItemVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatQueryVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 */
 public interface SeatMapper extends BaseMapper<Seat> {
 
-    IPage<RoomItemVo> pageRoomItemByQuery(IPage<RoomItemVo> page, RoomQueryVo queryVo);
+    IPage<SeatItemVo> pageSeatItemByQuery(IPage<SeatItemVo> page, SeatQueryVo queryVo);
 }
 
 

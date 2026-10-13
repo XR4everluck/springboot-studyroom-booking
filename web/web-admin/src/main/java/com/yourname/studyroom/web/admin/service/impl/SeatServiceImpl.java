@@ -10,10 +10,10 @@ import com.yourname.studyroom.web.admin.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yourname.studyroom.web.admin.vo.attr.AttrValueVo;
 import com.yourname.studyroom.web.admin.vo.graph.GraphVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomDetailVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomItemVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomQueryVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomSubmitVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatDetailVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatItemVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatQueryVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatSubmitVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,19 +35,19 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     GraphInfoService graphInfoService;
 
     @Autowired
-    RoomAttrValueService roomAttrValueService;
+    SeatAttrValueService seatAttrValueService;
 
     @Autowired
-    RoomFacilityService roomFacilityService;
+    SeatFacilityService seatFacilityService;
 
     @Autowired
-    RoomLabelService roomLabelService;
+    SeatLabelService seatLabelService;
 
     @Autowired
-    RoomPaymentTypeService roomPaymentTypeService;
+    SeatPaymentTypeService seatPaymentTypeService;
 
     @Autowired
-    RoomLeaseTermService roomLeaseTermService;
+    SeatBookingTermService seatBookingTermService;
 
     @Autowired
     SeatMapper seatMapper;
@@ -70,63 +70,63 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     PaymentTypeMapper paymentTypeMapper;
 
     @Autowired
-    LeaseTermMapper leaseTermMapper;
+    BookingTermMapper bookingTermMapper;
 
     @Autowired
     RedisTemplate<String,Object> redisTemplate;
 
     @Override
-    public void saveOrUpdateRoom(RoomSubmitVo roomSubmitVo) {
-        boolean isUpdate = roomSubmitVo.getId() != null;
-        super.saveOrUpdate(roomSubmitVo);
+    public void saveOrUpdateSeat(SeatSubmitVo seatSubmitVo) {
+        boolean isUpdate = seatSubmitVo.getId() != null;
+        super.saveOrUpdate(seatSubmitVo);
 
-        //若为更新操作，则先删除与Room相关的各项信息列表
+        //若为更新操作，则先删除与Seat相关的各项信息列表
         if (isUpdate) {
             //1.删除原有graphInfoList
             LambdaQueryWrapper<GraphInfo> graphQueryWrapper = new LambdaQueryWrapper<>();
-            graphQueryWrapper.eq(GraphInfo::getItemType, ItemType.ROOM);
-            graphQueryWrapper.eq(GraphInfo::getItemId, roomSubmitVo.getId());
+            graphQueryWrapper.eq(GraphInfo::getItemType, ItemType.SEAT);
+            graphQueryWrapper.eq(GraphInfo::getItemId, seatSubmitVo.getId());
             graphInfoService.remove(graphQueryWrapper);
 
-            //2.删除原有roomAttrValueList
-            LambdaQueryWrapper<RoomAttrValue> attrQueryMapper = new LambdaQueryWrapper<>();
-            attrQueryMapper.eq(RoomAttrValue::getRoomId, roomSubmitVo.getId());
-            roomAttrValueService.remove(attrQueryMapper);
+            //2.删除原有seatAttrValueList
+            LambdaQueryWrapper<SeatAttrValue> attrQueryMapper = new LambdaQueryWrapper<>();
+            attrQueryMapper.eq(SeatAttrValue::getSeatId, seatSubmitVo.getId());
+            seatAttrValueService.remove(attrQueryMapper);
 
-            //3.删除原有roomFacilityList
-            LambdaQueryWrapper<RoomFacility> facilityQueryWrapper = new LambdaQueryWrapper<>();
-            facilityQueryWrapper.eq(RoomFacility::getRoomId, roomSubmitVo.getId());
-            roomFacilityService.remove(facilityQueryWrapper);
+            //3.删除原有seatFacilityList
+            LambdaQueryWrapper<SeatFacility> facilityQueryWrapper = new LambdaQueryWrapper<>();
+            facilityQueryWrapper.eq(SeatFacility::getSeatId, seatSubmitVo.getId());
+            seatFacilityService.remove(facilityQueryWrapper);
 
-            //4.删除原有roomLabelList
-            LambdaQueryWrapper<RoomLabel> labelQueryWrapper = new LambdaQueryWrapper<>();
-            labelQueryWrapper.eq(RoomLabel::getRoomId, roomSubmitVo.getId());
-            roomLabelService.remove(labelQueryWrapper);
+            //4.删除原有seatLabelList
+            LambdaQueryWrapper<SeatLabel> labelQueryWrapper = new LambdaQueryWrapper<>();
+            labelQueryWrapper.eq(SeatLabel::getSeatId, seatSubmitVo.getId());
+            seatLabelService.remove(labelQueryWrapper);
 
             //5.删除原有paymentTypeList
-            LambdaQueryWrapper<RoomPaymentType> paymentQueryWrapper = new LambdaQueryWrapper<>();
-            paymentQueryWrapper.eq(RoomPaymentType::getRoomId, roomSubmitVo.getId());
-            roomPaymentTypeService.remove(paymentQueryWrapper);
+            LambdaQueryWrapper<SeatPaymentType> paymentQueryWrapper = new LambdaQueryWrapper<>();
+            paymentQueryWrapper.eq(SeatPaymentType::getSeatId, seatSubmitVo.getId());
+            seatPaymentTypeService.remove(paymentQueryWrapper);
 
 
-            //6.删除原有leaseTermList
-            LambdaQueryWrapper<RoomLeaseTerm> termQueryWrapper = new LambdaQueryWrapper<>();
-            termQueryWrapper.eq(RoomLeaseTerm::getRoomId, roomSubmitVo.getId());
-            roomLeaseTermService.remove(termQueryWrapper);
+            //6.删除原有bookingTermList
+            LambdaQueryWrapper<SeatBookingTerm> termQueryWrapper = new LambdaQueryWrapper<>();
+            termQueryWrapper.eq(SeatBookingTerm::getSeatId, seatSubmitVo.getId());
+            seatBookingTermService.remove(termQueryWrapper);
 
             //删除缓存
-            String key = RedisConstant.APP_ROOM_PREFIX+roomSubmitVo.getId();
+            String key = RedisConstant.APP_SEAT_PREFIX+seatSubmitVo.getId();
             redisTemplate.delete(key);
         }
 
         //1.保存新的graphInfoList
-        List<GraphVo> graphVoList = roomSubmitVo.getGraphVoList();
+        List<GraphVo> graphVoList = seatSubmitVo.getGraphVoList();
         if (!CollectionUtils.isEmpty(graphVoList)) {
             ArrayList<GraphInfo> graphInfoList = new ArrayList<>();
             for (GraphVo graphVo : graphVoList) {
                 GraphInfo graphInfo = new GraphInfo();
-                graphInfo.setItemType(ItemType.ROOM);
-                graphInfo.setItemId(roomSubmitVo.getId());
+                graphInfo.setItemType(ItemType.SEAT);
+                graphInfo.setItemId(seatSubmitVo.getId());
                 graphInfo.setName(graphVo.getName());
                 graphInfo.setUrl(graphVo.getUrl());
                 graphInfoList.add(graphInfo);
@@ -134,69 +134,69 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             graphInfoService.saveBatch(graphInfoList);
         }
 
-        //2.保存新的roomAttrValueList
-        List<Long> attrValueIds = roomSubmitVo.getAttrValueIds();
+        //2.保存新的seatAttrValueList
+        List<Long> attrValueIds = seatSubmitVo.getAttrValueIds();
         if (!CollectionUtils.isEmpty(attrValueIds)) {
-            List<RoomAttrValue> roomAttrValueList = new ArrayList<>();
+            List<SeatAttrValue> seatAttrValueList = new ArrayList<>();
             for (Long attrValueId : attrValueIds) {
-                RoomAttrValue roomAttrValue = RoomAttrValue.builder().roomId(roomSubmitVo.getId()).attrValueId(attrValueId).build();
-                roomAttrValueList.add(roomAttrValue);
+                SeatAttrValue seatAttrValue = SeatAttrValue.builder().seatId(seatSubmitVo.getId()).attrValueId(attrValueId).build();
+                seatAttrValueList.add(seatAttrValue);
             }
-            roomAttrValueService.saveBatch(roomAttrValueList);
+            seatAttrValueService.saveBatch(seatAttrValueList);
         }
 
         //3.保存新的facilityInfoList
-        List<Long> facilityInfoIds = roomSubmitVo.getFacilityInfoIds();
+        List<Long> facilityInfoIds = seatSubmitVo.getFacilityInfoIds();
         if (!CollectionUtils.isEmpty(facilityInfoIds)) {
-            List<RoomFacility> roomFacilityList = new ArrayList<>();
+            List<SeatFacility> seatFacilityList = new ArrayList<>();
             for (Long facilityInfoId : facilityInfoIds) {
-                RoomFacility roomFacility = RoomFacility.builder().roomId(roomSubmitVo.getId()).facilityId(facilityInfoId).build();
-                roomFacilityList.add(roomFacility);
+                SeatFacility seatFacility = SeatFacility.builder().seatId(seatSubmitVo.getId()).facilityId(facilityInfoId).build();
+                seatFacilityList.add(seatFacility);
             }
-            roomFacilityService.saveBatch(roomFacilityList);
+            seatFacilityService.saveBatch(seatFacilityList);
         }
 
         //4.保存新的labelInfoList
-        List<Long> labelInfoIds = roomSubmitVo.getLabelInfoIds();
+        List<Long> labelInfoIds = seatSubmitVo.getLabelInfoIds();
         if (!CollectionUtils.isEmpty(labelInfoIds)) {
-            ArrayList<RoomLabel> roomLabelList = new ArrayList<>();
+            ArrayList<SeatLabel> seatLabelList = new ArrayList<>();
             for (Long labelInfoId : labelInfoIds) {
-                RoomLabel roomLabel = RoomLabel.builder().roomId(roomSubmitVo.getId()).labelId(labelInfoId).build();
-                roomLabelList.add(roomLabel);
+                SeatLabel seatLabel = SeatLabel.builder().seatId(seatSubmitVo.getId()).labelId(labelInfoId).build();
+                seatLabelList.add(seatLabel);
             }
-            roomLabelService.saveBatch(roomLabelList);
+            seatLabelService.saveBatch(seatLabelList);
         }
 
         //5.保存新的paymentTypeList
-        List<Long> paymentTypeIds = roomSubmitVo.getPaymentTypeIds();
+        List<Long> paymentTypeIds = seatSubmitVo.getPaymentTypeIds();
         if (!CollectionUtils.isEmpty(paymentTypeIds)) {
-            ArrayList<RoomPaymentType> roomPaymentTypeList = new ArrayList<>();
+            ArrayList<SeatPaymentType> seatPaymentTypeList = new ArrayList<>();
             for (Long paymentTypeId : paymentTypeIds) {
-                RoomPaymentType roomPaymentType = RoomPaymentType.builder().roomId(roomSubmitVo.getId()).paymentTypeId(paymentTypeId).build();
-                roomPaymentTypeList.add(roomPaymentType);
+                SeatPaymentType seatPaymentType = SeatPaymentType.builder().seatId(seatSubmitVo.getId()).paymentTypeId(paymentTypeId).build();
+                seatPaymentTypeList.add(seatPaymentType);
             }
-            roomPaymentTypeService.saveBatch(roomPaymentTypeList);
+            seatPaymentTypeService.saveBatch(seatPaymentTypeList);
         }
 
-        //6.保存新的leaseTermList
-        List<Long> leaseTermIds = roomSubmitVo.getLeaseTermIds();
-        if (!CollectionUtils.isEmpty(leaseTermIds)) {
-            ArrayList<RoomLeaseTerm> roomLeaseTerms = new ArrayList<>();
-            for (Long leaseTermId : leaseTermIds) {
-                RoomLeaseTerm roomLeaseTerm = RoomLeaseTerm.builder().roomId(roomSubmitVo.getId()).leaseTermId(leaseTermId).build();
-                roomLeaseTerms.add(roomLeaseTerm);
+        //6.保存新的bookingTermList
+        List<Long> bookingTermIds = seatSubmitVo.getBookingTermIds();
+        if (!CollectionUtils.isEmpty(bookingTermIds)) {
+            ArrayList<SeatBookingTerm> seatBookingTerms = new ArrayList<>();
+            for (Long bookingTermId : bookingTermIds) {
+                SeatBookingTerm seatBookingTerm = SeatBookingTerm.builder().seatId(seatSubmitVo.getId()).bookingTermId(bookingTermId).build();
+                seatBookingTerms.add(seatBookingTerm);
             }
-            roomLeaseTermService.saveBatch(roomLeaseTerms);
+            seatBookingTermService.saveBatch(seatBookingTerms);
         }
     }
 
     @Override
-    public IPage<RoomItemVo> pageRoomItemByQuery(IPage<RoomItemVo> page, RoomQueryVo queryVo) {
-        return seatMapper.pageRoomItemByQuery(page, queryVo);
+    public IPage<SeatItemVo> pageSeatItemByQuery(IPage<SeatItemVo> page, SeatQueryVo queryVo) {
+        return seatMapper.pageSeatItemByQuery(page, queryVo);
     }
 
     @Override
-    public RoomDetailVo getRoomDetailById(Long id) {
+    public SeatDetailVo getSeatDetailById(Long id) {
         //1.查询Seat
         Seat seat = seatMapper.selectById(id);
 
@@ -204,76 +204,76 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
         StudyStore studyStore = studyStoreMapper.selectById(seat.getStoreId());
 
         //3.查询graphInfoList
-        List<GraphVo> graphVoList = graphInfoMapper.selectByItemTypeAndId(ItemType.ROOM, id);
+        List<GraphVo> graphVoList = graphInfoMapper.selectByItemTypeAndId(ItemType.SEAT, id);
 
         //4.查询attrValueList
-        List<AttrValueVo> attrvalueVoList = attrValueMapper.selectListByRoomId(id);
+        List<AttrValueVo> attrvalueVoList = attrValueMapper.selectListBySeatId(id);
 
         //5.查询facilityInfoList
-        List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
+        List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListBySeatId(id);
 
         //6.查询labelInfoList
-        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByRoomId(id);
+        List<LabelInfo> labelInfoList = labelInfoMapper.selectListBySeatId(id);
 
         //7.查询paymentTypeList
-        List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
+        List<PaymentType> paymentTypeList = paymentTypeMapper.selectListBySeatId(id);
 
-        //8.查询leaseTermList
-        List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
+        //8.查询bookingTermList
+        List<BookingTerm> bookingTermList = bookingTermMapper.selectListBySeatId(id);
 
 
-        RoomDetailVo adminRoomDetailVo = new RoomDetailVo();
-        BeanUtils.copyProperties(seat, adminRoomDetailVo);
+        SeatDetailVo adminSeatDetailVo = new SeatDetailVo();
+        BeanUtils.copyProperties(seat, adminSeatDetailVo);
 
-        adminRoomDetailVo.setStudyStore(studyStore);
-        adminRoomDetailVo.setGraphVoList(graphVoList);
-        adminRoomDetailVo.setAttrValueVoList(attrvalueVoList);
-        adminRoomDetailVo.setFacilityInfoList(facilityInfoList);
-        adminRoomDetailVo.setLabelInfoList(labelInfoList);
-        adminRoomDetailVo.setPaymentTypeList(paymentTypeList);
-        adminRoomDetailVo.setLeaseTermList(leaseTermList);
+        adminSeatDetailVo.setStudyStore(studyStore);
+        adminSeatDetailVo.setGraphVoList(graphVoList);
+        adminSeatDetailVo.setAttrValueVoList(attrvalueVoList);
+        adminSeatDetailVo.setFacilityInfoList(facilityInfoList);
+        adminSeatDetailVo.setLabelInfoList(labelInfoList);
+        adminSeatDetailVo.setPaymentTypeList(paymentTypeList);
+        adminSeatDetailVo.setBookingTermList(bookingTermList);
 
-        return adminRoomDetailVo;
+        return adminSeatDetailVo;
     }
 
     @Override
-    public void removeRoomById(Long id) {
+    public void removeSeatById(Long id) {
         //1.删除Seat
         super.removeById(id);
 
         //2.删除graphInfoList
         LambdaQueryWrapper<GraphInfo> graphQueryWrapper = new LambdaQueryWrapper<>();
-        graphQueryWrapper.eq(GraphInfo::getItemType, ItemType.ROOM);
+        graphQueryWrapper.eq(GraphInfo::getItemType, ItemType.SEAT);
         graphQueryWrapper.eq(GraphInfo::getItemId, id);
         graphInfoService.remove(graphQueryWrapper);
 
         //3.删除attrValueList
-        LambdaQueryWrapper<RoomAttrValue> attrQueryWrapper = new LambdaQueryWrapper<>();
-        attrQueryWrapper.eq(RoomAttrValue::getRoomId, id);
-        roomAttrValueService.remove(attrQueryWrapper);
+        LambdaQueryWrapper<SeatAttrValue> attrQueryWrapper = new LambdaQueryWrapper<>();
+        attrQueryWrapper.eq(SeatAttrValue::getSeatId, id);
+        seatAttrValueService.remove(attrQueryWrapper);
 
         //4.删除facilityInfoList
-        LambdaQueryWrapper<RoomFacility> facilityQueryWrapper = new LambdaQueryWrapper<>();
-        facilityQueryWrapper.eq(RoomFacility::getRoomId, id);
-        roomFacilityService.remove(facilityQueryWrapper);
+        LambdaQueryWrapper<SeatFacility> facilityQueryWrapper = new LambdaQueryWrapper<>();
+        facilityQueryWrapper.eq(SeatFacility::getSeatId, id);
+        seatFacilityService.remove(facilityQueryWrapper);
 
         //5.删除labelInfoList
-        LambdaQueryWrapper<RoomLabel> labelQueryWrapper = new LambdaQueryWrapper<>();
-        labelQueryWrapper.eq(RoomLabel::getRoomId, id);
-        roomLabelService.remove(labelQueryWrapper);
+        LambdaQueryWrapper<SeatLabel> labelQueryWrapper = new LambdaQueryWrapper<>();
+        labelQueryWrapper.eq(SeatLabel::getSeatId, id);
+        seatLabelService.remove(labelQueryWrapper);
 
         //6.删除paymentTypeList
-        LambdaQueryWrapper<RoomPaymentType> paymentQueryWrapper = new LambdaQueryWrapper<>();
-        paymentQueryWrapper.eq(RoomPaymentType::getRoomId, id);
-        roomPaymentTypeService.remove(paymentQueryWrapper);
+        LambdaQueryWrapper<SeatPaymentType> paymentQueryWrapper = new LambdaQueryWrapper<>();
+        paymentQueryWrapper.eq(SeatPaymentType::getSeatId, id);
+        seatPaymentTypeService.remove(paymentQueryWrapper);
 
-        //7.删除leaseTermList
-        LambdaQueryWrapper<RoomLeaseTerm> termQueryWrapper = new LambdaQueryWrapper<>();
-        termQueryWrapper.eq(RoomLeaseTerm::getRoomId, id);
-        roomLeaseTermService.remove(termQueryWrapper);
+        //7.删除bookingTermList
+        LambdaQueryWrapper<SeatBookingTerm> termQueryWrapper = new LambdaQueryWrapper<>();
+        termQueryWrapper.eq(SeatBookingTerm::getSeatId, id);
+        seatBookingTermService.remove(termQueryWrapper);
 
         //删除缓存
-        String key = RedisConstant.APP_ROOM_PREFIX + id;
+        String key = RedisConstant.APP_SEAT_PREFIX + id;
         redisTemplate.delete(key);
     }
 }

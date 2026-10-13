@@ -1,8 +1,8 @@
 package com.yourname.studyroom.web.admin.mapper;
 
 import com.yourname.studyroom.model.entity.BookingOrder;
-import com.yourname.studyroom.web.admin.vo.agreement.AgreementQueryVo;
-import com.yourname.studyroom.web.admin.vo.agreement.AgreementVo;
+import com.yourname.studyroom.web.admin.vo.order.OrderQueryVo;
+import com.yourname.studyroom.web.admin.vo.order.OrderVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Param;
@@ -17,7 +17,7 @@ import java.util.Date;
 */
 public interface BookingOrderMapper extends BaseMapper<BookingOrder> {
 
-    IPage<AgreementVo> pageAgreementByQuery(IPage<AgreementVo> page, AgreementQueryVo queryVo);
+    IPage<OrderVo> pageOrderByQuery(IPage<OrderVo> page, OrderQueryVo queryVo);
 
     /**
      * 统计同一座位在指定时段内的有效预订冲突数量

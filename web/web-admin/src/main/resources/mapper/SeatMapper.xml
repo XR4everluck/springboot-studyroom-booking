@@ -3,15 +3,15 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yourname.studyroom.web.admin.mapper.SeatMapper">
-    <resultMap id="RoomItemVoMP" type="com.yourname.studyroom.web.admin.vo.room.RoomItemVo" autoMapping="true">
+    <resultMap id="SeatItemVoMP" type="com.yourname.studyroom.web.admin.vo.seat.SeatItemVo" autoMapping="true">
         <id property="id" column="id"/>
         <association property="studyStore" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
-            <id property="id" column="apart_id"/>
-            <result property="isRelease" column="apart_is_release"/>
+            <id property="id" column="store_id"/>
+            <result property="isRelease" column="store_is_release"/>
         </association>
     </resultMap>
 
-    <select id="pageRoomItemByQuery" resultMap="RoomItemVoMP">
+    <select id="pageSeatItemByQuery" resultMap="SeatItemVoMP">
         select ri.id,
         ri.seat_code,
         ri.price,
@@ -19,7 +19,7 @@
         ri.is_release,
         la.seat_id is not null is_check_in,
         la.end_date,
-        ai.id                  apart_id,
+        ai.id                  store_id,
         ai.name,
         ai.introduction,
         ai.district_id,
@@ -32,7 +32,7 @@
         ai.latitude,
         ai.longitude,
         ai.phone,
-        ai.is_release          apart_is_release
+        ai.is_release          store_is_release
         from seat ri
         left join booking_order la
         on ri.id = la.seat_id

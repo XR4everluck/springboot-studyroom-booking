@@ -1,6 +1,6 @@
 package com.yourname.studyroom.web.app.service.impl;
 
-import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.BusinessHoursUtil;
 import com.yourname.studyroom.model.entity.StudyStore;
@@ -9,7 +9,7 @@ import com.yourname.studyroom.web.app.mapper.VisitAppointmentMapper;
 import com.yourname.studyroom.web.app.service.StudyStoreService;
 import com.yourname.studyroom.web.app.service.VisitAppointmentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yourname.studyroom.web.app.vo.apartment.ApartmentItemVo;
+import com.yourname.studyroom.web.app.vo.store.StoreItemVo;
 import com.yourname.studyroom.web.app.vo.appointment.AppointmentDetailVo;
 import com.yourname.studyroom.web.app.vo.appointment.AppointmentItemVo;
 import org.springframework.beans.BeanUtils;
@@ -54,14 +54,14 @@ public class VisitAppointmentServiceImpl extends ServiceImpl<VisitAppointmentMap
     public AppointmentDetailVo getDetailById(Long id) {
         VisitAppointment visitAppointment = visitAppointmentMapper.selectById(id);
 
-        ApartmentItemVo storeItemVo = studyStoreService.selectApartmentItemVoById(visitAppointment.getStoreId());
+        StoreItemVo storeItemVo = studyStoreService.selectStoreItemVoById(visitAppointment.getStoreId());
 
-        AppointmentDetailVo agreementDetailVo = new AppointmentDetailVo();
-        BeanUtils.copyProperties(visitAppointment, agreementDetailVo);
+        AppointmentDetailVo orderDetailVo = new AppointmentDetailVo();
+        BeanUtils.copyProperties(visitAppointment, orderDetailVo);
 
-        agreementDetailVo.setStoreItemVo(storeItemVo);
+        orderDetailVo.setStoreItemVo(storeItemVo);
 
-        return agreementDetailVo;
+        return orderDetailVo;
     }
 
     /**
@@ -71,13 +71,13 @@ public class VisitAppointmentServiceImpl extends ServiceImpl<VisitAppointmentMap
     public void createOrUpdateAppointment(VisitAppointment visitAppointment) {
         StudyStore studyStore = studyStoreService.getById(visitAppointment.getStoreId());
         if (studyStore == null) {
-            throw new LeaseException(ResultCodeEnum.DATA_ERROR);
+            throw new BookingException(ResultCodeEnum.DATA_ERROR);
         }
         boolean withinBusinessHours = BusinessHoursUtil.isWithin(
                 studyStore.getBusinessHours(),
                 visitAppointment.getAppointmentTime());
         if (!withinBusinessHours) {
-            throw new LeaseException(ResultCodeEnum.APPOINTMENT_NOT_IN_BUSINESS_HOURS);
+            throw new BookingException(ResultCodeEnum.APPOINTMENT_NOT_IN_BUSINESS_HOURS);
         }
         this.saveOrUpdate(visitAppointment);
     }

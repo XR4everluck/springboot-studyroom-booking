@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yourname.studyroom.web.app.mapper.FacilityInfoMapper">
 
-    <select id="selectListByRoomId" resultType="com.yourname.studyroom.model.entity.FacilityInfo">
+    <select id="selectListBySeatId" resultType="com.yourname.studyroom.model.entity.FacilityInfo">
         select id,
                type,
                name,
@@ -12,11 +12,11 @@
         from facility_info
         where is_deleted = 0
           and id in (select facility_id
-                     from room_facility
+                     from seat_facility
                      where is_deleted = 0
-                       and room_id = #{id})
+                       and seat_id = #{id})
     </select>
-    <select id="selectListByApartmentId" resultType="com.yourname.studyroom.model.entity.FacilityInfo">
+    <select id="selectListByStoreId" resultType="com.yourname.studyroom.model.entity.FacilityInfo">
         select id,
                type,
                name,
@@ -24,8 +24,8 @@
         from facility_info
         where is_deleted = 0
           and id in (select facility_id
-                     from apartment_facility
+                     from store_facility
                      where is_deleted = 0
-                       and apartment_id = #{id})
+                       and store_id = #{id})
     </select>
 </mapper>

@@ -32,9 +32,9 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(LeaseException.class)
+    @ExceptionHandler(BookingException.class)
     @ResponseBody
-    public Result handle(LeaseException e){
+    public Result handle(BookingException e){
         e.printStackTrace();
         return Result.fail(e.getCode(),e.getMessage());
     }

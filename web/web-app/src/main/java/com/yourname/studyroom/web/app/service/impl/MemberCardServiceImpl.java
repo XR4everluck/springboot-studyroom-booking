@@ -2,7 +2,7 @@ package com.yourname.studyroom.web.app.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.model.entity.BookingOrder;
 import com.yourname.studyroom.model.entity.CardRechargeRecord;
@@ -52,21 +52,21 @@ public class MemberCardServiceImpl extends ServiceImpl<MemberCardMapper, MemberC
     public void deductForBooking(Long memberCardId, BookingOrder bookingOrder) {
         MemberCard card = memberCardMapper.selectById(memberCardId);
         if (card == null || card.getStatus() == null || card.getStatus() != 1) {
-            throw new LeaseException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
+            throw new BookingException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
         }
         // 门店限定卡需与订单门店一致
         if (card.getStoreId() != null && !card.getStoreId().equals(bookingOrder.getStoreId())) {
-            throw new LeaseException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
+            throw new BookingException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
         }
         // 有效期校验
         if (card.getValidUntil() != null && card.getValidUntil().before(new Date())) {
-            throw new LeaseException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
+            throw new BookingException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
         }
 
         int required = requiredQuantity(card.getCardType(), bookingOrder);
         int remaining = card.getRemainingQuantity() == null ? 0 : card.getRemainingQuantity();
         if (remaining < required) {
-            throw new LeaseException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
+            throw new BookingException(ResultCodeEnum.MEMBER_CARD_NOT_ENOUGH);
         }
         card.setRemainingQuantity(remaining - required);
         memberCardMapper.updateById(card);

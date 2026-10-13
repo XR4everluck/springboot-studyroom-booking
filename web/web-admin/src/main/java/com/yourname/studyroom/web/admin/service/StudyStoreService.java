@@ -1,10 +1,10 @@
 package com.yourname.studyroom.web.admin.service;
 
 import com.yourname.studyroom.model.entity.StudyStore;
-import com.yourname.studyroom.web.admin.vo.apartment.ApartmentDetailVo;
-import com.yourname.studyroom.web.admin.vo.apartment.ApartmentItemVo;
-import com.yourname.studyroom.web.admin.vo.apartment.ApartmentQueryVo;
-import com.yourname.studyroom.web.admin.vo.apartment.ApartmentSubmitVo;
+import com.yourname.studyroom.web.admin.vo.store.StoreDetailVo;
+import com.yourname.studyroom.web.admin.vo.store.StoreItemVo;
+import com.yourname.studyroom.web.admin.vo.store.StoreQueryVo;
+import com.yourname.studyroom.web.admin.vo.store.StoreSubmitVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -16,11 +16,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface StudyStoreService extends IService<StudyStore> {
 
-    void saveOrUpdateApartment(ApartmentSubmitVo apartmentSubmitVo);
+    void saveOrUpdateStore(StoreSubmitVo storeSubmitVo);
 
-    IPage<ApartmentItemVo> pageItem(Page<ApartmentItemVo> page, ApartmentQueryVo queryVo);
+    IPage<StoreItemVo> pageItem(Page<StoreItemVo> page, StoreQueryVo queryVo);
 
-    ApartmentDetailVo getDetailById(Long id);
+    StoreDetailVo getDetailById(Long id);
 
-    void removeApartmentById(Long id);
+    void removeStoreById(Long id);
 }

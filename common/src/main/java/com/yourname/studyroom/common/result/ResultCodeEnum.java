@@ -29,7 +29,7 @@ public enum ResultCodeEnum {
     ADMIN_ACCOUNT_DISABLED_ERROR(308, "该用户已被禁用"),
     ADMIN_ACCESS_FORBIDDEN(309, "无访问权限"),
 
-    ADMIN_APARTMENT_DELETE_ERROR(310,"请先删除房间"),
+    ADMIN_STORE_DELETE_ERROR(310,"请先删除座位"),
 
     // 自习室预订相关
     SEAT_TIME_CONFLICT(401, "该座位所选时段已被预订，请选择其他时段"),

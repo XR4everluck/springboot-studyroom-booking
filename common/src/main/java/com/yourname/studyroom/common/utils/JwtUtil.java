@@ -1,6 +1,6 @@
 package com.yourname.studyroom.common.utils;
 
-import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -45,20 +45,20 @@ public class JwtUtil {
      *
      * @param token 待解析的JWT令牌
      * @return Claims对象，包含令牌中的信息
-     * @throws LeaseException 如果令牌为空、过期或无效，则抛出异常
+     * @throws BookingException 如果令牌为空、过期或无效，则抛出异常
      */
     public static Claims parseToken(String token) {
         if (token == null) {
-            throw new LeaseException(ResultCodeEnum.ADMIN_LOGIN_AUTH);
+            throw new BookingException(ResultCodeEnum.ADMIN_LOGIN_AUTH);
         }
         try {
             JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(secretKey).build();
             Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
             return claimsJws.getBody();
         } catch (ExpiredJwtException e) {
-            throw new LeaseException(ResultCodeEnum.TOKEN_EXPIRED);
+            throw new BookingException(ResultCodeEnum.TOKEN_EXPIRED);
         } catch (JwtException e) {
-            throw new LeaseException(ResultCodeEnum.TOKEN_INVALID);
+            throw new BookingException(ResultCodeEnum.TOKEN_INVALID);
         }
     }
 

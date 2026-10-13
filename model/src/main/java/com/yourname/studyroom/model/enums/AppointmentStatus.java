@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum AppointmentStatus implements BaseEnum {
 
 
-    WAITING(1, "待看房"),
+    WAITING(1, "待体验"),
 
     CANCELED(2, "已取消"),
 
-    VIEWED(3, "已看房");
+    VIEWED(3, "已体验");
 
 
     @EnumValue

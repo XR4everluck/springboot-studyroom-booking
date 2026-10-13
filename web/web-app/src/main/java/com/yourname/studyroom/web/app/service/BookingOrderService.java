@@ -2,8 +2,8 @@ package com.yourname.studyroom.web.app.service;
 
 import com.yourname.studyroom.model.entity.BookingOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yourname.studyroom.web.app.vo.agreement.AgreementDetailVo;
-import com.yourname.studyroom.web.app.vo.agreement.AgreementItemVo;
+import com.yourname.studyroom.web.app.vo.order.OrderDetailVo;
+import com.yourname.studyroom.web.app.vo.order.OrderItemVo;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import java.util.List;
 * @createDate 2023-07-26 11:12:39
 */
 public interface BookingOrderService extends IService<BookingOrder> {
-    List<AgreementItemVo> listItemByPhone(String phone);
+    List<OrderItemVo> listItemByPhone(String phone);
 
-    AgreementDetailVo getDetailById(Long id);
+    OrderDetailVo getDetailById(Long id);
 
     /**
      * 创建或更新预订订单，含营业时间校验与时段冲突校验，成功后刷新座位实时状态缓存

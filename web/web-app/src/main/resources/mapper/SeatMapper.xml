@@ -3,25 +3,25 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yourname.studyroom.web.app.mapper.SeatMapper">
-    <resultMap id="RoomItemVoMP" type="com.yourname.studyroom.web.app.vo.room.RoomItemVo" autoMapping="true">
+    <resultMap id="SeatItemVoMP" type="com.yourname.studyroom.web.app.vo.seat.SeatItemVo" autoMapping="true">
         <id column="id" property="id"/>
         <association property="studyStore" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
-            <id column="apartment_id" property="id"/>
+            <id column="store_id" property="id"/>
         </association>
         <collection property="graphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo"
-                    select="selectGraphListByRoomID"
+                    select="selectGraphListBySeatID"
                     column="id"
         />
         <collection property="labelInfoList" ofType="com.yourname.studyroom.model.entity.LabelInfo"
-                    select="selectLabelListByRoomId"
+                    select="selectLabelListBySeatId"
                     column="id"
         />
     </resultMap>
-    <select id="pageItem" resultMap="RoomItemVoMP">
+    <select id="pageItem" resultMap="SeatItemVoMP">
         select ri.id,
                ri.seat_code,
                ri.price,
-               ai.id apartment_id,
+               ai.id store_id,
                ai.name,
                ai.introduction,
                ai.district_id,
@@ -58,8 +58,8 @@
             </if>
             <if test="queryVo.paymentTypeId != null">
                 and ri.id in (select
-                            room_id
-                            from room_payment_type
+                            seat_id
+                            from seat_payment_type
                             where is_deleted = 0
                             and payment_type_id=#{queryVo.paymentTypeId})
             </if>
@@ -69,7 +69,7 @@
         </if>
     </select>
 
-    <select id="selectGraphListByRoomID" resultType="com.yourname.studyroom.web.app.vo.graph.GraphVo">
+    <select id="selectGraphListBySeatID" resultType="com.yourname.studyroom.web.app.vo.graph.GraphVo">
         select name,
                url
         from graph_info
@@ -78,7 +78,7 @@
           and item_id = #{id}
     </select>
 
-    <select id="selectLabelListByRoomId" resultType="com.yourname.studyroom.model.entity.LabelInfo">
+    <select id="selectLabelListBySeatId" resultType="com.yourname.studyroom.model.entity.LabelInfo">
         select
             id,
             type,
@@ -87,11 +87,11 @@
         where is_deleted = 0
         and id in (select
                        label_id
-                   from room_label
+                   from seat_label
                    where is_deleted = 0
-                    and room_id = #{id})
+                    and seat_id = #{id})
     </select>
-    <select id="selectMinRentByApartmentId" resultType="java.math.BigDecimal">
+    <select id="selectMinPriceByStoreId" resultType="java.math.BigDecimal">
         select min(price)
         from seat
         where is_deleted = 0
@@ -99,11 +99,11 @@
           and store_id = #{id}
     </select>
 
-    <select id="pageItemByApartmentId" resultMap="RoomItemVoMP">
+    <select id="pageItemByStoreId" resultMap="SeatItemVoMP">
         select ri.id,
                ri.seat_code,
                ri.price,
-               ai.id apartment_id,
+               ai.id store_id,
                ai.name,
                ai.introduction,
                ai.district_id,

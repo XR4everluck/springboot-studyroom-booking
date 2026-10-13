@@ -4,18 +4,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yourname.studyroom.web.app.mapper.BookingOrderMapper">
 
-    <resultMap id="AgreementItemVoMap" type="com.yourname.studyroom.web.app.vo.agreement.AgreementItemVo" autoMapping="true">
+    <resultMap id="OrderItemVoMap" type="com.yourname.studyroom.web.app.vo.order.OrderItemVo" autoMapping="true">
         <id property="id" column="id"/>
         <collection property="seatGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"/>
     </resultMap>
 
-    <select id="listItemByPhone" resultMap="AgreementItemVoMap">
+    <select id="listItemByPhone" resultMap="OrderItemVoMap">
         select la.id,
                la.start_date,
                la.end_date,
                la.total_amount,
                la.payment_type_id,
-               la.status lease_status,
+               la.status booking_status,
                la.source_type,
                ai.name store_name,
                ri.seat_code,

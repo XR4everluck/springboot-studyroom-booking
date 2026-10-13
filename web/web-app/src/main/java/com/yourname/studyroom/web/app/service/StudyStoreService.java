@@ -2,8 +2,8 @@ package com.yourname.studyroom.web.app.service;
 
 import com.yourname.studyroom.model.entity.StudyStore;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yourname.studyroom.web.app.vo.apartment.ApartmentDetailVo;
-import com.yourname.studyroom.web.app.vo.apartment.ApartmentItemVo;
+import com.yourname.studyroom.web.app.vo.store.StoreDetailVo;
+import com.yourname.studyroom.web.app.vo.store.StoreItemVo;
 
 /**
  * @author liubo
@@ -11,7 +11,7 @@ import com.yourname.studyroom.web.app.vo.apartment.ApartmentItemVo;
  * @createDate 2023-07-26 11:12:39
  */
 public interface StudyStoreService extends IService<StudyStore> {
-    ApartmentItemVo selectApartmentItemVoById(Long id);
+    StoreItemVo selectStoreItemVoById(Long id);
 
-    ApartmentDetailVo getDetailById(Long id);
+    StoreDetailVo getDetailById(Long id);
 }

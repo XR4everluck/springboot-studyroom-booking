@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.service.impl;
 
 import com.yourname.studyroom.common.constant.RedisConstant;
-import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.BusinessHoursUtil;
 import com.yourname.studyroom.model.entity.*;
@@ -12,8 +12,8 @@ import com.yourname.studyroom.web.app.mapper.*;
 import com.yourname.studyroom.web.app.service.BookingOrderService;
 import com.yourname.studyroom.web.app.service.MemberCardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yourname.studyroom.web.app.vo.agreement.AgreementDetailVo;
-import com.yourname.studyroom.web.app.vo.agreement.AgreementItemVo;
+import com.yourname.studyroom.web.app.vo.order.OrderDetailVo;
+import com.yourname.studyroom.web.app.vo.order.OrderItemVo;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     PaymentTypeMapper paymentTypeMapper;
 
     @Autowired
-    LeaseTermMapper leaseTermMapper;
+    BookingTermMapper bookingTermMapper;
 
     @Autowired
     MemberCardService memberCardService;
@@ -64,7 +64,7 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
      * @return 预订订单基本信息列表
      */
     @Override
-    public List<AgreementItemVo> listItemByPhone(String phone) {
+    public List<OrderItemVo> listItemByPhone(String phone) {
         return bookingOrderMapper.listItemByPhone(phone);
     }
 
@@ -75,7 +75,7 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
      * @return 预订订单详细信息对象
      */
     @Override
-    public AgreementDetailVo getDetailById(Long id) {
+    public OrderDetailVo getDetailById(Long id) {
         //1.查询预订订单信息
         BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
         if (bookingOrder == null) {
@@ -88,26 +88,26 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
         Seat seat = seatMapper.selectById(bookingOrder.getSeatId());
 
         //4.查询图片信息
-        List<GraphVo> seatGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, bookingOrder.getSeatId());
-        List<GraphVo> storeGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, bookingOrder.getStoreId());
+        List<GraphVo> seatGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.SEAT, bookingOrder.getSeatId());
+        List<GraphVo> storeGraphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.STORE, bookingOrder.getStoreId());
 
         //5.查询支付方式
         PaymentType paymentType = paymentTypeMapper.selectById(bookingOrder.getPaymentTypeId());
 
-        //6.查询租期
-        LeaseTerm leaseTerm = leaseTermMapper.selectById(bookingOrder.getLeaseTermId());
+        //6.查询预订时长
+        BookingTerm bookingTerm = bookingTermMapper.selectById(bookingOrder.getBookingTermId());
 
-        AgreementDetailVo agreementDetailVo = new AgreementDetailVo();
-        BeanUtils.copyProperties(bookingOrder, agreementDetailVo);
-        agreementDetailVo.setStoreName(studyStore.getName());
-        agreementDetailVo.setSeatCode(seat.getSeatCode());
-        agreementDetailVo.setStoreGraphVoList(storeGraphVoList);
-        agreementDetailVo.setSeatGraphVoList(seatGraphVoList);
-        agreementDetailVo.setPaymentTypeName(paymentType.getName());
-        agreementDetailVo.setLeaseTermMonthCount(leaseTerm.getMonthCount());
-        agreementDetailVo.setLeaseTermUnit(leaseTerm.getUnit());
+        OrderDetailVo orderDetailVo = new OrderDetailVo();
+        BeanUtils.copyProperties(bookingOrder, orderDetailVo);
+        orderDetailVo.setStoreName(studyStore.getName());
+        orderDetailVo.setSeatCode(seat.getSeatCode());
+        orderDetailVo.setStoreGraphVoList(storeGraphVoList);
+        orderDetailVo.setSeatGraphVoList(seatGraphVoList);
+        orderDetailVo.setPaymentTypeName(paymentType.getName());
+        orderDetailVo.setBookingTermMonthCount(bookingTerm.getMonthCount());
+        orderDetailVo.setBookingTermUnit(bookingTerm.getUnit());
 
-        return agreementDetailVo;
+        return orderDetailVo;
     }
 
     /**
@@ -121,14 +121,14 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
         // 1.营业时间校验
         StudyStore studyStore = studyStoreMapper.selectById(bookingOrder.getStoreId());
         if (studyStore == null) {
-            throw new LeaseException(ResultCodeEnum.DATA_ERROR);
+            throw new BookingException(ResultCodeEnum.DATA_ERROR);
         }
         boolean withinBusinessHours = BusinessHoursUtil.isRangeWithin(
                 studyStore.getBusinessHours(),
                 bookingOrder.getStartDate(),
                 bookingOrder.getEndDate());
         if (!withinBusinessHours) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_NOT_IN_BUSINESS_HOURS);
+            throw new BookingException(ResultCodeEnum.BOOKING_NOT_IN_BUSINESS_HOURS);
         }
 
         // 2.时段冲突校验
@@ -138,7 +138,7 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
                 bookingOrder.getEndDate(),
                 bookingOrder.getId());
         if (conflict > 0) {
-            throw new LeaseException(ResultCodeEnum.SEAT_TIME_CONFLICT);
+            throw new BookingException(ResultCodeEnum.SEAT_TIME_CONFLICT);
         }
 
         // 3.新单默认状态
@@ -165,10 +165,10 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     public void checkIn(Long id) {
         BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
         if (bookingOrder == null) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
+            throw new BookingException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
         }
         if (bookingOrder.getStatus() != BookingStatus.BOOKED) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_IN);
+            throw new BookingException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_IN);
         }
         bookingOrder.setStatus(BookingStatus.IN_USE);
         bookingOrder.setCheckInTime(new Date());
@@ -184,10 +184,10 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     public void checkOut(Long id) {
         BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
         if (bookingOrder == null) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
+            throw new BookingException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
         }
         if (bookingOrder.getStatus() != BookingStatus.IN_USE) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_OUT);
+            throw new BookingException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_OUT);
         }
         bookingOrder.setStatus(BookingStatus.COMPLETED);
         bookingOrder.setCheckOutTime(new Date());

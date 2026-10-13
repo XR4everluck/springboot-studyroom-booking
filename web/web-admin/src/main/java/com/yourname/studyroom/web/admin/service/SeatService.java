@@ -1,10 +1,10 @@
 package com.yourname.studyroom.web.admin.service;
 
 import com.yourname.studyroom.model.entity.Seat;
-import com.yourname.studyroom.web.admin.vo.room.RoomDetailVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomItemVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomQueryVo;
-import com.yourname.studyroom.web.admin.vo.room.RoomSubmitVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatDetailVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatItemVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatQueryVo;
+import com.yourname.studyroom.web.admin.vo.seat.SeatSubmitVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -15,11 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SeatService extends IService<Seat> {
 
-    void saveOrUpdateRoom(RoomSubmitVo roomSubmitVo);
+    void saveOrUpdateSeat(SeatSubmitVo seatSubmitVo);
 
-    IPage<RoomItemVo> pageRoomItemByQuery(IPage<RoomItemVo> page, RoomQueryVo queryVo);
+    IPage<SeatItemVo> pageSeatItemByQuery(IPage<SeatItemVo> page, SeatQueryVo queryVo);
 
-    RoomDetailVo getRoomDetailById(Long id);
+    SeatDetailVo getSeatDetailById(Long id);
 
-    void removeRoomById(Long id);
+    void removeSeatById(Long id);
 }

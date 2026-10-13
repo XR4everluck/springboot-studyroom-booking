@@ -3,7 +3,7 @@ import com.yourname.studyroom.common.utils.JwtUtil;
 import com.yourname.studyroom.model.enums.BaseStatus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.yourname.studyroom.common.constant.RedisConstant;
-import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.CodeUtil;
 import com.yourname.studyroom.model.entity.UserInfo;
@@ -34,7 +34,7 @@ public class LoginServiceImpl implements LoginService {
      * 获取手机验证码
      *
      * @param phone 用户手机号
-     * @throws LeaseException 如果发送验证码过于频繁，则抛出LeaseException异常
+     * @throws BookingException 如果发送验证码过于频繁，则抛出BookingException异常
      */
     @Override
     public void getCode(String phone) {
@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
         if (hasKey){
             Long ttl = redisTemplate.getExpire(key, TimeUnit.SECONDS);
             if (RedisConstant.ADMIN_LOGIN_CAPTCHA_TTL_SEC - ttl < RedisConstant.APP_LOGIN_CODE_RESEND_TIME_SEC){
-                throw new LeaseException(ResultCodeEnum.APP_SEND_SMS_TOO_OFTEN);
+                throw new BookingException(ResultCodeEnum.APP_SEND_SMS_TOO_OFTEN);
             }
         }
 
@@ -58,24 +58,24 @@ public class LoginServiceImpl implements LoginService {
      *
      * @param loginVo 登录信息对象，包含验证码和手机号
      * @return 登录成功后返回的JWT令牌
-     * @throws LeaseException 抛出各种登录异常情况，如验证码为空、手机号为空、验证码错误、账号被禁用等
+     * @throws BookingException 抛出各种登录异常情况，如验证码为空、手机号为空、验证码错误、账号被禁用等
      */
     @Override
     public String login(LoginVo loginVo) {
 
         if (loginVo.getCode()==null){
-            throw new LeaseException(ResultCodeEnum.APP_LOGIN_CODE_EMPTY);
+            throw new BookingException(ResultCodeEnum.APP_LOGIN_CODE_EMPTY);
         }
         if (loginVo.getPhone()==null){
-            throw new LeaseException(ResultCodeEnum.APP_LOGIN_PHONE_EMPTY);
+            throw new BookingException(ResultCodeEnum.APP_LOGIN_PHONE_EMPTY);
         }
         String key = RedisConstant.APP_LOGIN_PREFIX+loginVo.getPhone();
         String code = redisTemplate.opsForValue().get(key);
         if (code == null){
-            throw new LeaseException(ResultCodeEnum.APP_LOGIN_CODE_EXPIRED);
+            throw new BookingException(ResultCodeEnum.APP_LOGIN_CODE_EXPIRED);
         }
         if (!code.equals(loginVo.getCode())){
-            throw new LeaseException(ResultCodeEnum.APP_LOGIN_CODE_ERROR);
+            throw new BookingException(ResultCodeEnum.APP_LOGIN_CODE_ERROR);
         }
 
         LambdaQueryWrapper<UserInfo> queryWrapper = new LambdaQueryWrapper<>();
@@ -90,7 +90,7 @@ public class LoginServiceImpl implements LoginService {
             userInfoMapper.insert(userInfo);
         }else {
             if (userInfo.getStatus() == BaseStatus.DISABLE){
-                throw new LeaseException(ResultCodeEnum.APP_ACCOUNT_DISABLED_ERROR);
+                throw new BookingException(ResultCodeEnum.APP_ACCOUNT_DISABLED_ERROR);
             }
         }
 

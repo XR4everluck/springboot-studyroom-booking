@@ -7,8 +7,8 @@ import com.yourname.studyroom.model.enums.ItemType;
 import com.yourname.studyroom.web.app.mapper.*;
 import com.yourname.studyroom.web.app.service.StudyStoreService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yourname.studyroom.web.app.vo.apartment.ApartmentDetailVo;
-import com.yourname.studyroom.web.app.vo.apartment.ApartmentItemVo;
+import com.yourname.studyroom.web.app.vo.store.StoreDetailVo;
+import com.yourname.studyroom.web.app.vo.store.StoreItemVo;
 import com.yourname.studyroom.web.app.vo.graph.GraphVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +42,16 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
     FacilityInfoMapper facilityInfoMapper;
 
     @Override
-    public ApartmentItemVo selectApartmentItemVoById(Long id) {
+    public StoreItemVo selectStoreItemVoById(Long id) {
         StudyStore studyStore = studyStoreMapper.selectById(id);
 
-        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByApartmentId(id);
+        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByStoreId(id);
 
-        List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, id);
+        List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.STORE, id);
 
-        BigDecimal minPrice = seatMapper.selectMinRentByApartmentId(id);
+        BigDecimal minPrice = seatMapper.selectMinPriceByStoreId(id);
 
-        ApartmentItemVo storeItemVo = new ApartmentItemVo();
+        StoreItemVo storeItemVo = new StoreItemVo();
         BeanUtils.copyProperties(studyStore, storeItemVo);
 
         storeItemVo.setGraphVoList(graphVoList);
@@ -61,26 +61,26 @@ public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudySt
     }
 
     @Override
-    public ApartmentDetailVo getDetailById(Long id) {
+    public StoreDetailVo getDetailById(Long id) {
         //1.查询自习室门店信息
         StudyStore studyStore = studyStoreMapper.selectById(id);
         //2.查询图片信息
-        List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT, id);
+        List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.STORE, id);
         //3.查询标签信息
-        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByApartmentId(id);
+        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByStoreId(id);
         //4.查询配套信息
-        List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByApartmentId(id);
+        List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByStoreId(id);
         //5.查询最低座位单价
-        BigDecimal minPrice = seatMapper.selectMinRentByApartmentId(id);
+        BigDecimal minPrice = seatMapper.selectMinPriceByStoreId(id);
 
-        ApartmentDetailVo apartmentDetailVo = new ApartmentDetailVo();
+        StoreDetailVo storeDetailVo = new StoreDetailVo();
 
-        BeanUtils.copyProperties(studyStore, apartmentDetailVo);
-        apartmentDetailVo.setGraphVoList(graphVoList);
-        apartmentDetailVo.setLabelInfoList(labelInfoList);
-        apartmentDetailVo.setFacilityInfoList(facilityInfoList);
-        apartmentDetailVo.setMinPrice(minPrice);
-        return apartmentDetailVo;
+        BeanUtils.copyProperties(studyStore, storeDetailVo);
+        storeDetailVo.setGraphVoList(graphVoList);
+        storeDetailVo.setLabelInfoList(labelInfoList);
+        storeDetailVo.setFacilityInfoList(facilityInfoList);
+        storeDetailVo.setMinPrice(minPrice);
+        return storeDetailVo;
     }
 }
 

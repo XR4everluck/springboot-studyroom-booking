@@ -2,7 +2,7 @@ package com.yourname.studyroom.web.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yourname.studyroom.common.constant.RedisConstant;
-import com.yourname.studyroom.common.exception.LeaseException;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.BusinessHoursUtil;
 import com.yourname.studyroom.model.entity.*;
@@ -11,8 +11,8 @@ import com.yourname.studyroom.model.enums.SeatRealtimeStatus;
 import com.yourname.studyroom.web.admin.mapper.*;
 import com.yourname.studyroom.web.admin.service.BookingOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yourname.studyroom.web.admin.vo.agreement.AgreementQueryVo;
-import com.yourname.studyroom.web.admin.vo.agreement.AgreementVo;
+import com.yourname.studyroom.web.admin.vo.order.OrderQueryVo;
+import com.yourname.studyroom.web.admin.vo.order.OrderVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,32 +43,32 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     PaymentTypeMapper paymentTypeMapper;
 
     @Autowired
-    LeaseTermMapper leaseTermMapper;
+    BookingTermMapper bookingTermMapper;
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public AgreementVo getAgreementById(Long id) {
+    public OrderVo getOrderById(Long id) {
         BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
         StudyStore studyStore = studyStoreMapper.selectById(bookingOrder.getStoreId());
         Seat seat = seatMapper.selectById(bookingOrder.getSeatId());
         PaymentType paymentType = paymentTypeMapper.selectById(bookingOrder.getPaymentTypeId());
-        LeaseTerm leaseTerm = leaseTermMapper.selectById(bookingOrder.getLeaseTermId());
+        BookingTerm bookingTerm = bookingTermMapper.selectById(bookingOrder.getBookingTermId());
 
-        AgreementVo agreementVo = new AgreementVo();
-        BeanUtils.copyProperties(bookingOrder,agreementVo);
-        agreementVo.setStudyStore(studyStore);
-        agreementVo.setSeat(seat);
-        agreementVo.setPaymentType(paymentType);
-        agreementVo.setLeaseTerm(leaseTerm);
+        OrderVo orderVo = new OrderVo();
+        BeanUtils.copyProperties(bookingOrder,orderVo);
+        orderVo.setStudyStore(studyStore);
+        orderVo.setSeat(seat);
+        orderVo.setPaymentType(paymentType);
+        orderVo.setBookingTerm(bookingTerm);
 
-        return agreementVo;
+        return orderVo;
     }
 
     @Override
-    public IPage<AgreementVo> pageAgreementByQuery(IPage<AgreementVo> page, AgreementQueryVo queryVo) {
-        return bookingOrderMapper.pageAgreementByQuery(page, queryVo);
+    public IPage<OrderVo> pageOrderByQuery(IPage<OrderVo> page, OrderQueryVo queryVo) {
+        return bookingOrderMapper.pageOrderByQuery(page, queryVo);
     }
 
     /**
@@ -81,14 +81,14 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     public void createOrUpdateOrder(BookingOrder bookingOrder) {
         StudyStore studyStore = studyStoreMapper.selectById(bookingOrder.getStoreId());
         if (studyStore == null) {
-            throw new LeaseException(ResultCodeEnum.DATA_ERROR);
+            throw new BookingException(ResultCodeEnum.DATA_ERROR);
         }
         boolean withinBusinessHours = BusinessHoursUtil.isRangeWithin(
                 studyStore.getBusinessHours(),
                 bookingOrder.getStartDate(),
                 bookingOrder.getEndDate());
         if (!withinBusinessHours) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_NOT_IN_BUSINESS_HOURS);
+            throw new BookingException(ResultCodeEnum.BOOKING_NOT_IN_BUSINESS_HOURS);
         }
 
         int conflict = bookingOrderMapper.countTimeConflict(
@@ -97,7 +97,7 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
                 bookingOrder.getEndDate(),
                 bookingOrder.getId());
         if (conflict > 0) {
-            throw new LeaseException(ResultCodeEnum.SEAT_TIME_CONFLICT);
+            throw new BookingException(ResultCodeEnum.SEAT_TIME_CONFLICT);
         }
 
         if (bookingOrder.getStatus() == null) {
@@ -115,10 +115,10 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     public void checkIn(Long id) {
         BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
         if (bookingOrder == null) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
+            throw new BookingException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
         }
         if (bookingOrder.getStatus() != BookingStatus.BOOKED) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_IN);
+            throw new BookingException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_IN);
         }
         bookingOrder.setStatus(BookingStatus.IN_USE);
         bookingOrder.setCheckInTime(new Date());
@@ -134,10 +134,10 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
     public void checkOut(Long id) {
         BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
         if (bookingOrder == null) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
+            throw new BookingException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
         }
         if (bookingOrder.getStatus() != BookingStatus.IN_USE) {
-            throw new LeaseException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_OUT);
+            throw new BookingException(ResultCodeEnum.BOOKING_STATUS_NOT_ALLOW_CHECK_OUT);
         }
         bookingOrder.setStatus(BookingStatus.COMPLETED);
         bookingOrder.setCheckOutTime(new Date());
