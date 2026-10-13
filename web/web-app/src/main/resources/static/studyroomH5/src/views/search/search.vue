@@ -1,20 +1,27 @@
 <template>
-  <SearchBar :confirm-callback="confirmCallback"></SearchBar>
+  <div class="search-page">
+    <SearchBar :confirm-callback="confirmCallback"></SearchBar>
 
-  <div class="main-container">
-    <PullDownRefreshContainer
-      :request="getSeatListHandler"
-      ref="pullDownRefreshContainerRef"
-      class="min-h-[480px]"
-    >
-      <template v-if="seatList?.length">
+    <div class="search-page__main">
+      <div class="search-page__grid" v-if="seatList?.length">
         <SeatCard
           v-for="item in seatList"
           :key="item.id"
           :data="item"
+          class="search-page__card"
         ></SeatCard>
-      </template>
-    </PullDownRefreshContainer>
+      </div>
+      <van-empty v-else-if="!loading" description="搜索不到" />
+
+      <div class="search-page__pager" v-if="total > 0">
+        <van-pagination
+          v-model="pageInfo.current"
+          :page-size="pageInfo.size"
+          :total-items="total"
+          @change="onPageChange"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -23,13 +30,15 @@ import SearchBar from "@/components/SearchBar/SearchBar.vue";
 import type { SeatInterface, SeatListQueryInterface } from "@/api/search/types";
 import { ref } from "vue";
 import { getSeatList } from "@/api/search";
-import PullDownRefreshContainer from "@/components/PullDownRefreshContainer/PullDownRefreshContainer.vue";
-import type { ReqPage } from "@/api/types";
 import SeatCard from "@/components/SeatCard/SeatCard.vue";
 // 搜索参数
 const searchParams = ref<Partial<SeatListQueryInterface>>({});
-const pullDownRefreshContainerRef =
-  ref<InstanceType<typeof PullDownRefreshContainer>>();
+// 分页信息
+const pageInfo = ref({ current: 1, size: 10 });
+// 总数
+const total = ref(0);
+// 加载中
+const loading = ref(false);
 // 座位列表
 const seatList = ref<SeatInterface[]>([]);
 // 点击查找，搜索条件
@@ -43,20 +52,70 @@ function confirmCallback(params: SeatListQueryInterface) {
     }
   }
   searchParams.value = targetObi;
-  pullDownRefreshContainerRef.value?.onRefresh();
+  pageInfo.value.current = 1;
+  getSeatListHandler();
+}
+// 翻页
+function onPageChange(page: number) {
+  pageInfo.value.current = page;
+  getSeatListHandler();
 }
 // 分页获取座位的信息
-async function getSeatListHandler(pageInfo: ReqPage) {
-  //   调用接口
-  const { data } = await getSeatList({ ...searchParams.value, ...pageInfo });
-  console.log("pageInfo.current", pageInfo.current);
-  if (pageInfo.current === 1) {
+async function getSeatListHandler() {
+  loading.value = true;
+  try {
+    const { data } = await getSeatList({
+      ...searchParams.value,
+      ...pageInfo.value
+    });
     seatList.value = data.records;
-  } else {
-    seatList.value = [...seatList.value, ...data.records];
+    total.value = data.total;
+  } finally {
+    loading.value = false;
   }
-  pullDownRefreshContainerRef.value?.setFinished(
-    seatList.value.length >= data.total
-  );
 }
+getSeatListHandler();
 </script>
+
+<style scoped lang="less">
+.search-page {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px 0;
+}
+
+.search-page__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.search-page__card {
+  margin: 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+.search-page__pager {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 8px;
+}
+
+@media (max-width: 1100px) {
+  .search-page__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>

@@ -1,53 +1,98 @@
 <template>
-  <div>
-    <!--    顶部背景-->
-    <van-image :src="bgImgUrl">
-      <template v-slot:error>加载失败</template>
-      <template v-slot:loading>
-        <van-loading type="spinner" size="20" />
-      </template>
-    </van-image>
-    <!--    中间-->
-    <div class="main-container flex justify-around mt-[15px]">
-      <div
+  <div class="my-seat-page">
+    <h2 class="my-seat-page__title">我的座位</h2>
+    <div class="my-seat-page__grid">
+      <button
+        type="button"
         v-for="item in navList"
         :key="item.path"
-        class="flex flex-col justify-center items-center"
+        class="my-seat-page__entry"
         @click="router.push(item.path)"
       >
-        <SvgIcon :name="item.icon" size="45" />
-        <span>{{ item.name }}</span>
-      </div>
+        <SvgIcon :name="item.icon" size="40" />
+        <span class="my-seat-page__name">{{ item.name }}</span>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts" name="MySeat">
 import { ref } from "vue";
-import bgImgUrl from "@/assets/my_seat_bg.png";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const navList = ref([
   {
-    icon: "物业费用出账",
-    name: "交房租",
-    path: ""
+    icon: "合同",
+    name: "我的订单",
+    path: "/myOrder"
   },
   {
-    icon: "电费",
-    name: "交电费",
-    path: ""
+    icon: "预约",
+    name: "我的预约",
+    path: "/myVisit"
   },
   {
-    icon: "水费",
-    name: "交水费",
-    path: ""
+    icon: "home",
+    name: "到店体验",
+    path: "/visit"
   },
   {
-    icon: "物业报修",
-    name: "报修",
-    path: ""
+    icon: "历史",
+    name: "浏览历史",
+    path: "/browsingHistory"
   }
 ]);
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.my-seat-page {
+  padding: 24px 20px 0;
+}
+
+.my-seat-page__title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.my-seat-page__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.my-seat-page__entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 12px;
+  border: 1px solid var(--van-border-color);
+  border-radius: 10px;
+  background-color: var(--van-background-2);
+  color: var(--van-text-color);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+
+  &:hover {
+    border-color: var(--van-primary-color);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--van-primary-color);
+    outline-offset: 2px;
+  }
+}
+
+.my-seat-page__name {
+  font-size: 14px;
+}
+
+@media (max-width: 1100px) {
+  .my-seat-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>

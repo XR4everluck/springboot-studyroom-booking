@@ -1,12 +1,13 @@
 <template>
   <van-skeleton :row="20" :loading="!orderList">
-    <div class="p-[10px]">
-      <van-card
-        class="rounded-xl shadow"
-        v-for="item in orderList"
-        :key="item.id"
-        @click="goOrderDetail(item)"
-      >
+    <div class="order-page">
+      <div class="order-page__grid">
+        <van-card
+          class="rounded-xl shadow order-page__card"
+          v-for="item in orderList"
+          :key="item.id"
+          @click="goOrderDetail(item)"
+        >
         <!--      title-->
         <template #title>
           <h2 class="text-[15px] font-bold">
@@ -141,10 +142,11 @@
             >
           </div>
         </template>
-      </van-card>
-    </div>
+        </van-card>
+      </div>
 
-    <van-empty v-if="orderList?.length <= 0" description="搜索不到" />
+      <van-empty v-if="orderList?.length <= 0" description="暂无订单" />
+    </div>
   </van-skeleton>
 </template>
 <script setup lang="ts">
@@ -206,4 +208,31 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.order-page {
+  padding: 16px 20px 0;
+}
+
+.order-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.order-page__card {
+  margin: 0;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .order-page__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>

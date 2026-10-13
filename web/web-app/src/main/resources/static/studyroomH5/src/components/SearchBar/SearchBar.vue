@@ -1,188 +1,115 @@
 <template>
-  <van-dropdown-menu ref="menuRef">
-    <van-dropdown-item title="地区">
-      <div class="comment-padding">
-        <div class="flex flex-row h-[240px] mt-[5px]">
-          <!--        省-->
-          <div class="basis-1/3" style="overflow: scroll">
-            <div
-              class="mt-[5px]"
-              :class="{ checked: item.isCheck }"
-              @click="clickAreaItemHandle(item, 0)"
-              v-for="item in areaInfo.provinceList"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </div>
-          </div>
-          <!--        市-->
-          <div class="basis-1/3" style="overflow: scroll">
-            <div
-              class="mt-[5px]"
-              @click="clickAreaItemHandle(item, 1)"
-              v-for="item in areaInfo.cityList"
-              :class="{ checked: item.isCheck }"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </div>
-          </div>
-          <!--        区-->
-          <div class="basis-1/3" style="overflow: scroll">
-            <div
-              class="mt-[5px]"
-              @click="clickAreaItemHandle(item, 2)"
-              v-for="item in areaInfo.districtList"
-              :class="{ checked: item.isCheck }"
-              :key="item.id"
-            >
-              {{ item.name }}
-            </div>
-          </div>
-        </div>
-        <div class="flex comment-padding justify-between my-[10px]">
-          <!--        取消-->
-          <van-button
-            type="default"
-            size="small"
-            class="basis-2/5"
-            round
-            @click="onCancelHandle"
-          >
-            取消
-          </van-button>
-          <!--        查找-->
-          <van-button
-            type="primary"
-            size="small"
-            class="basis-2/5"
-            round
-            @click="onConfirmHandle"
-          >
-            查找
-          </van-button>
-        </div>
+  <aside class="filter-panel">
+    <section class="filter-panel__group">
+      <h4 class="filter-panel__title">地区</h4>
+      <div class="filter-panel__chips">
+        <button
+          type="button"
+          class="filter-panel__chip"
+          :class="{ 'is-checked': item.isCheck }"
+          @click="clickAreaItemHandle(item, 0)"
+          v-for="item in areaInfo.provinceList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </button>
+        <span v-if="!areaInfo.provinceList.length" class="filter-panel__empty"
+          >暂无数据</span
+        >
       </div>
-    </van-dropdown-item>
-    <van-dropdown-item title="价格">
-      <div class="comment-padding">
-        <van-row gutter="10" justify="space-between" class="mt-[5px]">
-          <van-col
-            class="text-center border p-[4px] mt-[5px] transition-all"
-            :class="{ 'other-checked': item.isCheck }"
-            @click="priceClickHandle(item)"
-            v-for="item in priceInfoList"
-            :key="item.label"
-            span="7"
-            >{{ item.label }}
-          </van-col>
-        </van-row>
+      <div
+        class="filter-panel__chips filter-panel__chips--sub"
+        v-if="areaInfo.cityList.length"
+      >
+        <button
+          type="button"
+          class="filter-panel__chip"
+          :class="{ 'is-checked': item.isCheck }"
+          @click="clickAreaItemHandle(item, 1)"
+          v-for="item in areaInfo.cityList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </button>
       </div>
+      <div
+        class="filter-panel__chips filter-panel__chips--sub"
+        v-if="areaInfo.districtList.length"
+      >
+        <button
+          type="button"
+          class="filter-panel__chip"
+          :class="{ 'is-checked': item.isCheck }"
+          @click="clickAreaItemHandle(item, 2)"
+          v-for="item in areaInfo.districtList"
+          :key="item.id"
+        >
+          {{ item.name }}
+        </button>
+      </div>
+    </section>
 
-      <div class="flex comment-padding justify-between my-[10px]">
-        <!--        取消-->
-        <van-button
-          type="default"
-          size="small"
-          class="basis-2/5"
-          round
-          @click="onCancelHandle"
+    <section class="filter-panel__group">
+      <h4 class="filter-panel__title">价格</h4>
+      <div class="filter-panel__chips">
+        <button
+          type="button"
+          class="filter-panel__chip"
+          :class="{ 'is-checked': item.isCheck }"
+          @click="priceClickHandle(item)"
+          v-for="item in priceInfoList"
+          :key="item.label"
         >
-          取消
-        </van-button>
-        <!--        查找-->
-        <van-button
-          type="primary"
-          size="small"
-          class="basis-2/5"
-          round
-          @click="onConfirmHandle"
-        >
-          查找
-        </van-button>
+          {{ item.label }}
+        </button>
       </div>
-    </van-dropdown-item>
-    <van-dropdown-item title="付款方式">
-      <div class="comment-padding">
-        <van-row justify="space-between" class="mt-[5px]">
-          <van-col
-            class="text-center border p-[4px] mt-[5px] transition-all"
-            :class="{ 'other-checked': item.isCheck }"
-            @click="paymentClickHandle(item)"
-            v-for="item in paymentInfoList"
-            :key="item.label"
-            span="7"
-            >{{ item.label }}
-          </van-col>
-        </van-row>
-      </div>
+    </section>
 
-      <div class="flex comment-padding justify-between my-[10px]">
-        <!--        取消-->
-        <van-button
-          type="default"
-          size="small"
-          class="basis-2/5"
-          round
-          @click="onCancelHandle"
+    <section class="filter-panel__group">
+      <h4 class="filter-panel__title">付款方式</h4>
+      <div class="filter-panel__chips">
+        <button
+          type="button"
+          class="filter-panel__chip"
+          :class="{ 'is-checked': item.isCheck }"
+          @click="paymentClickHandle(item)"
+          v-for="item in paymentInfoList"
+          :key="item.label"
         >
-          取消
-        </van-button>
-        <!--        查找-->
-        <van-button
-          type="primary"
-          size="small"
-          class="basis-2/5"
-          round
-          @click="onConfirmHandle"
+          {{ item.label }}
+        </button>
+        <span v-if="!paymentInfoList.length" class="filter-panel__empty"
+          >暂无数据</span
         >
-          查找
-        </van-button>
       </div>
-    </van-dropdown-item>
-    <van-dropdown-item title="排序">
-      <div class="comment-padding">
-        <van-row gutter="10" justify="space-around" class="mt-[5px]">
-          <van-col
-            class="text-center border p-[4px] mt-[5px] transition-all"
-            :class="{ 'other-checked': item.isCheck }"
-            @click="orderTypeClickHandle(item)"
-            v-for="item in orderTypeInfoList"
-            :key="item.label"
-            span="7"
-            >{{ item.label }}
-          </van-col>
-        </van-row>
-      </div>
+    </section>
 
-      <div class="flex comment-padding justify-between my-[10px]">
-        <!--        取消-->
-        <van-button
-          type="default"
-          size="small"
-          class="basis-2/5"
-          round
-          @click="onCancelHandle"
+    <section class="filter-panel__group">
+      <h4 class="filter-panel__title">排序</h4>
+      <div class="filter-panel__chips">
+        <button
+          type="button"
+          class="filter-panel__chip"
+          :class="{ 'is-checked': item.isCheck }"
+          @click="orderTypeClickHandle(item)"
+          v-for="item in orderTypeInfoList"
+          :key="item.label"
         >
-          取消
-        </van-button>
-        <!--        查找-->
-        <van-button
-          type="primary"
-          size="small"
-          class="basis-2/5"
-          round
-          @click="onConfirmHandle"
-        >
-          查找
-        </van-button>
+          {{ item.label }}
+        </button>
       </div>
-    </van-dropdown-item>
-  </van-dropdown-menu>
+    </section>
+
+    <div class="filter-panel__actions">
+      <van-button size="small" @click="onResetHandle">重置</van-button>
+      <van-button size="small" type="primary" @click="onConfirmHandle"
+        >查找</van-button
+      >
+    </div>
+  </aside>
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import type { DropdownMenuInstance } from "vant";
 import type {
   LabelValueInterface,
   RegionInterface,
@@ -201,8 +128,6 @@ const props = defineProps({
     default: () => ({})
   }
 });
-// 组件实例
-const menuRef = ref<DropdownMenuInstance>();
 const formData = ref<Omit<SeatListQueryInterface, "current" | "size">>({
   // 省市区
   provinceId: "",
@@ -286,8 +211,6 @@ const clickAreaItemHandle = (item: RegionInterface, type: number) => {
     });
     formData.value.districtId = item.isCheck ? item.id : "";
   }
-
-  console.log(item);
 };
 
 // 获取省份
@@ -492,18 +415,26 @@ function orderTypeClickHandle(item: LabelValueInterface) {
 
 //#endregion
 const onConfirmHandle = () => {
-  // itemRef.value?.toggle();
-  // 或者
-  menuRef.value?.close();
-  //   请求接口
-  console.log(formData.value);
-  // getSeatList(formData.value);
-  console.log("props.confirmCallback", !!props.confirmCallback);
   props.confirmCallback && props.confirmCallback(formData.value);
 };
-// 取消
-const onCancelHandle = () => {
-  menuRef.value?.close();
+// 重置全部筛选条件并立即查询
+const onResetHandle = () => {
+  formData.value = {
+    provinceId: "",
+    cityId: "",
+    districtId: "",
+    minPrice: "",
+    maxPrice: "",
+    paymentTypeId: "",
+    orderType: ""
+  };
+  areaInfo.value.provinceList.forEach(item => (item.isCheck = false));
+  areaInfo.value.cityList = [];
+  areaInfo.value.districtList = [];
+  priceInfoList.value.forEach((item, index) => (item.isCheck = index === 0));
+  paymentInfoList.value.forEach(item => (item.isCheck = false));
+  orderTypeInfoList.value.forEach(item => (item.isCheck = false));
+  onConfirmHandle();
 };
 onMounted(() => {
   // 获取省份列表
@@ -514,14 +445,81 @@ onMounted(() => {
 </script>
 
 <style scoped lang="less">
-// 地区选择
-.checked {
-  color: var(--van-primary-color);
+.filter-panel {
+  box-sizing: border-box;
+  width: 240px;
+  flex-shrink: 0;
+  padding: 16px;
+  background-color: var(--van-background-2);
+  border: 1px solid var(--van-border-color);
+  border-radius: 10px;
+  align-self: flex-start;
 }
 
-// 价格选择
-.other-checked {
-  background-color: var(--van-primary-color);
-  color: var(--van-white);
+.filter-panel__group {
+  margin-bottom: 18px;
+}
+
+.filter-panel__title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--van-text-color);
+}
+
+.filter-panel__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-panel__chips--sub {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--van-border-color);
+}
+
+.filter-panel__chip {
+  padding: 4px 10px;
+  border: 1px solid var(--van-border-color);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--van-text-color-2);
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    color: var(--van-primary-color);
+    border-color: var(--van-primary-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--van-primary-color);
+    outline-offset: 1px;
+  }
+
+  &.is-checked {
+    background-color: var(--van-primary-color);
+    border-color: var(--van-primary-color);
+    color: var(--van-white);
+  }
+}
+
+.filter-panel__empty {
+  font-size: 12px;
+  color: var(--van-text-color-3);
+}
+
+.filter-panel__actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--van-border-color);
+
+  :deep(.van-button) {
+    flex: 1;
+  }
 }
 </style>
