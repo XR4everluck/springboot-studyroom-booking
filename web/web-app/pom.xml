@@ -18,4 +18,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <!-- 移动端前端源码工程不参与打包，打包产物为其构建后的 static 根目录文件 -->
+                    <exclude>static/studyroomH5/**</exclude>
+                    <exclude>static/studyroomH5/**/*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+
 </project>

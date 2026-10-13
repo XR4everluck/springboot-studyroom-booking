@@ -36,7 +36,7 @@
         <div>
           <span class="text-red-500 text-[16px]">￥</span>
           <span class="text-red-500 text-[18px]"
-            >{{ storeDetailInfo.minPrice }}/月起</span
+            >{{ storeDetailInfo.minPrice }}/时起</span
           >
         </div>
       </div>
@@ -160,7 +160,8 @@ async function getSeatListHandler(pageInfo: ReqPage) {
 // 地图实例
 const { AMap, initMap } = useMap();
 function initMapPage(opts?: { lng: number; lat: number }) {
-  console.log("opts", opts);
+  // 未配置有效高德 Key 或脚本加载失败时跳过地图渲染，不影响详情其余信息
+  if (!AMap.value) return;
   const map = new AMap.value.Map("container", {
     zoom: 19, //初始地图级别
     center: [opts?.lng, opts?.lat], //初始地图中心点

@@ -1,9 +1,11 @@
 package com.yourname.studyroom.web.app.controller.order;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.yourname.studyroom.common.login.LoginUser;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.common.result.Result;
 import com.yourname.studyroom.model.entity.BookingOrder;
+import com.yourname.studyroom.model.enums.BookingSourceType;
 import com.yourname.studyroom.model.enums.BookingStatus;
 import com.yourname.studyroom.web.app.service.BookingOrderService;
 import com.yourname.studyroom.web.app.vo.order.OrderDetailVo;
@@ -75,8 +77,12 @@ public class BookingOrderController {
     @Operation(summary = "保存或更新预订订单", description = "用于下单与续期，含营业时间校验与时段冲突校验")
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
-        if (bookingOrder.getUserId() == null) {
-            bookingOrder.setUserId(LoginUserHolder.getLoginUser().getUserId());
+        LoginUser loginUser = LoginUserHolder.getLoginUser();
+        // 订单归属与联系电话一律以登录用户为准，避免越权为他人下单
+        bookingOrder.setUserId(loginUser.getUserId());
+        bookingOrder.setPhone(loginUser.getUsername());
+        if (bookingOrder.getSourceType() == null) {
+            bookingOrder.setSourceType(BookingSourceType.NEW);
         }
         bookingOrderService.createOrUpdateOrder(bookingOrder);
         return Result.ok();

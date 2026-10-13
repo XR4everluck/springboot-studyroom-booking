@@ -11,14 +11,15 @@
 
     <select id="listItemByPhone" resultMap="OrderItemVoMap">
         select la.id,
-               la.start_date,
-               la.end_date,
+               la.start_date booking_start_date,
+               la.end_date booking_end_date,
                la.total_amount,
                la.payment_type_id,
                la.status booking_status,
                la.source_type,
                ai.name store_name,
                ri.seat_code,
+               ri.price,
                gi.name,
                gi.url
         from booking_order la

@@ -5,8 +5,6 @@ import {
   AMAP_MAP_SECRET_KEY,
   AMAP_MAP_SERVICE_HOST
 } from "@/config/config";
-import "vant/es/toast/style";
-import { showFailToast } from "vant";
 import { onUnmounted, ref } from "vue";
 
 export const useMap = ({ domId }: { domId?: string } = {}) => {
@@ -25,8 +23,9 @@ export const useMap = ({ domId }: { domId?: string } = {}) => {
       });
       map.value = domId && new AMap.value.Map(domId);
     } catch (error) {
-      console.log(error);
-      showFailToast((error as any)?.message || "Has Error");
+      // 未配置可用的高德 Key（如 localhost 被域名白名单拦截）时静默降级，
+      // 页面只展示文字地址，不弹错误提示。
+      console.warn("地图初始化失败，已降级为文本地址显示", error);
     }
   }
   function destroyMap() {

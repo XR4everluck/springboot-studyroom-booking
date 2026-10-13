@@ -106,11 +106,9 @@
 
   - 缓存：Redis
 
-  - 对象存储：MinIO
+  - 文件存储：本地磁盘（`studyroom.storage.local-dir`，默认 `uploads/`）
 
-    > **对象存储**是用于存储非结构化数据的数据存储架构，它将一个数据单元称为一个对象，每个对象都包含数据本身、元数据（描述数据的信息）和一个唯一标识符（通常是一个 URL 地址）。
-    >
-    > **MinIO** 是一个开源的对象存储方案，兼容亚马逊 S3 协议。本项目采用开源的对象存储 MinIO 来存储图片信息。
+    > **文件存储**用于保存门店/座位图片等非结构化数据，上传后由后端返回可直接访问的 `/img/...` 相对路径并写入 `graph_info.url`。本项目以本地磁盘目录替代对象存储，省去额外部署依赖；如需切回 OSS/S3，只要替换 `FileService` 实现并保持返回 URL 的语义即可。
 
 - **部署**
 
@@ -120,7 +118,7 @@
 
 ```
 studyroom-booking                     父工程（聚合模块）
-├── common        公共模块：常量、异常、登录、MinIO、MyBatis-Plus、Redis、短信、工具类
+├── common        公共模块：常量、异常、登录、本地磁盘文件存储、MyBatis-Plus、Redis、短信、工具类
 ├── model         实体模型模块：entity、enums
 └── web           Web 聚合模块
     ├── web-admin 后台管理系统启动模块
@@ -235,38 +233,50 @@ studyroom-booking                     父工程（聚合模块）
 
 ### 环境要求
 
-- JDK 17（注意：`pom` 目标为 Java 17；请避免使用高于项目 Lombok 支持的大版本 JDK，否则 Lombok 注解处理器可能不生成访问器导致编译报「找不到符号」）
+- JDK 17+（`pom` 目标为 Java 17；若使用 JDK 23+，`maven-compiler-plugin` 已显式声明 Lombok 注解处理器路径，否则注解处理器不会从 classpath 隐式发现而报「找不到符号 getXxx」）
 - Maven 3.6+
-- MySQL 8.x、Redis 6.x、MinIO
-- Node.js 16+（构建内嵌前端）
+- MySQL 8.x、Redis 6.x（文件存储使用本地磁盘，目录由 `studyroom.storage.local-dir` 指定，默认 `uploads/`）
+- Node.js 16+（仅在需要重新构建内嵌前端时使用）
 
-### 后端
+### 一键启动（Windows）
+
+```bat
+start-all.bat            检查 MySQL / 内置 Redis / 数据库，按需构建 jar，启动两端并打开浏览器
+start-all.bat build      先执行 mvn clean package -DskipTests 再启动
+stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停止 MySQL）
+```
+
+- 脚本假定本机 MySQL 服务名为 `MySQL`、账号 `root/1234`，可在脚本头部改 `MYSQL_USER / MYSQL_PWD` 等变量；数据库 `studyroom_booking` 不存在时会询问是否导入 `sql` 目录脚本。
+- Redis 使用项目内置免安装版 `tools\redis\redis-server.exe`（该目录不入库，需自行放置，或改用系统 Redis 服务）。
+- 两个脚本以 GBK(cp936) 保存，请勿另存为 UTF-8，否则 `cmd` 逐行解析中文会错位。
+
+### 手动启动
 
 1. 建库与初始化数据：
    ```bash
    mysql -u root -p < sql/studyroom_booking.sql     # 建表 + 字典 + 公共初始化
    mysql -u root -p < sql/studyroom_init_data.sql   # 测试门店/座位/关联/账号/浏览数据
    ```
-2. 修改 `web-admin` / `web-app` 的 `application.yaml` 中 MySQL、Redis、MinIO、阿里云短信连接参数。
+2. 修改 `web-admin` / `web-app` 的 `application.yaml` 中 MySQL、Redis、本地存储、阿里云短信连接参数。
 3. 构建并运行：
    ```bash
    mvn clean package -DskipTests
-   java -jar web/web-admin/target/web-admin-*.jar   # 后台管理端
-   java -jar web/web-app/target/web-app-*.jar       # 用户移动端
+   java -jar web/web-admin/target/studyroom-web-admin-1.0-SNAPSHOT.jar   # 后台管理端 8080
+   java -jar web/web-app/target/studyroom-web-app-1.0-SNAPSHOT.jar       # 用户移动端 8081
    ```
 
 ### 前端
 
-前端（`studyroomAdmin`、`studyroomH5`）以 Spring 静态资源方式内嵌于后端模块；也可独立 `npm install && npm run build` 后由 Nginx 托管，并将 `/admin`、`/app` 反向代理至对应后端服务。
+前端（`studyroomAdmin`、`studyroomH5`）以 Spring 静态资源方式内嵌于后端模块：在对应目录 `npm install && npm run build`，把 `dist` 内容拷贝到模块的 `src/main/resources/static/` 根目录后重新打包 jar。也可独立构建后由 Nginx 托管，并将 `/admin`、`/app` 反向代理至对应后端服务。
 
 ### 测试账号
 
 - 后台管理：`admin / 123456`、`manager / 123456`（密码以 `md5Hex` 存储，密文 `e10adc3949ba59abbe56e057f20f883e`）。
-- 移动端：手机号 + 短信验证码登录，预置测试用户 `13900000001 / 13900000002 / 13900000003`（验证码有效期与重发间隔见 `RedisConstant`；未接短信服务时可在 Redis 中手工写入 `app:login:<phone>` 的验证码联调）。
+- 移动端：手机号 + 短信验证码登录，预置测试用户 `13900000001 / 13900000002 / 13900000003`（未接阿里云短信服务时，验证码会打印在 `studyroom-app` 窗口日志中，也可在 Redis 中手工写入 `app:login:<phone>` 联调）。
 
 ## 测试用例清单（阶段七联调校验）
 
-> 说明：当前开发机仅有高于项目目标版本的 JDK，`mvn compile` 会因 Lombok 注解处理器不兼容而失败，故本节以「静态一致性核对 + 手工联调步骤」组织；接入 JDK 17 后可按下列用例执行端到端验证。
+> 说明：以下用例已在本机（MySQL 8 + 内置 Redis + 本地磁盘存储）以两端 jar 实跑通过；`mvn` 构建需 JDK 17+，Lombok 处理器配置见上文环境要求。
 
 ### A. 后台管理全流程
 
@@ -278,7 +288,7 @@ studyroom-booking                     父工程（聚合模块）
 | A4 | 订单审核 | 订单列表分页→查看详情→`updateStatusById` 流转 | 状态按 `BookingStatus` 正确迁移 |
 | A5 | 预约处理 | 到店预约列表→`updateStatusById` 更新体验状态 | `appointment_status` 更新 |
 | A6 | 用户管理 | 系统用户增删改、C 端用户查看/禁用 | 禁用后登录被拦截（`ACCOUNT_DISABLED`） |
-| A7 | 图片上传 | 上传门店/座位图片 | 返回 MinIO URL 并写入 `graph_info` |
+| A7 | 图片上传 | 上传门店/座位图片 | 返回本地存储 URL 并写入 `graph_info` |
 
 ### B. 移动端全流程
 
@@ -309,7 +319,7 @@ studyroom-booking                     父工程（聚合模块）
 | --- | --- | --- |
 | D1 | 验证码 | 图形码/短信码写入 Redis 且 TTL 生效，重发受间隔限制 |
 | D2 | 缓存 | 座位详情、实时状态、热门门店/座位列表命中与过期重算 |
-| D3 | 图片上传 | MinIO 存取正常，URL 可访问 |
+| D3 | 图片上传 | 本地磁盘存取正常，URL 可访问 |
 | D4 | 定时任务 | `checkBookingStatus` 每日 00:00 到期处理 |
 | D5 | 热门榜单 | 依赖 `browsing_history` 浏览量降序，缓存 1h 后重算 |
 
@@ -323,4 +333,4 @@ studyroom-booking                     父工程（聚合模块）
 
 ## 最终项目说明
 
-本系统已由原公寓租赁模板完整改造为「共享自习室预订系统」，在**保留全部原始技术逻辑**（分页、状态流转、Redis 缓存、定时任务、参数校验、CRUD、前端布局与表单校验）的前提下，完成业务语义、字段、接口、文案与数据库的全量对齐，并扩展了自习室专属能力：时段冲突校验、签到/签退、座位实时状态、营业时间校验、会员卡体系，以及本阶段新增的首页热门门店 / 热门座位缓存、测试初始化数据与完整文档。项目可在使用 JDK 17 + Maven + MySQL + Redis + MinIO 的环境下按「部署说明」构建运行。
+本系统已由原公寓租赁模板完整改造为「共享自习室预订系统」，在**保留全部原始技术逻辑**（分页、状态流转、Redis 缓存、定时任务、参数校验、CRUD、前端布局与表单校验）的前提下，完成业务语义、字段、接口、文案与数据库的全量对齐，并扩展了自习室专属能力：时段冲突校验、签到/签退、座位实时状态、营业时间校验、会员卡体系，以及本阶段新增的首页热门门店 / 热门座位缓存、测试初始化数据与完整文档。项目可在使用 JDK 17 + Maven + MySQL + Redis 的环境下按「部署说明」构建运行。

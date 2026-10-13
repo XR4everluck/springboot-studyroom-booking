@@ -25,7 +25,7 @@
           type="warning"
           icon="Warning"
           v-if="scope.row.status === OrderStatus.RENEW_TO_BE_CONFIRMED"
-          @click="confirmBookingHandle(scope.row)"
+          @click="confirmRenewHandle(scope.row)"
         >
           确认续期
         </el-button>
@@ -278,7 +278,7 @@ const columns: ColumnProps[] = [
     prop: 'paymentType.name',
     label: '支付方式',
   },
-  { prop: 'bookingTerm.monthCount', label: '预订时长（月）' },
+  { prop: 'bookingTerm.monthCount', label: '预订时长' },
   {
     prop: 'sourceType',
     label: '订单来源',
@@ -525,7 +525,7 @@ const checkOutHandle = async (row: OrderInfoInterface) => {
   proTable.value?.getTableList()
 }
 // 确认续期
-const confirmBookingHandle = async (row: OrderInfoInterface) => {
+const confirmRenewHandle = async (row: OrderInfoInterface) => {
   await useHandleData(
     updateOrderStatusById,
     { id: row.id, status: OrderStatus.SIGNED },

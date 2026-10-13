@@ -128,15 +128,17 @@ JOIN (SELECT 1 AS booking_term_id UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 U
 WHERE s.id BETWEEN 1 AND 20;
 
 -- ------------------------------------------------------------
--- 八、图片占位（门店 item_type=1，座位 item_type=2；url 为 MinIO 演示地址，可按实际桶替换）
+-- 八、图片占位（门店 item_type=1，座位 item_type=2）
+--   url 指向 common 模块内置的演示图（classpath:/static/img/studyroom），
+--   两端 Spring 应用都能以相对路径直接访问；后台上传的真实图片走 /upload/**。
 -- ------------------------------------------------------------
 INSERT INTO `graph_info` (`item_type`, `item_id`, `name`, `url`) VALUES
-(1, 1, '门店封面', 'http://localhost:9000/studyroom/store-1.jpg'),
-(1, 2, '门店封面', 'http://localhost:9000/studyroom/store-2.jpg'),
-(1, 3, '门店封面', 'http://localhost:9000/studyroom/store-3.jpg');
+(1, 1, '门店封面', '/img/studyroom/store-1.svg'),
+(1, 2, '门店封面', '/img/studyroom/store-2.svg'),
+(1, 3, '门店封面', '/img/studyroom/store-3.svg');
 
 INSERT INTO `graph_info` (`item_type`, `item_id`, `name`, `url`)
-SELECT 2, s.id, '座位实拍', CONCAT('http://localhost:9000/studyroom/seat-', s.id, '.jpg')
+SELECT 2, s.id, '座位实拍', CONCAT('/img/studyroom/seat-', s.id, '.svg')
 FROM `seat` s
 WHERE s.id BETWEEN 1 AND 20
   AND NOT EXISTS (SELECT 1 FROM `graph_info` g WHERE g.item_type = 2 AND g.item_id = s.id);

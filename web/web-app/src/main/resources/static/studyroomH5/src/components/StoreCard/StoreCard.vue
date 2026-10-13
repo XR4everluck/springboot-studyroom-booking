@@ -8,7 +8,7 @@
     <template #price>
       <!--      价格-->
       <span class="text-red-500 text-[14px]">￥</span>
-      <span class="text-red-500 text-[16px]">{{ data.minPrice }}/月起</span>
+      <span class="text-red-500 text-[16px]">{{ data.minPrice }}/时起</span>
     </template>
     <!--    thumb-->
     <template #thumb>

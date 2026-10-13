@@ -88,7 +88,7 @@
           <!--      价格-->
           <div>
             <span class="text-red-500 text-[14px]">￥</span>
-            <span class="text-red-500 text-[16px]">{{ item.price }}/月</span>
+            <span class="text-red-500 text-[16px]">{{ item.price }}/时</span>
           </div>
         </template>
         <template #footer>

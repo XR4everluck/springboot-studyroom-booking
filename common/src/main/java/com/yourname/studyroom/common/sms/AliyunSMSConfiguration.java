@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(AliyunSMSProperties.class)
-@ConditionalOnProperty(name = "aliyun.sms.endpoint")
+@ConditionalOnProperty(name = "aliyun.sms.access-key-id") //仅当配置了短信凭证才创建客户端，否则本地联调时验证码只打印日志
 public class AliyunSMSConfiguration {
 
     @Autowired

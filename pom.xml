@@ -37,7 +37,6 @@
         <swagger.version>2.9.2</swagger.version>
         <jwt.version>0.11.2</jwt.version>
         <easycaptcha.version>1.6.2</easycaptcha.version>
-        <minio.version>8.2.0</minio.version>
         <knife4j.version>4.1.0</knife4j.version>
         <aliyun.sms.version>2.0.23</aliyun.sms.version>
     </properties>
@@ -87,14 +86,6 @@
                 <groupId>com.github.whvcse</groupId>
                 <artifactId>easy-captcha</artifactId>
                 <version>${easycaptcha.version}</version>
-            </dependency>
-
-            <!--对象存储，用于存储图像等非结构化数据-->
-            <!--官方文档：https://min.io/docs/minio/linux/developers/minio-drivers.html?ref=docs#java-sdk -->
-            <dependency>
-                <groupId>io.minio</groupId>
-                <artifactId>minio</artifactId>
-                <version>${minio.version}</version>
             </dependency>
 
             <!--阿里云短信客户端，用于发送短信验证码-->

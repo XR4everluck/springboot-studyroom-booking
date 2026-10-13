@@ -14,8 +14,15 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 浏览类接口（选座/门店/地区/时段/支付方式）允许未登录访问，下单与个人中心仍需登录
         registry.addInterceptor(this.authenticationInterceptor).
                 addPathPatterns("/app/**").
-                excludePathPatterns("/app/login/**");
+                excludePathPatterns(
+                        "/app/login/**",
+                        "/app/seat/**",
+                        "/app/store/**",
+                        "/app/region/**",
+                        "/app/term/**",
+                        "/app/payment/**");
     }
 }

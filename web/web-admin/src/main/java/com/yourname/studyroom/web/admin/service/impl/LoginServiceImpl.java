@@ -63,7 +63,9 @@ public class LoginServiceImpl implements LoginService {
             throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_DISABLED_ERROR);
         }
 
-        if (!systemUser.getPassword().equals(DigestUtils.md5Hex(loginVo.getPassword()))){
+        // 只导入建表脚本而未导入初始化数据时，账号密码字段可能为空，此处按密码错误处理而不是抛空指针
+        if (systemUser.getPassword() == null
+                || !systemUser.getPassword().equals(DigestUtils.md5Hex(loginVo.getPassword()))){
             throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
         }
 

@@ -7,14 +7,14 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    StoreCard: typeof import('./src/components/StoreCard/StoreCard.vue')['default']
     LoadingButton: typeof import('./src/components/LoadingButton/LoadingButton.vue')['default']
     NavBar: typeof import('./src/components/NavBar/index.vue')['default']
     PullDownRefreshContainer: typeof import('./src/components/PullDownRefreshContainer/PullDownRefreshContainer.vue')['default']
-    SeatCard: typeof import('./src/components/SeatCard/SeatCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./src/components/SearchBar/SearchBar.vue')['default']
+    SeatCard: typeof import('./src/components/SeatCard/SeatCard.vue')['default']
+    StoreCard: typeof import('./src/components/StoreCard/StoreCard.vue')['default']
     SvgIcon: typeof import('./src/components/SvgIcon/index.vue')['default']
     Tabbar: typeof import('./src/components/Tabbar/index.vue')['default']
     VanButton: typeof import('vant/es')['Button']

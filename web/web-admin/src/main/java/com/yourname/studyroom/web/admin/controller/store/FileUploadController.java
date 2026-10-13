@@ -3,7 +3,6 @@ package com.yourname.studyroom.web.admin.controller.store;
 
 import com.yourname.studyroom.common.result.Result;
 import com.yourname.studyroom.web.admin.service.FileService;
-import io.minio.errors.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 
 @Tag(name = "文件管理")
@@ -34,7 +31,7 @@ public class FileUploadController {
      */
     @Operation(summary = "上传文件")
     @PostMapping("upload")
-    public Result<String> upload(@RequestParam MultipartFile file) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public Result<String> upload(@RequestParam MultipartFile file) throws IOException {
         String url = fileService.upload(file);
         return Result.ok(url);
     }

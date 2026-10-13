@@ -77,7 +77,7 @@ export function getSeatListByStoreId(storeId: number | string) {
  * @param id
  */
 export function getOrderInfoById(id: number | string) {
-  return http.get<OrderInfoInterface>(`/admin/order?id=${id}`)
+  return http.get<OrderInfoInterface>(`/admin/order/getById?id=${id}`)
 }
 /**
  * @description 保存或修改订单信息

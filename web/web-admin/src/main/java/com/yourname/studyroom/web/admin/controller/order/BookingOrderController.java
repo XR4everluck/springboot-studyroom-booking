@@ -60,7 +60,7 @@ public class BookingOrderController {
      * @return 查询结果
      */
     @Operation(summary = "根据id查询预订订单信息")
-    @GetMapping(name = "getById")
+    @GetMapping("getById")
     public Result<OrderVo> getById(@RequestParam Long id) {
         OrderVo result = bookingOrderService.getOrderById(id);
         return Result.ok(result);

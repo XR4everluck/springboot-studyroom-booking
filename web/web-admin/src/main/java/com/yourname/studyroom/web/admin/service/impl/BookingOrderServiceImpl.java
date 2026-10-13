@@ -5,6 +5,7 @@ import com.yourname.studyroom.common.constant.RedisConstant;
 import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.BusinessHoursUtil;
+import com.yourname.studyroom.common.utils.OrderNoUtil;
 import com.yourname.studyroom.model.entity.*;
 import com.yourname.studyroom.model.enums.BookingStatus;
 import com.yourname.studyroom.model.enums.SeatRealtimeStatus;
@@ -102,6 +103,9 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
 
         if (bookingOrder.getStatus() == null) {
             bookingOrder.setStatus(BookingStatus.BOOKED);
+        }
+        if (bookingOrder.getId() == null && bookingOrder.getOrderNo() == null) {
+            bookingOrder.setOrderNo(OrderNoUtil.generate());
         }
         this.saveOrUpdate(bookingOrder);
 

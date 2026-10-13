@@ -2,6 +2,7 @@ package com.yourname.studyroom.web.app.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yourname.studyroom.common.constant.RedisConstant;
+import com.yourname.studyroom.common.login.LoginUser;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.model.entity.*;
 import com.yourname.studyroom.model.enums.ItemType;
@@ -119,8 +120,11 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
             //加入缓存
             redisTemplate.opsForValue().set(key,seatDetailVo);
         }
-        //异步 保存浏览历史
-        browsingHistoryService.saveHistory(LoginUserHolder.getLoginUser().getUserId(),id);
+        //异步 保存浏览历史，未登录游客浏览座位时不记录
+        LoginUser loginUser = LoginUserHolder.getLoginUser();
+        if (loginUser != null) {
+            browsingHistoryService.saveHistory(loginUser.getUserId(), id);
+        }
 
         //实时状态基于 Redis，始终按当前缓存回填，避免受详情缓存快照影响
         SeatRealtimeStatus realtime = readRealtimeStatus(id);

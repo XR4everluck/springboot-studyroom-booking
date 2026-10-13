@@ -39,3 +39,21 @@ build/
 
 ### 前端依赖 ###
 **/static/**/node_modules/**
+### 运行期产物与本地便携依赖 ###
+logs/
+tools/redis/
+
+### 编辑器/工具目录 ###
+.qoder/
+dump.rdb
+uploads/
+
+### 前端构建产物（vite build 后拷入 static 根，由 start-all.bat 重新生成）###
+web/web-admin/src/main/resources/static/assets/
+web/web-admin/src/main/resources/static/index.html
+web/web-admin/src/main/resources/static/logo.png
+web/web-app/src/main/resources/static/assets/
+web/web-app/src/main/resources/static/static/
+web/web-app/src/main/resources/static/index.html
+web/web-app/src/main/resources/static/index.html.gz
+web/web-app/src/main/resources/static/favicon.ico

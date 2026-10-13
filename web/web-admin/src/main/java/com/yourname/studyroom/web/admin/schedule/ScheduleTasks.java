@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -23,7 +25,7 @@ public class ScheduleTasks {
      * 定时任务：检查预订订单状态
      * <p>
      * 使用cron表达式设置任务执行时间，每天午夜执行一次。
-     * 检查所有已确认或正在退座的预订订单，如果订单结束日期早于当前日期，则更新预订订单状态。
+     * 结束日期早于今天的订单视为已到期；签退待确认的订单交由后台确认，不在这里改写状态。
      * ┌───────────── second (0-59)
      * │ ┌───────────── minute (0 - 59)
      * │ │ ┌───────────── hour (0 - 23)
@@ -36,10 +38,11 @@ public class ScheduleTasks {
      */
     @Scheduled(cron = "0 0 0 * * *")
     public void checkBookingStatus() {
+        // end_date 只精确到“天”，今天到期的订单当天仍应可用，因此只清理结束日期早于今天零点的订单
+        Date todayStart = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
         LambdaUpdateWrapper<BookingOrder> updateWrapper = new LambdaUpdateWrapper<>();
-        Date now = new Date();
-        updateWrapper.le(BookingOrder::getEndDate, now);
-        updateWrapper.in(BookingOrder::getStatus, BookingStatus.BOOKED, BookingStatus.CHECKOUT_PENDING);
+        updateWrapper.lt(BookingOrder::getEndDate, todayStart);
+        updateWrapper.in(BookingOrder::getStatus, BookingStatus.BOOKED, BookingStatus.IN_USE);
         updateWrapper.set(BookingOrder::getStatus, BookingStatus.EXPIRED);
         bookingOrderService.update(updateWrapper);
     }

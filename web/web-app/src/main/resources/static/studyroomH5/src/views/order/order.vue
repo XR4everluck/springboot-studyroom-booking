@@ -57,7 +57,7 @@
       </div>
       <!--    预订人信息-->
       <div>
-        <div class="base-info-title main-container py-[4px]">预订座位</div>
+        <div class="base-info-title main-container py-[4px]">预订人信息</div>
         <div class="main-container my-[5px]">
           <div class="rounded-xl shadow overflow-hidden">
             <van-row>
@@ -123,15 +123,6 @@
                   label-width="70px"
                   label="预订时段"
                   v-model="bookingDate"
-                ></van-field>
-              </van-col>
-              <!--          身份证号-->
-              <van-col span="24">
-                <van-field
-                  readonly
-                  label-width="70px"
-                  label="身份证号"
-                  v-model="orderDetailInfo.identificationNumber"
                 ></van-field>
               </van-col>
               <!--          总价-->
@@ -244,6 +235,7 @@ import {
   getTermListBySeatId,
   saveOrUpdateOrder
 } from "@/api/search";
+import { getTermEndDate } from "@/utils/bookingTerm";
 import { OrderSource, OrderStatus } from "@/enums/constEnums";
 const route = useRoute();
 const router = useRouter();
@@ -274,7 +266,7 @@ const orderDetailInfo = ref<Partial<OrderDetailInterface>>({
   endDate: "",
   // bookingTermId	预订时长id
   bookingTermId: "",
-  // totalAmount	单价（元/月）
+  // totalAmount	订单总金额（元）
   totalAmount: "",
   // paymentTypeId	支付类型id
   paymentTypeId: "",
@@ -301,22 +293,19 @@ const bookingTermInfo = ref({
 watch(
   bookingTermInfo,
   newValue => {
-    if (newValue) {
-      console.log("newValue", newValue);
-      // 重赋值预订时长
-      orderDetailInfo.value.bookingTermId = newValue.value;
-      orderDetailInfo.value.bookingTermMonthCount = +newValue.text.slice(
-        0,
-        -1
-      );
-      orderDetailInfo.value.bookingTermUnit = newValue.text.slice(-1);
-      //   重新计算起止日期
-      orderDetailInfo.value.endDate = dayjs(
-        orderDetailInfo.value.startDate
-      )
-        .add(orderDetailInfo.value.bookingTermMonthCount as number, "month")
-        .format("YYYY-MM-DD");
-    }
+    if (!newValue.value) return;
+    orderDetailInfo.value.bookingTermId = newValue.value;
+    const term = bookingTermList.value.find(
+      item => String(item.id) === String(newValue.value)
+    );
+    if (!term) return;
+    orderDetailInfo.value.bookingTermMonthCount = Number(term.monthCount);
+    orderDetailInfo.value.bookingTermUnit = term.unit;
+    //   重新计算起止日期
+    orderDetailInfo.value.endDate = getTermEndDate(
+      orderDetailInfo.value.startDate as string,
+      term
+    );
   },
   { immediate: true, deep: true }
 );
@@ -341,7 +330,6 @@ const getBookingTermListHandle = async () => {
 const onConfirmBookingTerm = (data: {
   selectedOptions: (typeof bookingTermInfo.value)[];
 }) => {
-  console.log("onConfirmBookingTerm", data);
   bookingTermInfo.value = data.selectedOptions[0];
   showPickerBookingTerm.value = false;
 };
@@ -359,7 +347,6 @@ watch(
   paymentType,
   newValue => {
     if (newValue) {
-      console.log("newValue", newValue);
       // 重赋值支付方式
       orderDetailInfo.value.paymentTypeId = newValue.value;
       orderDetailInfo.value.paymentTypeName = newValue.text;
@@ -386,7 +373,6 @@ const getPaymentTypeListHandle = async () => {
 const onConfirmPaymentType = (data: {
   selectedOptions: (typeof paymentType.value)[];
 }) => {
-  console.log("onConfirmPaymentType", data);
   paymentType.value = data.selectedOptions[0];
   showPickerPaymentType.value = false;
 };
@@ -411,14 +397,16 @@ const getOrderDetailHandle = async () => {
   if (isAllowEdit.value) {
     // 重新计算起止日期
     // 结束日期变成开始日期
-    orderDetailInfo.value.startDate =
-      orderDetailInfo.value.endDate;
-    // 结束日期变成开始日期+预订时长
-    orderDetailInfo.value.endDate = dayjs(
-      orderDetailInfo.value.startDate
-    )
-      .add(orderDetailInfo.value.bookingTermMonthCount as number, "month")
-      .format("YYYY-MM-DD");
+    orderDetailInfo.value.startDate = orderDetailInfo.value.endDate;
+    // 开始日期加上预订时长得到新的结束日期
+    orderDetailInfo.value.endDate = getTermEndDate(
+      orderDetailInfo.value.startDate as string,
+      {
+        id: data.bookingTermId,
+        monthCount: String(data.bookingTermMonthCount),
+        unit: data.bookingTermUnit
+      }
+    );
     //   重置订单状态
     orderDetailInfo.value.status = OrderStatus.RENEW_TO_BE_CONFIRMED;
     //   重置订单来源
@@ -435,20 +423,19 @@ const correctBookingTermAndPaymentType = () => {
   // 修正预订时长，如果不存在就改为数组第一项
   let targetTerm =
     bookingTermList.value.find(
-      item => item.id === orderDetailInfo.value.bookingTermId
+      item => String(item.id) === String(orderDetailInfo.value.bookingTermId)
     ) || bookingTermList.value[0];
   if (targetTerm) {
-    console.log("targetTerm", targetTerm);
     bookingTermInfo.value.text = targetTerm.monthCount + targetTerm.unit;
     bookingTermInfo.value.value = targetTerm.id as unknown as string;
   }
   //   修正支付方式，如果不存在就改为数组第一项
   let targetPaymentType =
     paymentTypeList.value.find(
-      item => item.id === orderDetailInfo.value.paymentTypeId
+      item =>
+        String(item.id) === String(orderDetailInfo.value.paymentTypeId)
     ) || paymentTypeList.value[0];
   if (targetPaymentType) {
-    console.log("targetPaymentType", targetPaymentType);
     paymentType.value.text = targetPaymentType.name as string;
     paymentType.value.value = targetPaymentType.id as unknown as string;
   }
@@ -469,30 +456,15 @@ const goSeatDetail = () => {
 };
 // 续期,修改
 const submitHandle = async () => {
-  console.log("确认预订");
   try {
-    // 预订时长时长不能小于支付方式月份长度
-    let bookingTermMonthCount =
-      bookingTermList.value.find(
-        item => item.id === orderDetailInfo.value.bookingTermId
-      )?.monthCount || 0;
-
-    console.log(bookingTermList.value);
-    console.log(orderDetailInfo.value);
-    console.log("=============================");
-    console.log("预订时长长度：" + bookingTermMonthCount);
-
-    let paymentTypeMonthCount =
-      paymentTypeList.value.find(
-        item => item.id === orderDetailInfo.value.paymentTypeId
-      )?.payMonthCount || 0;
-
-    console.log("支付月份长度：" + paymentTypeMonthCount);
-
-    if (+bookingTermMonthCount < +paymentTypeMonthCount) {
+    if (
+      !orderDetailInfo.value.bookingTermId ||
+      !orderDetailInfo.value.paymentTypeId ||
+      !orderDetailInfo.value.endDate
+    ) {
       showToast({
         type: "fail",
-        message: "预订时长时长不能小于支付方式月份长度"
+        message: "请选择预订时长和付款方式"
       });
       return;
     }

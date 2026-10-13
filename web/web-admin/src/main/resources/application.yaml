@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://192.168.70.128:3306/studyroom_booking?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+    url: jdbc:mysql://127.0.0.1:3306/studyroom_booking?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
     username: root
-    password: 123456
+    password: 1234
     hikari:
       connection-test-query: SELECT 1 # 自动检测连接
       connection-timeout: 60000 #数据库连接超时时间,默认30秒
@@ -19,23 +19,23 @@ spring:
     time-zone: GMT+8 # 全局配置时区
   data:
     redis:
-      host: 192.168.70.128
+      host: 127.0.0.1
       port: 6379
       database: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB # 单个上传文件大小上限
+      max-request-size: 20MB
 #用于打印框架生成的sql语句，便于调试
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-# MinIO 配置信息
-minio:
-  endpoint: http://192.168.70.128:9000
-  access-key: minioadmin
-  secret-key: minioadmin
-  bucket-name: studyroom
+# 图片等文件存储到本地磁盘，通过 ${url-prefix}/** 对外提供访问
+storage:
+  upload-dir: ./upload-data
+  url-prefix: /upload
 
 # 将queryVo打平处理
 springdoc:
   default-flat-param-object: true
-
-

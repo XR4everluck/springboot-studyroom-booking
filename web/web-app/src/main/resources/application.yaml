@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://192.168:70.128/studyroom_booking?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+    url: jdbc:mysql://127.0.0.1:3306/studyroom_booking?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
     username: root
-    password: 123456
+    password: 1234
     hikari:
       connection-test-query: SELECT 1 # 自动检测连接
       connection-timeout: 60000 #数据库连接超时时间,默认30秒
@@ -19,10 +19,9 @@ spring:
     time-zone: GMT+8
   data:
     redis:
-      host: 192.168.70.128
+      host: 127.0.0.1
       port: 6379
       database: 0
-
 #用于打印框架生成的sql语句，便于调试
 mybatis-plus:
   configuration:
@@ -31,9 +30,14 @@ mybatis-plus:
 springdoc:
   default-flat-param-object: true
 
-# 阿里云短信服务配置
-aliyun:
-  sms:
-    access-key-id:
-    access-key-secret:
-    endpoint: dysmsapi.aliyuncs.com
+# 与后台端共用同一本地磁盘目录，用于展示门店/座位图片
+storage:
+  upload-dir: ./upload-data
+  url-prefix: /upload
+
+# 阿里云短信服务配置：不填 access-key-id 时不真正发短信，登录验证码打印到应用日志
+#aliyun:
+#  sms:
+#    access-key-id: 你的AccessKeyId
+#    access-key-secret: 你的AccessKeySecret
+#    endpoint: dysmsapi.aliyuncs.com

@@ -4,6 +4,7 @@ import com.yourname.studyroom.common.constant.RedisConstant;
 import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.BusinessHoursUtil;
+import com.yourname.studyroom.common.utils.OrderNoUtil;
 import com.yourname.studyroom.model.entity.*;
 import com.yourname.studyroom.model.enums.BookingStatus;
 import com.yourname.studyroom.model.enums.ItemType;
@@ -146,8 +147,13 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
             bookingOrder.setStatus(BookingStatus.BOOKED);
         }
 
-        // 3.1 新单使用会员卡抵扣时扣减额度
+        // 3.1 新单补齐订单编号
         boolean isNewOrder = bookingOrder.getId() == null;
+        if (isNewOrder && bookingOrder.getOrderNo() == null) {
+            bookingOrder.setOrderNo(OrderNoUtil.generate());
+        }
+
+        // 3.2 新单使用会员卡抵扣时扣减额度
         if (isNewOrder && bookingOrder.getMemberCardId() != null) {
             memberCardService.deductForBooking(bookingOrder.getMemberCardId(), bookingOrder);
         }

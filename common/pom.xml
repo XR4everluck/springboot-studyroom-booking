@@ -41,12 +41,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <!--Minio -->
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-        </dependency>
-
         <!--   字符串加密处理工具类     -->
         <dependency>
             <groupId>commons-codec</groupId>
