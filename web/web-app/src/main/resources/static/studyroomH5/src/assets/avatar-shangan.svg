@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="上岸自习室">
+  <defs>
+    <linearGradient id="avBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#63e6be"/>
+      <stop offset="52%" stop-color="#38b2ac"/>
+      <stop offset="100%" stop-color="#276749"/>
+    </linearGradient>
+    <linearGradient id="avWave1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="avCap" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f3d38"/>
+      <stop offset="100%" stop-color="#1c5c53"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="100" cy="100" r="100" fill="url(#avBg)"/>
+  <circle cx="100" cy="100" r="96" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="3"/>
+
+  <!-- 学士帽（上岸 = 学业/考试有成） -->
+  <g transform="translate(100 46)">
+    <path d="M0 -20 L44 2 L0 24 L-44 2 Z" fill="url(#avCap)"/>
+    <path d="M0 -20 L44 2 L0 24 L-44 2 Z" fill="none" stroke="#8ff0d8" stroke-width="1.4" opacity="0.55"/>
+    <rect x="38" y="2" width="4.5" height="24" rx="2.2" fill="#0f3d38"/>
+    <circle cx="40.5" cy="29" r="5.4" fill="#ffd166"/>
+  </g>
+
+  <!-- 水面（上岸） -->
+  <path d="M0 152 C 34 136, 66 170, 100 152 C 134 134, 166 170, 200 152 L200 200 L0 200 Z" fill="url(#avWave1)"/>
+  <path d="M0 172 C 36 156, 70 190, 100 172 C 132 154, 164 190, 200 172 L200 200 L0 200 Z" fill="#ffffff" opacity="0.26"/>
+
+  <!-- 「上岸」二字 -->
+  <text x="100" y="134" text-anchor="middle"
+        font-family="Microsoft YaHei,PingFang SC,SimHei,sans-serif"
+        font-size="56" font-weight="bold" fill="#ffffff">上岸</text>
+</svg>

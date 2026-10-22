@@ -95,6 +95,15 @@ const appRoutes: Array<RouteRecordRaw> = [
     }
   },
   {
+    name: "ChangePassword",
+    path: "/changePassword",
+    component: () => import("@/views/changePassword/changePassword.vue"),
+    meta: {
+      title: "修改密码",
+      noCache: true
+    }
+  },
+  {
     name: "SeatDetail",
     path: "/seatDetail",
     component: () => import("@/views/seatDetail/seatDetail.vue"),

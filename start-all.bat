@@ -4,7 +4,7 @@ chcp 936 >nul
 cd /d "%~dp0"
 
 rem =====================================================================
-rem  共享自习室预订系统 一键启动脚本
+rem  上岸自习室预订系统 一键启动脚本
 rem  用法：
 rem    start-all.bat            使用已有 jar 直接启动（缺失时自动构建）
 rem    start-all.bat build      先执行 mvn clean package 再启动
@@ -150,14 +150,14 @@ if errorlevel 1 (
 rem ---------------------------------------------------------------------
 rem  启动两端服务（各自独立窗口，日志直接显示在窗口内）
 rem ---------------------------------------------------------------------
-echo [7/7] 启动后台管理端与用户移动端 ...
+echo [7/7] 启动后台管理端与用户用户端 ...
 start "studyroom-admin(8080)" cmd /k "java -jar %ADMIN_JAR%"
 start "studyroom-app(8081)" cmd /k "java -jar %APP_JAR%"
 
 call :wait_port %ADMIN_PORT% 90
 if errorlevel 1 echo   [警告] 管理端 8080 未就绪，请查看 studyroom-admin 窗口。
 call :wait_port %APP_PORT% 90
-if errorlevel 1 echo   [警告] 移动端 8081 未就绪，请查看 studyroom-app 窗口。
+if errorlevel 1 echo   [警告] 用户端 8081 未就绪，请查看 studyroom-app 窗口。
 
 start "" http://localhost:%ADMIN_PORT%/
 start "" http://localhost:%APP_PORT%/
@@ -166,8 +166,8 @@ echo.
 echo =====================================================================
 echo   启动完成
 echo     管理后台： http://localhost:%ADMIN_PORT%/   （admin / 123456）
-echo     移动端：   http://localhost:%APP_PORT%/     （手机号 13900000001）
-echo   说明：移动端未配置阿里云短信时，登录验证码打印在 studyroom-app 窗口日志中。
+echo     用户端：   http://localhost:%APP_PORT%/     （账号 demo001，密码 123456）
+echo   说明：用户端为账号密码登录，支持自助注册；测试账号见 sql\studyroom_init_data.sql。
 echo   停止服务请运行 stop-all.bat
 echo =====================================================================
 goto :eof

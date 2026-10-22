@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>studyroom-web-admin</artifactId>
-    <name>共享自习室预订系统-后台管理端</name>
+    <name>上岸自习室预订系统-后台管理端</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

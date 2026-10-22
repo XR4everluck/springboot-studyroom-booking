@@ -1,0 +1,1 @@
+const i={mounted(s,a){const e=a.value,t=c=>{c.target instanceof Element&&e&&(Array.isArray(e)?e.forEach(r=>{s.classList.remove(r)}):s.classList.remove(e))};s.addEventListener("click",t)}};export{i as default};

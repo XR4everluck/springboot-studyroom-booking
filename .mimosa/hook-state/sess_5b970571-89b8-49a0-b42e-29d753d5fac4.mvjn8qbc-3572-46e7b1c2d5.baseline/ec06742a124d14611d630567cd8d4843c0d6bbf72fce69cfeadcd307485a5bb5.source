@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.yourname.studyroom</groupId>
+        <artifactId>studyroom-web</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>studyroom-web-admin</artifactId>
+    <name>上岸自习室预订系统-后台管理端</name>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <!-- 后台前端源码工程不参与打包，打包产物为其构建后的 static 根目录文件 -->
+                    <exclude>static/studyroomAdmin/**</exclude>
+                    <exclude>static/studyroomAdmin/**/*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+
+</project>

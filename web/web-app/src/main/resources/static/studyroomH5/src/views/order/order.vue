@@ -1,5 +1,5 @@
 <template>
-  <van-skeleton :row="20" :loading="!orderDetailInfo?.seatId">
+  <van-skeleton :row="20" :loading="loading">
     <div class="od">
       <div class="od__back">
         <van-button icon="arrow-left" size="small" @click="router.back()"
@@ -208,6 +208,8 @@ import { getTermEndDate } from "@/utils/bookingTerm";
 import { OrderSource, OrderStatus } from "@/enums/constEnums";
 const route = useRoute();
 const router = useRouter();
+// 详情加载态：无论成功、失败还是缺少 id，都必须收敛，避免骨架屏常驻
+const loading = ref(true);
 // 是否允许修改
 const isAllowEdit = ref(route.query.isEdit === "true");
 // 是否是新增续期
@@ -298,10 +300,11 @@ const bookingTermColumns = computed(() => {
 });
 // 获取预订时长列表
 const getBookingTermListHandle = async () => {
-  const { data } = await getTermListBySeatId(
-    orderDetailInfo.value.seatId as string
-  );
-  bookingTermList.value = data;
+  const seatId = orderDetailInfo.value.seatId as string;
+  // 没有座位 id 时直接跳过，避免发出一条 seatId 为空的无效请求
+  if (!seatId) return;
+  const { data } = await getTermListBySeatId(seatId);
+  bookingTermList.value = data || [];
 };
 // 确认选择预订时长
 const onConfirmBookingTerm = (data: {
@@ -341,10 +344,11 @@ const paymentTypeColumns = computed(() => {
 });
 // 获取支付方式列表
 const getPaymentTypeListHandle = async () => {
-  const { data } = await getPaymentListBySeatId(
-    orderDetailInfo.value.seatId as string
-  );
-  paymentTypeList.value = data;
+  const seatId = orderDetailInfo.value.seatId as string;
+  // 同预订时长，缺少座位 id 时跳过
+  if (!seatId) return;
+  const { data } = await getPaymentListBySeatId(seatId);
+  paymentTypeList.value = data || [];
 };
 // 确认选择支付方式
 const onConfirmPaymentType = (data: {
@@ -363,6 +367,8 @@ const priceText = computed(() => {
 // 获取自习室门店的详情信息
 const getOrderDetailHandle = async () => {
   const { data } = await getOrderDetailById(route.query.id as string);
+  // 订单不存在/已删除时后端返回 null，这里直接返回，避免后续解构取值抛错
+  if (!data) return;
   orderDetailInfo.value = data;
   // 单独预订时长相关
   bookingTermInfo.value.text = data.bookingTermMonthCount + data.bookingTermUnit;
@@ -379,7 +385,7 @@ const getOrderDetailHandle = async () => {
     orderDetailInfo.value.endDate = getTermEndDate(
       orderDetailInfo.value.startDate as string,
       {
-        id: data.bookingTermId,
+        id: Number(data.bookingTermId),
         monthCount: String(data.bookingTermMonthCount),
         unit: data.bookingTermUnit
       }
@@ -472,11 +478,22 @@ const checkOutHandle = async () => {
   }
 };
 onMounted(async () => {
-  route.query.id && (await getOrderDetailHandle());
-  await getBookingTermListHandle();
-  await getPaymentTypeListHandle();
-  //  如果允许修改，修正预订时长和支付方式
-  isAllowEdit.value && correctBookingTermAndPaymentType();
+  try {
+    if (route.query.id) {
+      await getOrderDetailHandle();
+    }
+    // 时长与支付方式都挂在座位维度上，只有拿到座位信息后才需要查询
+    if (orderDetailInfo.value.seatId) {
+      await getBookingTermListHandle();
+      await getPaymentTypeListHandle();
+      //  如果允许修改，修正预订时长和支付方式
+      isAllowEdit.value && correctBookingTermAndPaymentType();
+    }
+  } catch (error) {
+    console.error("订单详情初始化失败", error);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 

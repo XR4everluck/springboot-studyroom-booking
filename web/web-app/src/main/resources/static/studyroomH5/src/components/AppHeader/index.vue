@@ -5,7 +5,7 @@ import SvgIcon from "@/components/SvgIcon/index.vue";
 import appRoutes from "@/router/appRoutes";
 import { useDarkMode, useToggleDarkMode } from "@/hooks/useToggleDarkMode";
 import { useUserStore } from "@/store/modules/user";
-import defaultAvatarUrl from "../../../public/favicon.ico";
+import defaultAvatarUrl from "@/assets/avatar-shangan.svg";
 
 const route = useRoute();
 const userStore = useUserStore();
@@ -29,8 +29,8 @@ const isActive = (path: string) => route.path === path;
   <header class="app-header">
     <div class="app-header__inner">
       <router-link to="/search" class="app-header__brand">
-        <span class="app-header__logo">自</span>
-        <span class="app-header__title">共享自习室</span>
+        <span class="app-header__logo">上</span>
+        <span class="app-header__title">上岸自习室</span>
       </router-link>
 
       <nav class="app-header__nav">

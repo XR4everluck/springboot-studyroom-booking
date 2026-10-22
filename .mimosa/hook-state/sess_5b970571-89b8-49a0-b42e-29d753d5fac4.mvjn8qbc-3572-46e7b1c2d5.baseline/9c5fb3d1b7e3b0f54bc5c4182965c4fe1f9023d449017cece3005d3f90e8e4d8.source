@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.yourname.studyroom</groupId>
+    <artifactId>studyroom-booking</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <name>上岸自习室预订系统</name>
+    <description>基于 SpringBoot+Vue3 的上岸自习室预订管理平台，包含后台管理系统与用户移动端</description>
+
+    <modules>
+        <module>model</module>
+        <module>common</module>
+        <module>web</module>
+    </modules>
+
+    <!-- 继承Spring Boot父项目 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.0.5</version>
+    </parent>
+
+    <!-- 注意：直接替换pom文件中原有的properties -->
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 覆盖 spring-boot-starter-parent 默认的 Lombok 1.18.26，选用支持高版本 JDK 的 Lombok -->
+        <lombok.version>1.18.48</lombok.version>
+        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <swagger.version>2.9.2</swagger.version>
+        <jwt.version>0.11.2</jwt.version>
+        <easycaptcha.version>1.6.2</easycaptcha.version>
+        <knife4j.version>4.1.0</knife4j.version>
+        <aliyun.sms.version>2.0.23</aliyun.sms.version>
+    </properties>
+
+    <!--配置dependencyManagement统一管理依赖版本-->
+    <dependencyManagement>
+        <dependencies>
+            <!--mybatis-plus-->
+            <!--官方文档：https://baomidou.com/pages/bab2db/ -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!--knife4j文档-->
+            <!--官方文档：https://doc.xiaominfo.com/docs/quick-start -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+
+            <!--JWT登录认证相关-->
+            <!--官方文档：https://github.com/jwtk/jjwt#install-jdk-maven -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <scope>runtime</scope>
+                <version>${jwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <scope>runtime</scope>
+                <version>${jwt.version}</version>
+            </dependency>
+
+            <!--图形验证码-->
+            <!--官方文档：https://gitee.com/ele-admin/EasyCaptcha -->
+            <dependency>
+                <groupId>com.github.whvcse</groupId>
+                <artifactId>easy-captcha</artifactId>
+                <version>${easycaptcha.version}</version>
+            </dependency>
+
+            <!--阿里云短信客户端，用于发送短信验证码-->
+            <!--官方文档：https://help.aliyun.com/document_detail/215759.html?spm=a2c4g.215759.0.0.49f32807f4Yc0y -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dysmsapi20170525</artifactId>
+                <version>${aliyun.sms.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- JDK 23+ 默认不再从 classpath 自动发现注解处理器，需显式声明 Lombok 处理器路径 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

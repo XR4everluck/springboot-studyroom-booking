@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>studyroom-model</artifactId>
-    <name>共享自习室预订系统-实体模型模块</name>
+    <name>上岸自习室预订系统-实体模型模块</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

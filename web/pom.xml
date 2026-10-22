@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>studyroom-web</artifactId>
-    <name>共享自习室预订系统-Web聚合模块</name>
+    <name>上岸自习室预订系统-Web聚合模块</name>
     <packaging>pom</packaging>
 
     <modules>

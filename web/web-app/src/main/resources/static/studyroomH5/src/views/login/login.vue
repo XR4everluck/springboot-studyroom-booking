@@ -3,7 +3,7 @@
     <div class="login-page__card">
       <div class="login-page__brand">
         <van-image round width="64px" height="64px" :src="defaultAvatarUrl" />
-        <h1 class="login-page__title">共享自习室</h1>
+        <h1 class="login-page__title">上岸自习室</h1>
         <p class="--van-gray-6 login-page__subtitle">账号密码登录，没有账号可免费注册</p>
       </div>
 
@@ -21,7 +21,7 @@
                 placeholder="请输入登录账号"
                 :rules="[
                   { required: true, message: '请输入登录账号' },
-                  { pattern: USERNAME_PATTERN, message: '账号为4-20位字母、数字或下划线' }
+                  { pattern: USERNAME_PATTERN, message: USERNAME_RULE_MESSAGE }
                 ]"
               />
               <van-field
@@ -48,6 +48,13 @@
               <van-checkbox v-model="rememberAccount" shape="square" icon-size="16px">
                 记住账号
               </van-checkbox>
+            </div>
+
+            <div class="login-page__demo" @click="fillDemoAccount">
+              <span class="login-page__demo-label">演示账号</span>
+              <van-tag plain type="primary" size="medium">demo001</van-tag>
+              <van-tag plain type="success" size="medium">123456</van-tag>
+              <span class="login-page__demo-fill">一键填入</span>
             </div>
 
             <div class="login-page__submit">
@@ -77,7 +84,7 @@
                 placeholder="4-20位字母、数字或下划线"
                 :rules="[
                   { required: true, message: '请输入登录账号' },
-                  { pattern: USERNAME_PATTERN, message: '账号为4-20位字母、数字或下划线' }
+                  { pattern: USERNAME_PATTERN, message: USERNAME_RULE_MESSAGE }
                 ]"
               />
               <van-field
@@ -101,7 +108,7 @@
                 placeholder="选填，作为订单联系方式"
                 :rules="[
                   {
-                    pattern: /^1[3-9]\d{9}$/,
+                    pattern: PHONE_PATTERN,
                     required: false,
                     message: '手机号格式不正确'
                   }
@@ -117,7 +124,7 @@
                 placeholder="8-20位，需包含字母和数字"
                 :rules="[
                   { required: true, message: '请输入密码' },
-                  { pattern: PASSWORD_PATTERN, message: '密码需为8-20位，且同时包含字母和数字' }
+                  { pattern: PASSWORD_PATTERN, message: PASSWORD_RULE_MESSAGE }
                 ]"
               >
                 <template #right-icon>
@@ -128,6 +135,22 @@
                   />
                 </template>
               </van-field>
+              <div v-if="registerStrength.level" class="login-page__strength">
+                <span class="--van-gray-6">密码强度</span>
+                <span class="login-page__strength-bar">
+                  <i
+                    v-for="i in 3"
+                    :key="i"
+                    :class="[
+                      registerStrength.className,
+                      { 'is-on': i <= registerStrength.level }
+                    ]"
+                  />
+                </span>
+                <span :class="registerStrength.className">
+                  {{ registerStrength.text }}
+                </span>
+              </div>
               <van-field
                 v-model="registerForm.confirmPassword"
                 name="confirmPassword"
@@ -169,21 +192,25 @@
 </template>
 <script setup lang="ts">
 import defaultAvatarUrl from "../../../public/favicon.ico";
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { login, register } from "@/api/user";
 import type { FormInstance } from "vant";
 import { showToast } from "vant";
 import { useUserStore } from "@/store/modules/user";
 import LoadingButton from "@/components/LoadingButton/LoadingButton.vue";
+import {
+  PHONE_PATTERN,
+  USERNAME_PATTERN,
+  PASSWORD_PATTERN,
+  USERNAME_RULE_MESSAGE,
+  PASSWORD_RULE_MESSAGE,
+  passwordStrengthMeta
+} from "@/utils/validate";
 
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
-
-// 与后端一致的校验规则
-const USERNAME_PATTERN = /^[a-zA-Z0-9_]{4,20}$/;
-const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/;
 
 const REMEMBER_KEY = "studyroom:remember-account";
 
@@ -210,6 +237,18 @@ const registerForm = reactive({
   confirmPassword: ""
 });
 const showRegPassword = ref(false);
+// 注册密码强度提示
+const registerStrength = computed(() =>
+  passwordStrengthMeta(registerForm.password)
+);
+
+// 演示账号一键填入（对外演示用）
+const fillDemoAccount = () => {
+  loginForm.username = "demo001";
+  loginForm.password = "123456";
+  rememberAccount.value = false;
+  showToast({ type: "success", message: "已填入演示账号" });
+};
 
 // 登录
 const onSubmitLogin = async () => {
@@ -331,6 +370,79 @@ onMounted(() => {
 .login-page__hint {
   padding: 8px 16px 0;
   font-size: 12px;
+}
+
+.login-page__strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px 0;
+  font-size: 12px;
+}
+
+.login-page__strength-bar {
+  display: inline-flex;
+  gap: 4px;
+
+  i {
+    display: inline-block;
+    width: 22px;
+    height: 6px;
+    border-radius: 3px;
+    background-color: var(--van-border-color);
+
+    &.is-on.is-weak {
+      background-color: #ee4d38;
+    }
+
+    &.is-on.is-medium {
+      background-color: #ff976a;
+    }
+
+    &.is-on.is-strong {
+      background-color: #07c160;
+    }
+  }
+}
+
+.login-page__strength .is-weak {
+  color: #ee4d38;
+}
+
+.login-page__strength .is-medium {
+  color: #ff976a;
+}
+
+.login-page__strength .is-strong {
+  color: #07c160;
+}
+
+.login-page__demo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 16px 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--van-text-color-2);
+  background: var(--van-background);
+  border: 1px dashed var(--van-primary-color);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  .login-page__demo-label {
+    color: var(--van-text-color-3);
+  }
+
+  .login-page__demo-fill {
+    margin-left: auto;
+    color: var(--van-primary-color);
+    font-weight: 600;
+  }
 }
 
 .login-page__submit {

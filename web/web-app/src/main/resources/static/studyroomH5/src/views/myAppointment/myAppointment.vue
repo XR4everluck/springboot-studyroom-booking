@@ -1,5 +1,5 @@
 <template>
-  <van-skeleton :row="20" :loading="!appointmentList">
+  <van-skeleton :row="20" :loading="loading">
     <div class="ma-page">
       <div class="ma-page__grid">
         <van-card
@@ -51,7 +51,10 @@
         </van-card>
       </div>
 
-      <van-empty v-if="appointmentList?.length <= 0" description="暂无预约" />
+      <van-empty
+        v-if="!loading && !appointmentList.length"
+        description="暂无预约"
+      />
     </div>
   </van-skeleton>
 </template>
@@ -68,11 +71,19 @@ import {
 
 const router = useRouter();
 // 预约列表
-const appointmentList = ref<AppointmentItemInterface[]>();
+const appointmentList = ref<AppointmentItemInterface[]>([]);
+// 列表加载态：请求无论成功还是失败都要收敛，否则骨架屏会一直挂着
+const loading = ref(true);
 // 获取预约列表
 const getAppointmentListHandle = async () => {
-  const { data } = await getMyAppointmentList();
-  appointmentList.value = data;
+  try {
+    const { data } = await getMyAppointmentList();
+    appointmentList.value = data || [];
+  } catch (error) {
+    console.error("获取预约列表失败", error);
+  } finally {
+    loading.value = false;
+  }
 };
 // 跳转到自习室门店的详情页面
 const goAppointmentDetail = (item: AppointmentItemInterface) => {

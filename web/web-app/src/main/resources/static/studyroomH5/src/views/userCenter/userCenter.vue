@@ -46,7 +46,7 @@
 <script setup lang="ts" name="UserCenter">
 import { useUserStore } from "@/store/modules/user";
 import { showImagePreview } from "vant";
-import defaultAvatarUrl from "../../../public/favicon.ico";
+import defaultAvatarUrl from "@/assets/avatar-shangan.svg";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -65,6 +65,11 @@ const navList = ref([
     icon: "合同",
     name: "我的订单",
     path: "/myOrder"
+  },
+  {
+    icon: "修改密码",
+    name: "修改密码",
+    path: "/changePassword"
   }
 ]);
 const userStore = useUserStore();

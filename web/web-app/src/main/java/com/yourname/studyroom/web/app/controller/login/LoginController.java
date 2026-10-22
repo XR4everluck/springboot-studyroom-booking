@@ -4,6 +4,7 @@ package com.yourname.studyroom.web.app.controller.login;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.common.result.Result;
 import com.yourname.studyroom.web.app.service.LoginService;
+import com.yourname.studyroom.web.app.vo.user.ChangePasswordVo;
 import com.yourname.studyroom.web.app.vo.user.LoginVo;
 import com.yourname.studyroom.web.app.vo.user.RegisterVo;
 import com.yourname.studyroom.web.app.vo.user.UserInfoVo;
@@ -43,6 +44,20 @@ public class LoginController {
     @Operation(summary = "注册", description = "账号密码注册，成功后可直接登录")
     public Result<Void> register(@RequestBody RegisterVo registerVo) {
         loginService.register(registerVo);
+        return Result.ok();
+    }
+
+    /**
+     * 修改密码接口（需登录）
+     *
+     * @param changePasswordVo 修改密码信息对象，包含原密码与新密码
+     * @return 操作结果
+     */
+    @PostMapping("password")
+    @Operation(summary = "修改密码", description = "校验原密码后设置新密码，修改成功后需重新登录")
+    public Result<Void> changePassword(@RequestBody ChangePasswordVo changePasswordVo) {
+        Long userId = LoginUserHolder.getLoginUser().getUserId();
+        loginService.changePassword(userId, changePasswordVo);
         return Result.ok();
     }
 

@@ -1,5 +1,5 @@
 -- =============================================================
--- 共享自习室预订系统 - 完整业务表 DDL
+-- 上岸自习室预订系统 - 完整业务表 DDL
 -- 数据库：studyroom_booking
 -- 约定：所有表统一继承 id / create_time / update_time / is_deleted 四个公共列，
 --       与 model 层 BaseEntity 一致；业务列名与实体 @TableName/@TableField 严格一一对应。

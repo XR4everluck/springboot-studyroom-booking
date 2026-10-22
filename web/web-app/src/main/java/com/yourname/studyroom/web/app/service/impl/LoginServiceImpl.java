@@ -8,6 +8,7 @@ import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.model.entity.UserInfo;
 import com.yourname.studyroom.web.app.mapper.UserInfoMapper;
 import com.yourname.studyroom.web.app.service.LoginService;
+import com.yourname.studyroom.web.app.vo.user.ChangePasswordVo;
 import com.yourname.studyroom.web.app.vo.user.LoginVo;
 import com.yourname.studyroom.web.app.vo.user.RegisterVo;
 import com.yourname.studyroom.web.app.vo.user.UserInfoVo;
@@ -55,8 +56,7 @@ public class LoginServiceImpl implements LoginService {
 
         // 连续失败达到上限后锁定，防止暴力破解
         String failKey = RedisConstant.APP_LOGIN_FAIL_PREFIX + username;
-        String failCount = redisTemplate.opsForValue().get(failKey);
-        if (failCount != null && Integer.parseInt(failCount) >= RedisConstant.APP_LOGIN_FAIL_MAX) {
+        if (getFailCount(failKey) >= RedisConstant.APP_LOGIN_FAIL_MAX) {
             throw new BookingException(ResultCodeEnum.APP_LOGIN_LOCKED);
         }
 
@@ -64,8 +64,13 @@ public class LoginServiceImpl implements LoginService {
         // 账号不存在与密码错误统一提示，不暴露账号是否已注册
         if (!PasswordUtil.matches(loginVo.getPassword(),
                 userInfo == null ? DUMMY_HASH : userInfo.getPassword())) {
-            recordLoginFailure(failKey);
-            throw new BookingException(ResultCodeEnum.APP_LOGIN_ERROR);
+            long remain = recordLoginFailure(failKey);
+            if (remain <= 0) {
+                throw new BookingException(ResultCodeEnum.APP_LOGIN_LOCKED);
+            }
+            // 提示剩余可尝试次数，比笼统的"账号或密码错误"更贴近用户习惯
+            throw new BookingException(ResultCodeEnum.APP_LOGIN_ERROR.getCode(),
+                    "账号或密码错误，还可尝试 " + remain + " 次");
         }
         if (userInfo.getStatus() == BaseStatus.DISABLE) {
             throw new BookingException(ResultCodeEnum.APP_ACCOUNT_DISABLED_ERROR);
@@ -76,9 +81,22 @@ public class LoginServiceImpl implements LoginService {
         return JwtUtil.createToken(userInfo.getId(), userInfo.getPhone() == null ? "" : userInfo.getPhone());
     }
 
-    private void recordLoginFailure(String failKey) {
-        redisTemplate.opsForValue().increment(failKey);
+    /**
+     * 读取当前累计失败次数，无记录视为 0
+     */
+    private long getFailCount(String failKey) {
+        String value = redisTemplate.opsForValue().get(failKey);
+        return value == null ? 0L : Long.parseLong(value);
+    }
+
+    /**
+     * 记录一次登录失败，并返回剩余可尝试次数
+     */
+    private long recordLoginFailure(String failKey) {
+        Long count = redisTemplate.opsForValue().increment(failKey);
         redisTemplate.expire(failKey, RedisConstant.APP_LOGIN_FAIL_TTL_SEC, TimeUnit.SECONDS);
+        long current = count == null ? 1L : count;
+        return RedisConstant.APP_LOGIN_FAIL_MAX - current;
     }
 
     /**
@@ -119,6 +137,47 @@ public class LoginServiceImpl implements LoginService {
         userInfo.setPhone(phone);
         userInfo.setStatus(BaseStatus.ENABLE);
         userInfoMapper.insert(userInfo);
+    }
+
+    /**
+     * 修改密码：校验原密码 → 校验新密码强度与一致性 → 落库（PBKDF2 加盐哈希）
+     *
+     * @param userId           当前登录用户ID
+     * @param changePasswordVo 修改密码信息对象
+     */
+    @Override
+    public void changePassword(Long userId, ChangePasswordVo changePasswordVo) {
+        if (userId == null) {
+            throw new BookingException(ResultCodeEnum.APP_PASSWORD_NOT_LOGIN);
+        }
+        if (isBlank(changePasswordVo.getOldPassword())) {
+            throw new BookingException(ResultCodeEnum.APP_LOGIN_PASSWORD_EMPTY);
+        }
+        String newPassword = changePasswordVo.getNewPassword();
+        if (newPassword == null || !newPassword.matches(PASSWORD_PATTERN)) {
+            throw new BookingException(ResultCodeEnum.APP_REGISTER_PASSWORD_INVALID);
+        }
+        // 服务端兜底校验，防止绕过前端校验直接调用接口
+        if (!newPassword.equals(changePasswordVo.getConfirmPassword())) {
+            throw new BookingException(ResultCodeEnum.APP_REGISTER_PASSWORD_INVALID.getCode(),
+                    "两次输入的新密码不一致");
+        }
+
+        UserInfo userInfo = userInfoMapper.selectByIdWithPassword(userId);
+        if (userInfo == null) {
+            throw new BookingException(ResultCodeEnum.APP_PASSWORD_NOT_LOGIN);
+        }
+        if (!PasswordUtil.matches(changePasswordVo.getOldPassword(), userInfo.getPassword())) {
+            throw new BookingException(ResultCodeEnum.APP_OLD_PASSWORD_ERROR);
+        }
+        if (PasswordUtil.matches(newPassword, userInfo.getPassword())) {
+            throw new BookingException(ResultCodeEnum.APP_CHANGE_PASSWORD_SAME);
+        }
+
+        UserInfo update = new UserInfo();
+        update.setId(userId);
+        update.setPassword(PasswordUtil.encode(newPassword));
+        userInfoMapper.updateById(update);
     }
 
     /**

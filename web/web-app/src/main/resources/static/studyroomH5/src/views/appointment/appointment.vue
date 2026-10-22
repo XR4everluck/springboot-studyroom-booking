@@ -1,6 +1,7 @@
 <template>
-  <van-skeleton :row="20" :loading="!storeDetailInfo?.id">
-    <div class="ap">
+  <van-skeleton :row="20" :loading="loading">
+    <!-- 已选定门店：展示预约表单 -->
+    <div class="ap" v-if="storeDetailInfo?.id">
       <div class="ap__back">
         <van-button icon="arrow-left" size="small" @click="router.back()"
           >返回</van-button
@@ -79,7 +80,7 @@
                   v-model="dateInfo.time"
                   title="选择时间"
                   @confirm="onConfirmAppointmentTimeHandle"
-                  @cancel="showDate = false"
+                  @cancel="showTime = false"
                   :columns-type="['hour', 'minute', 'second']"
               /></van-popup>
               <!--            营业时间提示-->
@@ -112,7 +113,14 @@
               />
             </van-cell-group>
             <div class="ap__submit">
-              <van-button round block type="primary" native-type="submit">
+              <van-button
+                round
+                block
+                type="primary"
+                native-type="submit"
+                :loading="submitting"
+                loading-text="提交中..."
+              >
                 {{ formData.id ? "重新预约" : "到店体验" }}
               </van-button>
             </div>
@@ -120,6 +128,22 @@
         </section>
       </div>
     </div>
+
+    <!-- 从顶部导航直接进入且未携带门店：给出明确引导，避免骨架屏常驻造成“卡顿”假象 -->
+    <van-empty
+      v-else
+      class="ap__empty"
+      description="请先选择一家自习室门店，再发起到店体验预约"
+    >
+      <van-button
+        round
+        type="primary"
+        class="ap__empty-btn"
+        @click="router.push('/search')"
+      >
+        去找座位
+      </van-button>
+    </van-empty>
   </van-skeleton>
 </template>
 <script setup lang="ts">
@@ -142,10 +166,17 @@ const route = useRoute();
 const router = useRouter();
 // 自习室门店的详情信息
 const storeDetailInfo = ref<StoreInterface>({} as StoreInterface);
+// 页面加载态：无论走哪个分支（含从导航空参进入、请求失败）都必须在 finally 中收敛，
+// 否则骨架屏会一直挂着，看起来就像「板块启动卡住」
+const loading = ref(true);
+// 提交中标记，避免重复点击重复下单
+const submitting = ref(false);
 // 获取自习室门店的详情信息
 const getStoreDetailHandle = async () => {
-  const { data } = await getStoreDetailById(route.query.storeId as string);
-  storeDetailInfo.value = data;
+  const storeId = route.query.storeId as string;
+  if (!storeId) return;
+  const { data } = await getStoreDetailById(storeId);
+  storeDetailInfo.value = data || ({} as StoreInterface);
 };
 //#region <form表单相关>
 const formData = ref<
@@ -195,31 +226,58 @@ const onConfirmAppointmentTimeHandle = (date: any) => {
   showTime.value = false;
 };
 // 提交表单
-async function onSubmit(values: any) {
-  await saveOrUpdateAppointment(formData.value);
-  showToast("操作成功");
-  route.query.storeId
-    ? await router.replace("/myVisit")
-    : await router.back();
+async function onSubmit() {
+  // 兜底校验：没有门店时不允许提交（正常路径下表单已被空态替换）
+  if (!storeDetailInfo.value?.id) {
+    showToast("请先选择要体验的自习室门店");
+    return;
+  }
+  submitting.value = true;
+  try {
+    await saveOrUpdateAppointment({
+      ...formData.value,
+      storeId: storeDetailInfo.value.id as number | string
+    });
+    showToast("操作成功");
+    route.query.appointmentId
+      ? await router.back()
+      : await router.replace("/myVisit");
+  } finally {
+    submitting.value = false;
+  }
 }
 
 //#endregion
 // 预约信息
 async function getAppointmentDetailHandle() {
-  const { data } = await getAppointmentDetailById(
-    route.query.appointmentId as string
-  );
+  const appointmentId = route.query.appointmentId as string;
+  if (!appointmentId) return;
+  const { data } = await getAppointmentDetailById(appointmentId);
+  if (!data) return;
   Object.keys(formData.value).forEach(key => {
-    (formData.value as any)[key] = (data as any)[key];
+    if ((data as any)[key] !== undefined) {
+      (formData.value as any)[key] = (data as any)[key];
+    }
   });
-  // 单独处理日期
-  dateInfo.value.date = data.appointmentTime.split(" ")[0].split("-");
-  dateInfo.value.time = data.appointmentTime.split(" ")[1].split(":");
-  storeDetailInfo.value = data.storeItemVo;
+  // 单独处理日期（后端时间字段异常时不至于直接抛错卡住页面）
+  const [datePart, timePart] = (data.appointmentTime || "").split(" ");
+  if (datePart) dateInfo.value.date = datePart.split("-");
+  if (timePart) dateInfo.value.time = timePart.split(":");
+  storeDetailInfo.value = data.storeItemVo || ({} as StoreInterface);
 }
 onMounted(async () => {
-  route.query.storeId && (await getStoreDetailHandle());
-  route.query.appointmentId && (await getAppointmentDetailHandle());
+  try {
+    if (route.query.storeId) {
+      await getStoreDetailHandle();
+    }
+    if (route.query.appointmentId) {
+      await getAppointmentDetailHandle();
+    }
+  } catch (error) {
+    console.error("到店体验页面初始化失败", error);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 
@@ -268,6 +326,14 @@ onMounted(async () => {
 
 .ap__submit {
   margin-top: 24px;
+}
+
+.ap__empty {
+  padding: 40px 24px 0;
+}
+
+.ap__empty-btn {
+  min-width: 160px;
 }
 
 :deep(.van-card) {

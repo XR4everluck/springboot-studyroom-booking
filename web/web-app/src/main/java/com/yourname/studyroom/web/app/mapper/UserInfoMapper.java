@@ -19,4 +19,11 @@ public interface UserInfoMapper extends BaseMapper<UserInfo> {
     @Select("SELECT id, username, phone, password, avatar_url, nickname, status " +
             "FROM user_info WHERE username = #{username} AND is_deleted = 0")
     UserInfo selectByUsername(@Param("username") String username);
+
+    /**
+     * 按主键查询用户并带出 password 列（用于校验原密码等需要密文的场景）
+     */
+    @Select("SELECT id, username, phone, password, avatar_url, nickname, status " +
+            "FROM user_info WHERE id = #{id} AND is_deleted = 0")
+    UserInfo selectByIdWithPassword(@Param("id") Long id);
 }

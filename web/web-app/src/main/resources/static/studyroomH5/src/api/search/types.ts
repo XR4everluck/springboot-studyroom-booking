@@ -237,6 +237,8 @@ export interface OrderQueryInterface {
   startDate: string;
   // endDate	预订结束日期
   endDate: string;
+  // bookingType	预订类型描述（如 1小时 / 1天 / 1月），与后端 booking_order.booking_type 对应
+  bookingType?: string;
   // bookingTermId	预订时长id
   bookingTermId: number | string;
   // totalAmount	总价（元）

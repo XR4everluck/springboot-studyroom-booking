@@ -1,5 +1,5 @@
 <template>
-  <van-skeleton :row="20" :loading="!orderList">
+  <van-skeleton :row="20" :loading="loading">
     <div class="order-page">
       <div class="order-page__grid">
         <van-card
@@ -137,6 +137,7 @@
               size="mini"
               plain
               type="danger"
+              :loading="pendingId === item.id"
               @click="refundHandle(item)"
               >提前签退</van-button
             >
@@ -145,7 +146,7 @@
         </van-card>
       </div>
 
-      <van-empty v-if="orderList?.length <= 0" description="暂无订单" />
+      <van-empty v-if="!loading && !orderList.length" description="暂无订单" />
     </div>
   </van-skeleton>
 </template>
@@ -153,7 +154,7 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import type { OrderItemInterface } from "@/api/search/types";
-import { getMyOrderList, saveOrUpdateOrder } from "@/api/search";
+import { getMyOrderList, updateOrderStatusById } from "@/api/search";
 import { showConfirmDialog, showToast } from "vant";
 import {
   OrderSourceMap,
@@ -164,11 +165,21 @@ import {
 
 const router = useRouter();
 // 订单列表
-const orderList = ref<OrderItemInterface[]>();
+const orderList = ref<OrderItemInterface[]>([]);
+// 列表加载态：请求无论成功还是失败都要收敛，否则骨架屏会一直挂着
+const loading = ref(true);
+// 正在处理的订单 id，避免同一订单重复提交
+const pendingId = ref<number | string | null>(null);
 // 获取订单列表
 const getOrderListHandle = async () => {
-  const { data } = await getMyOrderList();
-  orderList.value = data;
+  try {
+    const { data } = await getMyOrderList();
+    orderList.value = data || [];
+  } catch (error) {
+    console.error("获取订单列表失败", error);
+  } finally {
+    loading.value = false;
+  }
 };
 // 跳转到订单详情
 const goOrderDetail = (
@@ -181,6 +192,9 @@ const goOrderDetail = (
   });
 };
 // 提前签退
+// 注意：这里必须走「按 id 更新状态」接口。原先复用 saveOrUpdate 只传 id+status，
+// 后端 createOrUpdateOrder 会先按 storeId 查门店，storeId 为空必然抛 DATA_ERROR，
+// 表现为「点提前签退一定失败」。
 const refundHandle = (item: OrderItemInterface) => {
   showConfirmDialog({
     title: "提前签退",
@@ -189,17 +203,22 @@ const refundHandle = (item: OrderItemInterface) => {
     confirmButtonText: "确定"
   })
     .then(async () => {
-      await saveOrUpdateOrder({
-        id: item.id,
-        status: OrderStatus.TO_BE_CONFIRMED
-      });
-      //   操作成功
-      showToast({
-        type: "success",
-        message: "操作成功"
-      });
-      //   修改当前订单状态
-      item.bookingStatus = OrderStatus.TO_BE_CONFIRMED;
+      if (pendingId.value === item.id) return;
+      pendingId.value = item.id;
+      try {
+        await updateOrderStatusById({
+          id: item.id,
+          status: OrderStatus.TO_BE_CONFIRMED
+        });
+        showToast({
+          type: "success",
+          message: "操作成功"
+        });
+        //   修改当前订单状态
+        item.bookingStatus = OrderStatus.TO_BE_CONFIRMED;
+      } finally {
+        pendingId.value = null;
+      }
     })
     .catch(() => {});
 };

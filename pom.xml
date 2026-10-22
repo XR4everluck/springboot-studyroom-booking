@@ -10,8 +10,8 @@
 
     <packaging>pom</packaging>
 
-    <name>共享自习室预订系统</name>
-    <description>基于 SpringBoot+Vue3 的共享自习室预订管理平台，包含后台管理系统与用户移动端</description>
+    <name>上岸自习室预订系统</name>
+    <description>基于 SpringBoot+Vue3 的上岸自习室预订管理平台，包含后台管理系统与用户移动端</description>
 
     <modules>
         <module>model</module>

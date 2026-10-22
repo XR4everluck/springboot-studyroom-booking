@@ -168,24 +168,39 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
     }
 
     /**
-     * 批量回填座位列表实时状态
+     * 批量回填座位列表实时状态。
+     * 使用 multiGet 一次取回整批状态，避免逐行 GET Redis 造成 N 次网络往返
+     * （列表页 10 条数据原本要 10 次往返，属首屏启动链路的热点）。
      */
     private void fillRealtimeStatus(List<SeatItemVo> records) {
-        if (records == null) {
+        if (records == null || records.isEmpty()) {
             return;
         }
+        List<String> keys = new ArrayList<>(records.size());
         for (SeatItemVo record : records) {
-            SeatRealtimeStatus realtime = readRealtimeStatus(record.getId());
+            keys.add(RedisConstant.APP_SEAT_STATUS_PREFIX + record.getId());
+        }
+        List<Object> values = redisTemplate.opsForValue().multiGet(keys);
+        for (int i = 0; i < records.size(); i++) {
+            SeatRealtimeStatus realtime = toRealtimeStatus(values == null ? null : values.get(i));
+            SeatItemVo record = records.get(i);
             record.setRealtimeStatus(realtime.getCode());
             record.setRealtimeStatusName(realtime.getName());
         }
     }
 
     /**
-     * 从 Redis 读取座位实时状态，缺省视为空闲
+     * 从 Redis 读取单个座位的实时状态，缺省视为空闲
      */
     private SeatRealtimeStatus readRealtimeStatus(Long seatId) {
-        Object cached = redisTemplate.opsForValue().get(RedisConstant.APP_SEAT_STATUS_PREFIX + seatId);
+        return toRealtimeStatus(
+                redisTemplate.opsForValue().get(RedisConstant.APP_SEAT_STATUS_PREFIX + seatId));
+    }
+
+    /**
+     * 缓存值 -> 实时状态枚举，非法或缺失一律按空闲处理
+     */
+    private SeatRealtimeStatus toRealtimeStatus(Object cached) {
         if (cached instanceof Number) {
             return SeatRealtimeStatus.ofCode(((Number) cached).intValue());
         }

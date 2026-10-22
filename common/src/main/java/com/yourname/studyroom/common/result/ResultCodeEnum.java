@@ -53,6 +53,9 @@ public enum ResultCodeEnum {
     APP_REGISTER_PHONE_INVALID(511, "手机号格式不正确"),
     APP_REGISTER_NICKNAME_INVALID(512, "昵称需为1-12个字符"),
     APP_REGISTER_PHONE_EXISTS(513, "该手机号已被其他账号使用"),
+    APP_OLD_PASSWORD_ERROR(514, "原密码不正确"),
+    APP_CHANGE_PASSWORD_SAME(515, "新密码不能与原密码相同"),
+    APP_PASSWORD_NOT_LOGIN(516, "登录状态已失效，请重新登录"),
 
 
     TOKEN_EXPIRED(601, "token过期"),

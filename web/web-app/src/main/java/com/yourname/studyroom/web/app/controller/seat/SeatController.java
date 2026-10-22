@@ -66,7 +66,9 @@ public class SeatController {
     @Operation(summary = "根据自习室门店id分页查询座位列表")
     @GetMapping("pageItemByStoreId")
     public Result<IPage<SeatItemVo>> pageItemByStoreId(@RequestParam long current, @RequestParam long size, @RequestParam Long id) {
-        IPage<SeatItemVo> page = new Page<>();
+        // 原先用 new Page<>() 丢掉入参，分页会退化成固定第一页 10 条，
+        // 门店下座位超过 10 个时列表会被静默截断
+        IPage<SeatItemVo> page = new Page<>(current, size);
         IPage<SeatItemVo> result = seatService.pageItemByStoreId(page,id);
         return Result.ok(result);
     }

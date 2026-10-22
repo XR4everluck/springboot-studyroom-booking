@@ -2,6 +2,7 @@ import http from "@/utils/http";
 import type {
   loginQueryInterface,
   registerQueryInterface,
+  changePasswordQueryInterface,
   UserInfoInterface
 } from "@/api/user/types";
 
@@ -19,6 +20,14 @@ export function login(params: loginQueryInterface) {
  */
 export function register(params: registerQueryInterface) {
   return http.post<null>(`/app/register`, params);
+}
+
+/**
+ * @description 修改密码（需登录）
+ * @param params
+ */
+export function changePassword(params: changePasswordQueryInterface) {
+  return http.post<null>(`/app/password`, params);
 }
 
 /**

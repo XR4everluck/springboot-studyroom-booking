@@ -17,18 +17,13 @@ import type {
   TermInfoInterface
 } from "@/api/search/types";
 import type { PageRes, ReqPage } from "@/api/types";
+import type { OrderStatus } from "@/enums/constEnums";
 /**
  * @description 分页查询座位列表
  * @param params
  */
 export function getSeatList(params: Partial<SeatListQueryInterface>) {
   return http.get<PageRes<SeatInterface>>(`/app/seat/pageItem`, params);
-}
-/**
- * @description 查询省市区列表
- */
-export function getRegionList() {
-  return http.get<RegionInterface[]>(`/app/region/listAsTree`);
 }
 /**
  * @description 查询省份列表
@@ -126,6 +121,19 @@ export function getOrderDetailById(id: number | string) {
   return http.get<OrderDetailInterface>(
     `/app/order/getDetailById?id=${id}`
   );
+}
+
+/**
+ * @description 根据id更新订单状态（用于提前签退等状态流转）
+ * @param params
+ */
+export function updateOrderStatusById(params: {
+  id: number | string;
+  status: OrderStatus;
+}) {
+  return http.post(`/app/order/updateStatusById`, undefined, {
+    params
+  });
 }
 
 /**

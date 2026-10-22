@@ -1,6 +1,6 @@
 <template>
-  <van-skeleton :row="20" :loading="!seatDetailInfo?.id">
-    <div class="sd">
+  <van-skeleton :row="20" :loading="loading">
+    <div class="sd" v-if="seatDetailInfo?.id">
       <div class="sd__back">
         <van-button icon="arrow-left" size="small" @click="router.back()"
           >返回</van-button
@@ -284,6 +284,17 @@
         </van-form>
       </van-popup>
     </div>
+
+    <!-- 座位不存在 / 已被下架时给出明确提示，避免骨架屏常驻 -->
+    <van-empty
+      v-else
+      class="sd__empty"
+      description="未找到该座位，可能已下架"
+    >
+      <van-button round type="primary" @click="router.push('/search')"
+        >去找座位</van-button
+      >
+    </van-empty>
   </van-skeleton>
 </template>
 <script setup lang="ts">
@@ -310,10 +321,13 @@ const router = useRouter();
 const route = useRoute();
 // 座位的详情信息
 const seatDetailInfo = ref<SeatDetailInterface>({} as SeatDetailInterface);
+// 页面加载态：请求成功/失败/座位不存在都要收敛，避免骨架屏常驻
+const loading = ref(true);
 // 获取座位的详情信息
 const getSeatDetailHandle = async () => {
   const { data } = await getSeatDetailById(route.query.id as string);
-  seatDetailInfo.value = data;
+  seatDetailInfo.value = data || ({} as SeatDetailInterface);
+  if (!data) return;
   bookingForm.value.bookingTermId = String(data.bookingTermList?.[0]?.id ?? "");
   bookingForm.value.paymentTypeId = String(
     data.paymentTypeList?.[0]?.id ?? ""
@@ -453,12 +467,20 @@ const appointmentToViewHandle = () => {
 };
 //#endregion
 onMounted(async () => {
-  await getSeatDetailHandle();
-  await initMap();
-  initMapPage({
-    lng: +seatDetailInfo.value.storeItemVo.longitude,
-    lat: +seatDetailInfo.value.storeItemVo.latitude
-  });
+  try {
+    if (!route.query.id) return;
+    await getSeatDetailHandle();
+    if (!seatDetailInfo.value?.id) return;
+    await initMap();
+    initMapPage({
+      lng: +seatDetailInfo.value.storeItemVo.longitude,
+      lat: +seatDetailInfo.value.storeItemVo.latitude
+    });
+  } catch (error) {
+    console.error("座位详情初始化失败", error);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 
@@ -472,6 +494,10 @@ onMounted(async () => {
   align-items: center;
   gap: 10px;
   margin-bottom: 14px;
+}
+
+.sd__empty {
+  padding: 40px 24px 0;
 }
 
 .sd__back-title {

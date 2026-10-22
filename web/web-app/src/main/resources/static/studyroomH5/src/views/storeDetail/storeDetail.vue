@@ -1,6 +1,6 @@
 <template>
-  <van-skeleton :row="20" :loading="!storeDetailInfo?.id">
-    <div class="std">
+  <van-skeleton :row="20" :loading="loading">
+    <div class="std" v-if="storeDetailInfo?.id">
       <div class="std__back">
         <van-button icon="arrow-left" size="small" @click="router.back()"
           >返回</van-button
@@ -107,6 +107,17 @@
         </aside>
       </div>
     </div>
+
+    <!-- 门店不存在 / 已被下架时给出明确提示，避免骨架屏常驻 -->
+    <van-empty
+      v-else
+      class="std__empty"
+      description="未找到该自习室门店，可能已下架"
+    >
+      <van-button round type="primary" @click="router.push('/search')"
+        >去找座位</van-button
+      >
+    </van-empty>
   </van-skeleton>
 </template>
 <script setup lang="ts">
@@ -122,23 +133,27 @@ const router = useRouter();
 const route = useRoute();
 // 自习室门店的详情信息
 const storeDetailInfo = ref<StoreInterface>({} as StoreInterface);
+// 页面加载态：请求成功/失败/门店不存在都要收敛，避免骨架屏常驻
+const loading = ref(true);
 // 获取自习室门店的详情信息
 const getStoreDetailHandle = async () => {
   const { data } = await getStoreDetailById(route.query.id as string);
-  storeDetailInfo.value = data;
+  storeDetailInfo.value = data || ({} as StoreInterface);
 };
-// 座位列表（后端该接口分页参数不生效，一次返回全量）
+// 座位列表（门店详情内一次取满，size 给足即可覆盖常规门店座位量）
 const seatList = ref<SeatInterface[]>([]);
 async function getSeatListHandler() {
+  if (!storeDetailInfo.value?.id) return;
   const { data } = await getSeatListByStoreId({
     id: route.query.id as string,
     current: 1,
     size: 100
   });
-  data.records.forEach(item => {
+  const records = data?.records || [];
+  records.forEach(item => {
     item.studyStore = storeDetailInfo.value;
   });
-  seatList.value = data.records;
+  seatList.value = records;
 }
 //#region <高德地图相关>
 // 地图实例
@@ -173,13 +188,21 @@ const appointmentToViewHandle = () => {
 };
 //#endregion
 onMounted(async () => {
-  await getStoreDetailHandle();
-  await getSeatListHandler();
-  await initMap();
-  initMapPage({
-    lng: +storeDetailInfo.value.longitude,
-    lat: +storeDetailInfo.value.latitude
-  });
+  try {
+    if (!route.query.id) return;
+    await getStoreDetailHandle();
+    if (!storeDetailInfo.value?.id) return;
+    await getSeatListHandler();
+    await initMap();
+    initMapPage({
+      lng: +storeDetailInfo.value.longitude,
+      lat: +storeDetailInfo.value.latitude
+    });
+  } catch (error) {
+    console.error("门店详情初始化失败", error);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 
@@ -193,6 +216,10 @@ onMounted(async () => {
   align-items: center;
   gap: 10px;
   margin-bottom: 14px;
+}
+
+.std__empty {
+  padding: 40px 24px 0;
 }
 
 .std__back-title {

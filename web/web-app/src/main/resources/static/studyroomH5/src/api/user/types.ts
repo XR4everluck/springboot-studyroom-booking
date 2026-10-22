@@ -18,6 +18,16 @@ export interface registerQueryInterface {
   phone?: string;
 }
 
+// 修改密码
+export interface changePasswordQueryInterface {
+  // 原密码
+  oldPassword: string;
+  // 新密码，8-20位且包含字母和数字
+  newPassword: string;
+  // 确认新密码
+  confirmPassword: string;
+}
+
 // 用户信息
 export interface UserInfoInterface {
   // 头像
