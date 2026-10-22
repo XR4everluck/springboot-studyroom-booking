@@ -1,0 +1,45 @@
+server:
+  port: 8081
+  # 开启响应压缩：内嵌前端的入口 JS/CSS 体积较大（入口包约 450KB / 样式约 91KB），
+  # 压缩后首屏与各板块的启动速度明显改善
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,text/xml,text/plain,text/javascript,application/javascript,application/json,application/xml,image/svg+xml
+    min-response-size: 1024
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://127.0.0.1:3306/studyroom_booking?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+    username: root
+    password: 1234
+    hikari:
+      connection-test-query: SELECT 1 # 自动检测连接
+      connection-timeout: 60000 #数据库连接超时时间,默认30秒
+      idle-timeout: 500000 #空闲连接存活最大时间，默认600000（10分钟）
+      max-lifetime: 540000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      maximum-pool-size: 12 #连接池最大连接数，默认是10
+      minimum-idle: 10 #最小空闲连接数量
+      pool-name: SPHHikariPool # 连接池名称
+  jackson:
+    time-zone: GMT+8
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+# 用于打印框架生成的sql语句，便于调试
+mybatis-plus:
+  configuration:
+    # 排障期可临时改为 org.apache.ibatis.logging.stdout.StdOutImpl 打印 SQL；
+    # 平时保持关闭：该实现会在每个请求内同步写控制台，而 Windows 控制台写操作很慢
+    # （start-all.bat 正是以独立 cmd 窗口运行 jar），会明显拖慢接口响应与页面启动。
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+springdoc:
+  default-flat-param-object: true
+
+# 与后台端共用同一本地磁盘目录，用于展示门店/座位图片
+storage:
+  upload-dir: ./upload-data
+  url-prefix: /upload

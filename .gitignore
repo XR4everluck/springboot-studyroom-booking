@@ -1,0 +1,59 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### 前端依赖 ###
+**/static/**/node_modules/**
+### 运行期产物与本地便携依赖 ###
+logs/
+tools/redis/
+
+### 编辑器/工具目录 ###
+.qoder/
+dump.rdb
+uploads/
+
+### 前端构建产物（vite build 后拷入 static 根，由 start-all.bat 重新生成）###
+web/web-admin/src/main/resources/static/assets/
+web/web-admin/src/main/resources/static/index.html
+web/web-admin/src/main/resources/static/logo.png
+web/web-app/src/main/resources/static/assets/
+web/web-app/src/main/resources/static/static/
+web/web-app/src/main/resources/static/index.html
+web/web-app/src/main/resources/static/index.html.gz
+web/web-app/src/main/resources/static/favicon.ico

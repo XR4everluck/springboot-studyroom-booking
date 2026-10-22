@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.BookingOrderMapper">
+
+    <resultMap id="orderVoMap" type="com.yourname.studyroom.web.admin.vo.order.OrderVo" autoMapping="true">
+        <id property="id" column="id"/>
+        <association property="studyStore" javaType="com.yourname.studyroom.model.entity.StudyStore" autoMapping="true">
+            <id property="id" column="store_id"/>
+            <result property="name" column="store_name"/>
+        </association>
+        <association property="seat" javaType="com.yourname.studyroom.model.entity.Seat" autoMapping="true">
+            <id property="id" column="seat_id"/>
+        </association>
+        <association property="paymentType" javaType="com.yourname.studyroom.model.entity.PaymentType" autoMapping="true">
+            <id property="id" column="payment_type_id"/>
+            <result property="name" column="payment_type_name"/>
+        </association>
+        <association property="bookingTerm" javaType="com.yourname.studyroom.model.entity.BookingTerm" autoMapping="true">
+            <id property="id" column="booking_term_id"/>
+        </association>
+    </resultMap>
+
+    <select id="pageOrderByQuery" resultMap="orderVoMap">
+        select la.id,
+        la.phone,
+        la.name,
+        la.identification_number,
+        la.start_date,
+        la.end_date,
+        la.total_amount,
+        la.status,
+        la.source_type,
+        la.additional_info,
+        ai.id   store_id,
+        ai.name store_name,
+        ai.district_id,
+        ai.district_name,
+        ai.city_id,
+        ai.city_name,
+        ai.province_id,
+        ai.province_name,
+        ri.id   seat_id,
+        ri.seat_code,
+        pt.id   payment_type_id,
+        pt.name payment_type_name,
+        pt.pay_month_count,
+        lt.id   booking_term_id,
+        lt.month_count,
+        lt.unit
+        from  booking_order la
+        left join
+        study_store ai
+        on la.store_id = ai.id and ai.is_deleted=0
+        left join
+        seat ri
+        on la.seat_id = ri.id and ri.is_deleted=0
+        left join
+        payment_type pt
+        on la.payment_type_id = pt.id and pt.is_deleted=0
+        left join
+        booking_term lt
+        on la.booking_term_id = lt.id and lt.is_deleted=0
+        <where>
+            la.is_deleted = 0
+            <if test="queryVo.provinceId != null">
+                and ai.province_id = #{queryVo.provinceId}
+            </if>
+            <if test="queryVo.cityId != null">
+                and ai.city_id = #{queryVo.cityId}
+            </if>
+            <if test="queryVo.districtId != null">
+                and ai.district_id = #{queryVo.districtId}
+            </if>
+            <if test="queryVo.storeId != null">
+                and la.store_id = #{queryVo.storeId}
+            </if>
+            <if test="queryVo.seatCode != null and queryVo.seatCode != ''">
+                and ri.seat_code like concat('%',#{queryVo.seatCode},'%')
+            </if>
+            <if test="queryVo.name != null and queryVo.name != ''">
+                and la.name like concat('%',#{queryVo.name},'%')
+            </if>
+            <if test="queryVo.phone != null and queryVo.phone != ''">
+                and la.phone like concat('%',#{queryVo.phone},'%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 统计同一座位在指定时段内的有效预订冲突数量（时间区间重叠即冲突） -->
+    <select id="countTimeConflict" resultType="int">
+        select count(1)
+        from booking_order bo
+        where bo.is_deleted = 0
+          and bo.seat_id = #{seatId}
+          and bo.status in (1, 2, 5, 7, 8)
+          and bo.start_date &lt; #{endDate}
+          and bo.end_date &gt; #{startDate}
+        <if test="excludeId != null">
+            and bo.id != #{excludeId}
+        </if>
+    </select>
+</mapper>

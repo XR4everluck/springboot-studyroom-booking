@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.BookingTermMapper">
+
+    <select id="selectListBySeatId" resultType="com.yourname.studyroom.model.entity.BookingTerm">
+        select id,
+               month_count,
+               unit
+        from booking_term
+        where is_deleted = 0
+          and id in (select booking_term_id
+                     from seat_booking_term
+                     where is_deleted = 0
+                       and seat_id = #{id})
+    </select>
+</mapper>

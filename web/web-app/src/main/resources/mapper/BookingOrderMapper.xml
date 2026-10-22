@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.studyroom.web.app.mapper.BookingOrderMapper">
+
+    <resultMap id="OrderItemVoMap" type="com.yourname.studyroom.web.app.vo.order.OrderItemVo" autoMapping="true">
+        <id property="id" column="id"/>
+        <collection property="seatGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"/>
+    </resultMap>
+
+    <select id="listItemByUserId" resultMap="OrderItemVoMap">
+        select la.id,
+               la.start_date booking_start_date,
+               la.end_date booking_end_date,
+               la.total_amount,
+               la.payment_type_id,
+               la.status booking_status,
+               la.source_type,
+               ai.name store_name,
+               ri.seat_code,
+               ri.price,
+               gi.name,
+               gi.url
+        from booking_order la
+                 left join study_store ai on la.store_id = ai.id and ai.is_deleted = 0
+                 left join seat ri on la.seat_id = ri.id and ri.is_deleted = 0
+                 left join graph_info gi on gi.item_type = 2 and gi.item_id = ri.id and gi.is_deleted = 0
+        where la.is_deleted = 0
+          and la.user_id = #{userId}
+
+    </select>
+
+    <!-- 统计同一座位在指定时段内的有效预订冲突数量（时间区间重叠即冲突） -->
+    <select id="countTimeConflict" resultType="int">
+        select count(1)
+        from booking_order bo
+        where bo.is_deleted = 0
+          and bo.seat_id = #{seatId}
+          and bo.status in (1, 2, 5, 7, 8)
+          and bo.start_date &lt; #{endDate}
+          and bo.end_date &gt; #{startDate}
+        <if test="excludeId != null">
+            and bo.id != #{excludeId}
+        </if>
+    </select>
+</mapper>

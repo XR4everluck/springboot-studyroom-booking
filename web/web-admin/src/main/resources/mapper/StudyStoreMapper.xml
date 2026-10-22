@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.studyroom.web.admin.mapper.StudyStoreMapper">
+
+    <select id="pageItem" resultType="com.yourname.studyroom.web.admin.vo.store.StoreItemVo">
+        select
+        ai.id,
+        ai.name,
+        ai.introduction,
+        ai.district_id,
+        ai.district_name,
+        ai.city_id,
+        ai.city_name,
+        ai.province_id,
+        ai.province_name,
+        ai.address_detail,
+        ai.latitude,
+        ai.longitude,
+        ai.phone,
+        ai.business_hours,
+        ai.seat_count,
+        ai.is_release,
+        ifnull(tc.cnt,0) total_seat_count,
+        ifnull(tc.cnt,0) - ifnull(cc.cnt,0) free_seat_count
+        from (select id,
+                     name,
+                     introduction,
+                     district_id,
+                     district_name,
+                     city_id,
+                     city_name,
+                     province_id,
+                     province_name,
+                     address_detail,
+                     latitude,
+                     longitude,
+                     phone,
+                     business_hours,
+                     seat_count,
+                     is_release
+              from study_store
+                <where>
+                    is_deleted = 0
+                    <if test="queryVo.provinceId != null">
+                        and province_id = #{queryVo.provinceId}
+                    </if>
+                    <if test="queryVo.cityId != null">
+                        and city_id = #{queryVo.cityId}
+                    </if>
+                    <if test="queryVo.districtId != null">
+                        and district_id = #{queryVo.districtId}
+                    </if>
+                </where>) ai
+                 left join
+             (select store_id,
+                     count(*) cnt
+              from seat
+              where is_deleted = 0
+                and is_release = 1
+              group by store_id) tc
+             on ai.id = tc.store_id
+                 left join
+             (select store_id,
+                     count(*) cnt
+              from booking_order
+              where is_deleted = 0
+                and status in (2, 5)
+              group by store_id) cc
+             on ai.id = cc.store_id
+    </select>
+    <select id="selectListByStoreId" resultType="com.yourname.studyroom.model.entity.LabelInfo">
+
+
+        select id, type, name
+        from label_info
+        where is_deleted = 0
+          and id in (select label_id
+                     from store_label
+                     where is_deleted = 0
+                       and store_id = #{id})
+
+
+    </select>
+</mapper>
