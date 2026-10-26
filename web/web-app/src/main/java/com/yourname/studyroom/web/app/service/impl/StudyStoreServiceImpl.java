@@ -25,23 +25,23 @@ import java.util.concurrent.TimeUnit;
  * 针对表【study_store(自习室门店信息表)】的数据库操作Service实现
  */
 @Service
-public class StudyStoreServiceImpl extends ServiceImpl<StudyStoreMapper, StudyStore>
+public class StudyStoreServiceImpl extends ServiceImpl<AppStudyStoreMapper, StudyStore>
         implements StudyStoreService {
 
     @Autowired
-    StudyStoreMapper studyStoreMapper;
+    AppStudyStoreMapper studyStoreMapper;
 
     @Autowired
-    LabelInfoMapper labelInfoMapper;
+    AppLabelInfoMapper labelInfoMapper;
 
     @Autowired
-    GraphInfoMapper graphInfoMapper;
+    AppGraphInfoMapper graphInfoMapper;
 
     @Autowired
-    SeatMapper seatMapper;
+    AppSeatMapper seatMapper;
 
     @Autowired
-    FacilityInfoMapper facilityInfoMapper;
+    AppFacilityInfoMapper facilityInfoMapper;
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;

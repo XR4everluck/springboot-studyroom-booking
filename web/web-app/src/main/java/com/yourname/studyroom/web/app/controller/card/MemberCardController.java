@@ -1,7 +1,9 @@
 package com.yourname.studyroom.web.app.controller.card;
 
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.common.result.Result;
+import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.model.entity.CardRechargeRecord;
 import com.yourname.studyroom.model.entity.MemberCard;
 import com.yourname.studyroom.web.app.service.MemberCardService;
@@ -43,9 +45,15 @@ public class MemberCardController {
     public Result recharge(@RequestBody MemberCard memberCard,
                            @RequestParam Integer rechargeQuantity,
                            @RequestParam BigDecimal amount) {
-        if (memberCard.getUserId() == null) {
-            memberCard.setUserId(LoginUserHolder.getLoginUser().getUserId());
+        Long userId = LoginUserHolder.getLoginUser().getUserId();
+        // 归属强制以登录用户为准：不给他人卡充值，也不能替他人办卡
+        if (memberCard.getId() != null) {
+            MemberCard existing = memberCardService.getById(memberCard.getId());
+            if (existing == null || !userId.equals(existing.getUserId())) {
+                throw new BookingException(ResultCodeEnum.DATA_ERROR);
+            }
         }
+        memberCard.setUserId(userId);
         CardRechargeRecord record = new CardRechargeRecord();
         record.setRechargeQuantity(rechargeQuantity);
         record.setAmount(amount);

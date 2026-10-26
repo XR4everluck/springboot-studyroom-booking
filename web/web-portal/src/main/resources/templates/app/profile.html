@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('个人中心 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('profile')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container narrow">
+    <h2 class="page-title">个人中心</h2>
+
+    <div class="form-card">
+        <table class="kv-table">
+            <tr><th>登录账号</th><td th:text="${username}"></td></tr>
+            <tr><th>昵称</th><td th:text="${userInfo != null and userInfo.nickname != null} ? ${userInfo.nickname} : '-'"></td></tr>
+        </table>
+    </div>
+
+    <h3 class="section-title">修改密码</h3>
+    <form th:action="@{/app/profile/password}" method="post" class="form-card">
+        <label class="field">
+            <span>原密码 *</span>
+            <input type="password" name="oldPassword" required maxlength="20">
+        </label>
+        <label class="field">
+            <span>新密码 *</span>
+            <input type="password" name="newPassword" required maxlength="20"
+                   placeholder="8-20位，且同时包含字母和数字">
+        </label>
+        <label class="field">
+            <span>确认新密码 *</span>
+            <input type="password" name="confirmPassword" required maxlength="20">
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="btn primary">保存新密码</button>
+            <span class="dim">修改成功后将退出登录，需用新密码重新登录</span>
+        </div>
+    </form>
+</div>
+</body>
+</html>

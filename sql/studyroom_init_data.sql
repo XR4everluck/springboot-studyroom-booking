@@ -9,15 +9,17 @@ USE `studyroom_booking`;
 
 -- ------------------------------------------------------------
 -- 一、后台管理账号
---   登录密码采用 DigestUtils.md5Hex(明文) 存储
---   admin / 123456   →   e10adc3949ba59abbe56e057f20f883e
+--   登录密码采用 PBKDF2WithHmacSHA256 加盐哈希存储（common 模块 PasswordUtil）
+--   admin / 123456
+--   manager / 123456
+--   旧 MD5 哈希在登录成功后由后端自动升级为 PBKDF2
 -- ------------------------------------------------------------
 UPDATE `system_user`
-SET `password` = 'e10adc3949ba59abbe56e057f20f883e'
+SET `password` = 'pbkdf2$100000$CFytx6xxNMjLqBeroOpwKA==$d5vKxEm8ShuTevJE1C7HpTvICgQNobdQ/80TyK0bvTQ='
 WHERE `username` = 'admin';
 
 INSERT INTO `system_user` (`id`, `username`, `password`, `name`, `type`, `phone`, `post_id`, `status`) VALUES
-(2, 'manager', 'e10adc3949ba59abbe56e057f20f883e', '门店管理员', 1, '13800000002', 2, 1)
+(2, 'manager', 'pbkdf2$100000$dtFXnXmWsM/uJrnYeLGjDQ==$HUOROdQl4aoF1jyR7D9wxw94ZJce7uyXbPgVLGqXmwk=', '门店管理员', 1, '13800000002', 2, 1)
 ON DUPLICATE KEY UPDATE `password` = VALUES(`password`);
 
 -- ------------------------------------------------------------
@@ -142,6 +144,36 @@ SELECT 2, s.id, '座位实拍', CONCAT('/img/studyroom/seat-', s.id, '.svg')
 FROM `seat` s
 WHERE s.id BETWEEN 1 AND 20
   AND NOT EXISTS (SELECT 1 FROM `graph_info` g WHERE g.item_type = 2 AND g.item_id = s.id);
+
+-- ------------------------------------------------------------
+-- 八点五、座位属性字典与关联（属性管理页数据源；幂等，可重复执行）
+--   采光：独立窗边/中央照明/角落暗座  插座：每座双插/共享插排/无线充电
+--   环境：静音舱/低噪区/普通区       储物：独立储物柜/开放挂钩
+-- ------------------------------------------------------------
+INSERT INTO `attr_key` (`name`)
+SELECT t.name FROM (SELECT '采光' name UNION SELECT '插座' UNION SELECT '环境' UNION SELECT '储物') t
+WHERE NOT EXISTS (SELECT 1 FROM `attr_key` k WHERE k.name = t.name);
+
+INSERT INTO `attr_value` (`attr_key_id`, `name`)
+SELECT k.id, t.name
+FROM (SELECT '采光' kn, '独立窗边' name UNION SELECT '采光', '中央照明' UNION SELECT '采光', '角落暗座'
+      UNION SELECT '插座', '每座双插' UNION SELECT '插座', '共享插排' UNION SELECT '插座', '无线充电'
+      UNION SELECT '环境', '静音舱' UNION SELECT '环境', '低噪区' UNION SELECT '环境', '普通区'
+      UNION SELECT '储物', '独立储物柜' UNION SELECT '储物', '开放挂钩') t
+JOIN `attr_key` k ON k.name = t.kn
+WHERE NOT EXISTS (SELECT 1 FROM `attr_value` v WHERE v.name = t.name AND v.attr_key_id = k.id);
+
+INSERT INTO `seat_attr_value` (`seat_id`, `attr_value_id`)
+SELECT s.id, v.id
+FROM `seat` s
+JOIN `attr_value` v ON (
+       (s.seat_type = '靠窗座' AND v.name = '独立窗边')
+    OR (v.name = '每座双插')
+    OR (s.seat_type IN ('沉浸式卡座', '包间') AND v.name = '静音舱')
+    OR (s.seat_type = '普通座' AND v.name = '低噪区')
+    OR (s.seat_type = '包间' AND v.name = '独立储物柜'))
+WHERE NOT EXISTS (SELECT 1 FROM `seat_attr_value` sav
+                  WHERE sav.seat_id = s.id AND sav.attr_value_id = v.id);
 
 -- ------------------------------------------------------------
 -- 九、浏览历史（驱动首页热门门店 / 热门座位缓存冷启动）

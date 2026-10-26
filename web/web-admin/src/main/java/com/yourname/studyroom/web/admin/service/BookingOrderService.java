@@ -1,6 +1,7 @@
 package com.yourname.studyroom.web.admin.service;
 
 import com.yourname.studyroom.model.entity.BookingOrder;
+import com.yourname.studyroom.model.enums.BookingStatus;
 import com.yourname.studyroom.web.admin.vo.order.OrderQueryVo;
 import com.yourname.studyroom.web.admin.vo.order.OrderVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -37,4 +38,13 @@ public interface BookingOrderService extends IService<BookingOrder> {
      * @param id 订单id
      */
     void checkOut(Long id);
+
+    /**
+     * 管理端订单状态确认（待确认→已预订、签退待确认→已完成、续期待确认→已预订、取消等），
+     * 成功后同步刷新座位实时状态缓存
+     *
+     * @param id     订单id
+     * @param target 目标状态
+     */
+    void confirmStatus(Long id, BookingStatus target);
 }

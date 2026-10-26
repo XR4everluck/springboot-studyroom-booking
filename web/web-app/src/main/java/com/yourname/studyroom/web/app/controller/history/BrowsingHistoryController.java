@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yourname.studyroom.common.login.LoginUser;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.common.result.Result;
-import com.yourname.studyroom.web.app.mapper.BrowsingHistoryMapper;
+import com.yourname.studyroom.web.app.mapper.AppBrowsingHistoryMapper;
 import com.yourname.studyroom.web.app.service.BrowsingHistoryService;
 import com.yourname.studyroom.web.app.vo.history.HistoryItemVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;

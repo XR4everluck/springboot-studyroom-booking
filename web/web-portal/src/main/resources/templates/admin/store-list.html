@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('门店管理 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('store')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title">门店管理</h2>
+        <a class="btn primary" th:href="@{/admin/store/form}">新增门店</a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th><th>ID</th><th>门店名称</th><th>所在区域</th><th>地址</th>
+            <th>营业时间</th><th>电话</th><th>座位（空闲/总数）</th><th>状态</th><th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s, st : ${page.records}">
+            <td><span class="cover" th:classappend="'c' + (${st.count} % 3 + 1)" th:text="${s.name.substring(0,1)}"></span></td>
+            <td th:text="${s.id}"></td>
+            <td th:text="${s.name}"></td>
+            <td th:text="${s.provinceName} + ' ' + ${s.cityName} + ' ' + ${s.districtName}"></td>
+            <td th:text="${s.addressDetail}"></td>
+            <td th:text="${s.businessHours}"></td>
+            <td th:text="${s.phone}"></td>
+            <td>
+                <span class="ok-text" th:text="${s.freeSeatCount}"></span>
+                /
+                <span th:text="${s.totalSeatCount}"></span>
+            </td>
+            <td>
+                <span class="tag ok" th:if="${s.isRelease?.code} == 1">已发布</span>
+                <span class="tag off" th:if="${s.isRelease?.code} == 0">未发布</span>
+            </td>
+            <td class="actions">
+                <a class="btn small" th:href="@{'/admin/store/form/' + ${s.id}}">编辑</a>
+                <form class="inline-form" th:action="@{'/admin/store/release/' + ${s.id}}" method="post">
+                    <input type="hidden" name="release" th:value="${s.isRelease?.code} == 1 ? 'false' : 'true'">
+                    <button class="btn small" type="submit"
+                            th:text="${s.isRelease?.code} == 1 ? '下架' : '发布'"></button>
+                </form>
+                <a class="btn small danger" th:href="@{'/admin/store/delete/' + ${s.id} + '/confirm'}">删除</a>
+            </td>
+        </tr>
+        <tr th:if="${page.records.isEmpty()}">
+            <td colspan="10" class="empty">暂无门店，点击右上角「新增门店」创建</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/admin/store', '')}"></nav>
+</div>
+</body>
+</html>

@@ -1,9 +1,10 @@
 package com.yourname.studyroom.web.app.controller.order;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.login.LoginUser;
 import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.common.result.Result;
+import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.model.entity.BookingOrder;
 import com.yourname.studyroom.model.entity.UserInfo;
 import com.yourname.studyroom.model.enums.BookingSourceType;
@@ -50,25 +51,27 @@ public class BookingOrderController {
     @Operation(summary = "根据id获取预订订单详细信息")
     @GetMapping("getDetailById")
     public Result<OrderDetailVo> getDetailById(@RequestParam Long id) {
+        // 先校验订单归属，防止查看他人订单
+        bookingOrderService.getOwnedOrder(currentUserId(), id);
         OrderDetailVo orderDetailVo = bookingOrderService.getDetailById(id);
         return Result.ok(orderDetailVo);
     }
 
     /**
-     * 根据id更新预订订单状态
+     * 申请提前签退：使用中 → 签退待确认，等待管理员确认
      *
-     * @param id        预订订单ID
-     * @param status 预订订单状态
+     * @param id 预订订单ID
      * @return 操作结果
-     * @description 用于确认预订订单和提前退座
+     * @description 仅订单本人可操作；原先"任意状态随意改"的接口已收紧为该专用流转
      */
-    @Operation(summary = "根据id更新预订订单状态", description = "用于确认预订订单和提前退座")
+    @Operation(summary = "申请提前签退", description = "使用中订单申请提前签退，流转为签退待确认")
     @PostMapping("updateStatusById")
     public Result updateStatusById(@RequestParam Long id, @RequestParam BookingStatus status) {
-        LambdaUpdateWrapper<BookingOrder> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(BookingOrder::getId, id);
-        updateWrapper.set(BookingOrder::getStatus, status);
-        bookingOrderService.update(updateWrapper);
+        if (status != BookingStatus.CHECKOUT_PENDING) {
+            // 用户端仅允许发起提前签退这一种状态流转，其余状态变更由后台管理端操作
+            throw new BookingException(ResultCodeEnum.APP_ORDER_STATUS_NOT_ALLOW);
+        }
+        bookingOrderService.requestEarlyCheckout(currentUserId(), id);
         return Result.ok();
     }
 
@@ -83,6 +86,10 @@ public class BookingOrderController {
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody BookingOrder bookingOrder) {
         LoginUser loginUser = LoginUserHolder.getLoginUser();
+        // 续期（更新）时校验订单归属，防止冒改他人订单；新单 id 为空无需校验
+        if (bookingOrder.getId() != null) {
+            bookingOrderService.getOwnedOrder(loginUser.getUserId(), bookingOrder.getId());
+        }
         // 订单归属以登录用户为准，联系电话取用户绑定的手机号（注册时选填），避免越权为他人下单
         bookingOrder.setUserId(loginUser.getUserId());
         UserInfo loginUser_ = userInfoService.getById(loginUser.getUserId());
@@ -103,6 +110,7 @@ public class BookingOrderController {
     @Operation(summary = "订单签到", description = "已预订订单签到后转为使用中")
     @PostMapping("checkIn")
     public Result checkIn(@RequestParam Long id) {
+        bookingOrderService.getOwnedOrder(currentUserId(), id);
         bookingOrderService.checkIn(id);
         return Result.ok();
     }
@@ -116,8 +124,13 @@ public class BookingOrderController {
     @Operation(summary = "订单签退", description = "使用中订单签退后转为已完成并释放座位")
     @PostMapping("checkOut")
     public Result checkOut(@RequestParam Long id) {
+        bookingOrderService.getOwnedOrder(currentUserId(), id);
         bookingOrderService.checkOut(id);
         return Result.ok();
+    }
+
+    private Long currentUserId() {
+        return LoginUserHolder.getLoginUser().getUserId();
     }
 
 }

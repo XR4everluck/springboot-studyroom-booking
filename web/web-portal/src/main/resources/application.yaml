@@ -1,0 +1,47 @@
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,text/plain,application/json
+    min-response-size: 1024
+
+spring:
+  application:
+    name: studyroom-portal
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://127.0.0.1:3306/studyroom_booking?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:1234}
+    hikari:
+      connection-test-query: SELECT 1
+      connection-timeout: 60000
+      idle-timeout: 500000
+      max-lifetime: 540000
+      maximum-pool-size: 12
+      minimum-idle: 10
+      pool-name: PortalHikariPool
+  jackson:
+    time-zone: GMT+8
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+
+mybatis-plus:
+  configuration:
+    # 排障期可临时改为 org.apache.ibatis.logging.stdout.StdOutImpl 打印 SQL
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+# 上传文件存储目录与访问前缀
+storage:
+  upload-dir: ./upload-data
+  url-prefix: /upload

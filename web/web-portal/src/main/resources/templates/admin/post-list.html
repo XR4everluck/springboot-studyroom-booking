@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('岗位管理 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('post')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title">岗位管理</h2>
+        <a class="btn primary" th:href="@{/admin/post/form}">新增岗位</a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr><th>ID</th><th>岗位编码</th><th>岗位名称</th><th>描述</th><th>状态</th><th>操作</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${page.records}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.postCode}"></td>
+            <td th:text="${p.name}"></td>
+            <td th:text="${p.description} != null ? ${p.description} : '-'"></td>
+            <td>
+                <span class="tag ok" th:if="${p.status.code} == 1" th:text="${p.status.name}"></span>
+                <span class="tag off" th:if="${p.status.code} == 0" th:text="${p.status.name}"></span>
+            </td>
+            <td class="actions">
+                <a class="btn small" th:href="@{'/admin/post/form/' + ${p.id}}">编辑</a>
+                <a class="btn small danger" th:href="@{'/admin/post/delete/' + ${p.id} + '/confirm'}">删除</a>
+            </td>
+        </tr>
+        <tr th:if="${page.records.isEmpty()}">
+            <td colspan="6" class="empty">暂无岗位</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/admin/post', '')}"></nav>
+</div>
+</body>
+</html>

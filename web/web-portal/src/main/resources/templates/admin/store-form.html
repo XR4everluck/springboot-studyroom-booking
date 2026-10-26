@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('门店编辑 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('store')}"></nav>
+
+<div class="container narrow">
+    <h2 class="page-title" th:text="${store.id} != null ? '编辑门店' : '新增门店'">门店编辑</h2>
+
+    <form th:action="@{/admin/store/save}" method="post" class="form-card">
+        <input type="hidden" name="id" th:if="${store.id} != null" th:value="${store.id}">
+
+        <label class="field">
+            <span>门店名称 *</span>
+            <input type="text" name="name" required maxlength="50" th:value="${store.name}">
+        </label>
+
+        <label class="field">
+            <span>门店介绍</span>
+            <textarea name="introduction" rows="3" maxlength="500"
+                      th:text="${store.introduction}"></textarea>
+        </label>
+
+        <label class="field">
+            <span>所在区县 *</span>
+            <select name="districtId" required>
+                <option value="">请选择（省 / 市 / 区）</option>
+                <option th:each="entry : ${districtLabels}"
+                        th:value="${entry.key}"
+                        th:selected="${store.districtId != null and store.districtId == entry.key}"
+                        th:text="${entry.value}"></option>
+            </select>
+        </label>
+
+        <label class="field">
+            <span>详细地址</span>
+            <input type="text" name="addressDetail" maxlength="100" th:value="${store.addressDetail}">
+        </label>
+
+        <div class="field-row">
+            <label class="field">
+                <span>营业时间（如 08:00-22:00）</span>
+                <input type="text" name="businessHours" maxlength="30" th:value="${store.businessHours}">
+            </label>
+            <label class="field">
+                <span>联系电话</span>
+                <input type="text" name="phone" maxlength="20" th:value="${store.phone}">
+            </label>
+        </div>
+
+        <label class="field">
+            <span>门店封面图片 URL（选填）</span>
+            <input type="text" name="imageUrl" maxlength="200" th:value="${imageUrl}" placeholder="/upload/xxx.jpg 或外部链接">
+        </label>
+
+        <div class="field">
+            <span class="field-label">配套设施</span>
+            <div class="checks">
+                <label class="check" th:each="f : ${facilities}">
+                    <input type="checkbox" name="facilityIds" th:value="${f.id}"
+                           th:checked="${facilityIds.contains(f.id)}">
+                    <span th:text="${f.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">门店标签</span>
+            <div class="checks">
+                <label class="check" th:each="l : ${labels}">
+                    <input type="checkbox" name="labelIds" th:value="${l.id}"
+                           th:checked="${labelIds.contains(l.id)}">
+                    <span th:text="${l.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">杂费项</span>
+            <div class="checks">
+                <label class="check" th:each="fv : ${feeValues}">
+                    <input type="checkbox" name="feeValueIds" th:value="${fv.id}"
+                           th:checked="${feeValueIds.contains(fv.id)}">
+                    <span th:text="${fv.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn primary">保 存</button>
+            <a class="btn" th:href="@{/admin/store}">返 回</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.yourname.studyroom.web.admin.vo.appointment;
 
+import com.yourname.studyroom.model.enums.AppointmentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -25,5 +26,8 @@ public class AppointmentQueryVo {
 
     @Schema(description="预约用户手机号码")
     private String phone;
+
+    @Schema(description="预约状态筛选")
+    private AppointmentStatus appointmentStatus;
 
 }

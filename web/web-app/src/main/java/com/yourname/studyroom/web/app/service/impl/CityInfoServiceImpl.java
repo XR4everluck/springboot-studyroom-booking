@@ -3,7 +3,7 @@ package com.yourname.studyroom.web.app.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yourname.studyroom.model.entity.CityInfo;
 import com.yourname.studyroom.web.app.service.CityInfoService;
-import com.yourname.studyroom.web.app.mapper.CityInfoMapper;
+import com.yourname.studyroom.web.app.mapper.AppCityInfoMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-07-26 11:12:39
 */
 @Service
-public class CityInfoServiceImpl extends ServiceImpl<CityInfoMapper, CityInfo>
+public class CityInfoServiceImpl extends ServiceImpl<AppCityInfoMapper, CityInfo>
     implements CityInfoService{
 
 }

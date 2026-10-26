@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('订单详情 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('orders')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container narrow">
+    <div class="list-head">
+        <h2 class="page-title">订单详情</h2>
+        <a class="btn" th:href="@{/app/orders}">返回列表</a>
+    </div>
+
+    <div class="form-card">
+        <table class="kv-table">
+            <tr><th>订单号</th><td th:text="${order.orderNo}"></td></tr>
+            <tr><th>状态</th><td><span class="tag ok" th:text="${order.status.name}"></span></td></tr>
+            <tr><th>门店</th><td th:text="${order.storeName}"></td></tr>
+            <tr><th>座位</th><td th:text="${order.seatCode}"></td></tr>
+            <tr><th>开始时间</th><td th:text="${#dates.format(order.startDate, 'yyyy-MM-dd HH:mm')}"></td></tr>
+            <tr><th>结束时间</th><td th:text="${order.endDate != null} ? ${#dates.format(order.endDate, 'yyyy-MM-dd HH:mm')} : '-'"></td></tr>
+            <tr><th>签到/签退</th><td>
+                <span th:if="${order.checkInTime != null}" th:text="${#dates.format(order.checkInTime, 'MM-dd HH:mm')}"></span>
+                <span th:if="${order.checkOutTime != null}" th:text="' ~ ' + ${#dates.format(order.checkOutTime, 'MM-dd HH:mm')}"></span>
+                <span th:if="${order.checkInTime == null}" class="dim">未签到</span>
+            </td></tr>
+            <tr><th>支付方式</th><td th:text="${order.paymentTypeName} != null ? ${order.paymentTypeName} : '-'"></td></tr>
+            <tr><th>金额</th><td>¥ <span th:text="${order.totalAmount}"></span></td></tr>
+            <tr><th>备注</th><td th:text="${order.additionalInfo} != null ? ${order.additionalInfo} : '-'"></td></tr>
+        </table>
+
+        <div class="form-actions">
+            <form class="inline-form" th:if="${order.status.code} == 2"
+                  th:action="@{'/app/orders/' + ${order.id} + '/checkIn'}" method="post">
+                <button class="btn primary" type="submit">签到</button>
+            </form>
+            <form class="inline-form" th:if="${order.status.code} == 8"
+                  th:action="@{'/app/orders/' + ${order.id} + '/checkOut'}" method="post">
+                <button class="btn primary" type="submit">签退</button>
+            </form>
+            <form class="inline-form" th:if="${order.status.code} == 8"
+                  th:action="@{'/app/orders/' + ${order.id} + '/earlyCheckout'}" method="post">
+                <button class="btn" type="submit">申请提前签退</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

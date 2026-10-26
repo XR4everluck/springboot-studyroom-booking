@@ -5,7 +5,7 @@ import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.BusinessHoursUtil;
 import com.yourname.studyroom.model.entity.StudyStore;
 import com.yourname.studyroom.model.entity.VisitAppointment;
-import com.yourname.studyroom.web.app.mapper.VisitAppointmentMapper;
+import com.yourname.studyroom.web.app.mapper.AppVisitAppointmentMapper;
 import com.yourname.studyroom.web.app.service.StudyStoreService;
 import com.yourname.studyroom.web.app.service.VisitAppointmentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,11 +24,11 @@ import java.util.List;
  * @createDate 2023-07-26 11:12:39
  */
 @Service
-public class VisitAppointmentServiceImpl extends ServiceImpl<VisitAppointmentMapper, VisitAppointment>
+public class VisitAppointmentServiceImpl extends ServiceImpl<AppVisitAppointmentMapper, VisitAppointment>
         implements VisitAppointmentService {
 
     @Autowired
-    private VisitAppointmentMapper visitAppointmentMapper;
+    private AppVisitAppointmentMapper visitAppointmentMapper;
 
     @Autowired
     private StudyStoreService studyStoreService;

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('座位管理 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('seat')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title">座位管理</h2>
+        <a class="btn primary" th:href="@{/admin/seat/form}">新增座位</a>
+    </div>
+
+    <form class="filter-bar" method="get" th:action="@{/admin/seat}">
+        <label>门店
+            <select name="storeId">
+                <option value="">全部门店</option>
+                <option th:each="s : ${stores}" th:value="${s.id}" th:text="${s.name}"
+                        th:selected="${storeId != null and storeId == s.id}"></option>
+            </select>
+        </label>
+        <button class="btn" type="submit">筛选</button>
+    </form>
+
+    <div class="seat-map" th:if="${!page.records.isEmpty()}">
+        <a class="seat-cell" th:each="s : ${page.records}" th:href="@{'/admin/seat/form/' + ${s.id}}"
+           th:title="'编辑座位 ' + ${s.seatCode}">
+            <b th:text="${s.seatCode}"></b>
+            <span th:text="'¥' + ${s.price} + '/时'"></span>
+        </a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th><th>座位编号</th><th>所属门店</th><th>类型</th>
+            <th>单价(元/时)</th><th>电源/台灯/静音</th><th>状态</th><th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${page.records}">
+            <td th:text="${s.id}"></td>
+            <td th:text="${s.seatCode}"></td>
+            <td th:text="${s.studyStore != null} ? ${s.studyStore.name} : '-'"></td>
+            <td th:text="${s.seatType}"></td>
+            <td th:text="${s.price}"></td>
+            <td>
+                <span th:if="${s.hasPower}">⚡</span><span th:unless="${s.hasPower}">-</span>
+                <span th:if="${s.hasLight}">💡</span><span th:unless="${s.hasLight}">-</span>
+                <span th:if="${s.isQuiet}">🤫</span><span th:unless="${s.isQuiet}">-</span>
+            </td>
+            <td>
+                <span class="tag ok" th:if="${s.isRelease?.code} == 1">已发布</span>
+                <span class="tag off" th:if="${s.isRelease?.code} == 0">未发布</span>
+            </td>
+            <td class="actions">
+                <a class="btn small" th:href="@{'/admin/seat/form/' + ${s.id}}">编辑</a>
+                <form class="inline-form" th:action="@{'/admin/seat/release/' + ${s.id}}" method="post">
+                    <input type="hidden" name="storeId" th:value="${storeId}">
+                    <input type="hidden" name="release" th:value="${s.isRelease?.code} == 1 ? 'false' : 'true'">
+                    <button class="btn small" type="submit"
+                            th:text="${s.isRelease?.code} == 1 ? '下架' : '发布'"></button>
+                </form>
+                <a class="btn small danger"
+                   th:href="${'/admin/seat/delete/' + s.id + '/confirm' + (storeId != null ? '?storeId=' + storeId : '')}">删除</a>
+            </td>
+        </tr>
+        <tr th:if="${page.records.isEmpty()}">
+            <td colspan="8" class="empty">暂无座位</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/admin/seat', ${storeId != null ? '&storeId=' + storeId : ''})}"></nav>
+</div>
+</body>
+</html>

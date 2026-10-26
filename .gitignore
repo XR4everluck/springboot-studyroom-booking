@@ -48,6 +48,9 @@ tools/redis/
 dump.rdb
 uploads/
 
+### 本地私有环境变量（密钥不入库，参考前端 .env.example） ###
+**/.env.local
+
 ### 前端构建产物（vite build 后拷入 static 根，由 start-all.bat 重新生成）###
 web/web-admin/src/main/resources/static/assets/
 web/web-admin/src/main/resources/static/index.html

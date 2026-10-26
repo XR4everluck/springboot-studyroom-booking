@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('属性管理 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('attr')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title">属性管理</h2>
+        <form class="inline-form" method="post" th:action="@{/admin/attr/key/save}">
+            <input type="text" name="name" required maxlength="20" placeholder="新属性名（如：采光）">
+            <button class="btn primary" type="submit">新增属性名</button>
+        </form>
+    </div>
+
+    <div class="attr-grid">
+        <div class="attr-card" th:each="k : ${attrKeys}">
+            <div class="attr-head">
+                <strong th:text="${k.name}">属性名</strong>
+                <form class="inline-form" th:action="@{'/admin/attr/key/delete/' + ${k.id}}" method="post">
+                    <button class="btn small danger" type="submit">删除</button>
+                </form>
+            </div>
+            <ul class="attr-values">
+                <li th:each="v : ${k.attrValueList}">
+                    <span th:text="${v.name}"></span>
+                    <form class="inline-form" th:action="@{'/admin/attr/value/delete/' + ${v.id}}" method="post">
+                        <button class="btn-link danger-text" type="submit">删除</button>
+                    </form>
+                </li>
+                <li th:if="${#lists.isEmpty(k.attrValueList)}" class="dim">（暂无属性值）</li>
+            </ul>
+            <form class="inline-form attr-add" method="post" th:action="@{/admin/attr/value/save}">
+                <input type="hidden" name="attrKeyId" th:value="${k.id}">
+                <input type="text" name="name" required maxlength="20" th:attr="placeholder='新增「' + ${k.name} + '」的属性值'">
+                <button class="btn small" type="submit">添加</button>
+            </form>
+        </div>
+        <div class="empty" th:if="${#lists.isEmpty(attrKeys)}">暂无属性，先在右上角新增属性名</div>
+    </div>
+</div>
+</body>
+</html>

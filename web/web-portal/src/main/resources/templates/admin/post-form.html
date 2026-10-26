@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('岗位编辑 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('post')}"></nav>
+
+<div class="container narrow">
+    <h2 class="page-title" th:text="${post.id} != null ? '编辑岗位' : '新增岗位'">岗位编辑</h2>
+
+    <form th:action="@{/admin/post/save}" method="post" class="form-card">
+        <input type="hidden" name="id" th:if="${post.id} != null" th:value="${post.id}">
+
+        <div class="field-row">
+            <label class="field">
+                <span>岗位编码 *</span>
+                <input type="text" name="postCode" required maxlength="20" th:value="${post.postCode}">
+            </label>
+            <label class="field">
+                <span>岗位名称 *</span>
+                <input type="text" name="name" required maxlength="20" th:value="${post.name}">
+            </label>
+        </div>
+
+        <label class="field">
+            <span>岗位描述</span>
+            <textarea name="description" rows="3" maxlength="200" th:text="${post.description}"></textarea>
+        </label>
+
+        <label class="field">
+            <span>状态</span>
+            <select name="enable">
+                <option value="true" th:selected="${post.id == null or post.status.code == 1}">启用</option>
+                <option value="false" th:selected="${post.id != null and post.status.code == 0}">禁用</option>
+            </select>
+        </label>
+
+        <div class="form-actions">
+            <button type="submit" class="btn primary">保 存</button>
+            <a class="btn" th:href="@{/admin/post}">返 回</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yourname.studyroom.web.app.mapper.AppBrowsingHistoryMapper">
+    <resultMap id="HistoryItemVoMP" type="com.yourname.studyroom.web.app.vo.history.HistoryItemVo" autoMapping="true">
+        <id column="id" property="id"/>
+        <result column="seat_id" property="seatId"/>
+        <collection property="seatGraphVoList" ofType="com.yourname.studyroom.web.app.vo.graph.GraphVo" autoMapping="true"
+                    select="selectGraphVoBySeatId" column="seat_id"
+        />
+    </resultMap>
+    <select id="pageItemByUserId" resultMap="HistoryItemVoMP">
+        select bh.id,
+               bh.user_id,
+               bh.seat_id,
+               bh.browse_time,
+               ri.seat_code,
+               ri.price,
+               ai.name store_name,
+               ai.district_name,
+               ai.city_name,
+               ai.province_name
+        from browsing_history bh
+                 left join seat ri on bh.seat_id = ri.id and ri.is_deleted = 0
+                 left join study_store ai on ri.store_id = ai.id and ai.is_deleted = 0
+        where bh.is_deleted = 0
+          and bh.user_id = #{userId}
+        order by bh.browse_time desc
+    </select>
+
+    <select id="selectGraphVoBySeatId" resultType="com.yourname.studyroom.web.app.vo.graph.GraphVo">
+        select url,
+               name
+        from graph_info
+        where is_deleted = 0
+          and item_type = 2
+          and item_id = #{seat_id}
+    </select>
+</mapper>

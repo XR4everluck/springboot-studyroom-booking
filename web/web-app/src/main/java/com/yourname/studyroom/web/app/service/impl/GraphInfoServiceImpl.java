@@ -3,7 +3,7 @@ package com.yourname.studyroom.web.app.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yourname.studyroom.model.entity.GraphInfo;
 import com.yourname.studyroom.web.app.service.GraphInfoService;
-import com.yourname.studyroom.web.app.mapper.GraphInfoMapper;
+import com.yourname.studyroom.web.app.mapper.AppGraphInfoMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-07-26 11:12:39
 */
 @Service
-public class GraphInfoServiceImpl extends ServiceImpl<GraphInfoMapper, GraphInfo>
+public class GraphInfoServiceImpl extends ServiceImpl<AppGraphInfoMapper, GraphInfo>
     implements GraphInfoService{
 
 }

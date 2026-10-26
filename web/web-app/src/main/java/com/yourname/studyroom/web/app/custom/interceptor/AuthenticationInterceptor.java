@@ -3,6 +3,7 @@ package com.yourname.studyroom.web.app.custom.interceptor;
 import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.login.LoginUser;
 import com.yourname.studyroom.common.login.LoginUserHolder;
+import com.yourname.studyroom.common.login.LoginUserType;
 import com.yourname.studyroom.common.utils.JwtUtil;
 import com.yourname.studyroom.common.utils.ResponseUtil;
 import io.jsonwebtoken.Claims;
@@ -11,6 +12,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * 登录状态校验拦截器
+ * <p>
+ * 除验签外还校验 userType 必须为 app，
+ * 防止管理端令牌跨端调用用户端接口
+ */
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
@@ -21,6 +28,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         Claims claims;
         try {
             claims = JwtUtil.parseToken(token);
+            JwtUtil.checkUserType(claims, LoginUserType.APP);
         } catch (BookingException e) {
             ResponseUtil.writeFail(response, e);
             return false;

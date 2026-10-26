@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>studyroom-web-app</artifactId>
-    <name>上岸自习室预订系统-用户移动端</name>
+    <name>上岸自习室预订系统-用户端业务库</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -23,9 +23,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <!-- 移动端前端源码工程不参与打包，打包产物为其构建后的 static 根目录文件 -->
-                    <exclude>static/studyroomH5/**</exclude>
-                    <exclude>static/studyroomH5/**/*</exclude>
+                    <!-- 本模块是纯业务库：静态资源与启动配置一律不打包，由 web-portal 统一提供 -->
+                    <exclude>static/**</exclude>
+                    <exclude>application.yaml</exclude>
                 </excludes>
             </resource>
         </resources>

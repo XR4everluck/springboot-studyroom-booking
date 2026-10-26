@@ -31,26 +31,26 @@ import java.util.concurrent.TimeUnit;
  * @createDate 2023-07-26 11:12:39
  */
 @Service
-public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, BookingOrder>
+public class BookingOrderServiceImpl extends ServiceImpl<AppBookingOrderMapper, BookingOrder>
         implements BookingOrderService {
 
     @Autowired
-    BookingOrderMapper bookingOrderMapper;
+    AppBookingOrderMapper bookingOrderMapper;
 
     @Autowired
-    StudyStoreMapper studyStoreMapper;
+    AppStudyStoreMapper studyStoreMapper;
 
     @Autowired
-    SeatMapper seatMapper;
+    AppSeatMapper seatMapper;
 
     @Autowired
-    GraphInfoMapper graphInfoMapper;
+    AppGraphInfoMapper graphInfoMapper;
 
     @Autowired
-    PaymentTypeMapper paymentTypeMapper;
+    AppPaymentTypeMapper paymentTypeMapper;
 
     @Autowired
-    BookingTermMapper bookingTermMapper;
+    AppBookingTermMapper bookingTermMapper;
 
     @Autowired
     MemberCardService memberCardService;
@@ -214,6 +214,34 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
             return SeatRealtimeStatus.BOOKED;
         }
         return SeatRealtimeStatus.FREE;
+    }
+
+    /**
+     * 校验订单存在且属于当前登录用户，不存在或不属于本人时统一抛"订单不存在"，避免越权探测他人订单
+     */
+    @Override
+    public BookingOrder getOwnedOrder(Long userId, Long id) {
+        BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
+        if (bookingOrder == null || !userId.equals(bookingOrder.getUserId())) {
+            throw new BookingException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
+        }
+        return bookingOrder;
+    }
+
+    /**
+     * 申请提前签退：仅订单本人可发起，且仅"使用中"状态可流转为"签退待确认"
+     */
+    @Override
+    public void requestEarlyCheckout(Long userId, Long id) {
+        BookingOrder bookingOrder = getOwnedOrder(userId, id);
+        if (bookingOrder.getStatus() != BookingStatus.IN_USE) {
+            throw new BookingException(ResultCodeEnum.APP_ORDER_STATUS_NOT_ALLOW);
+        }
+        bookingOrder.setStatus(BookingStatus.CHECKOUT_PENDING);
+        this.updateById(bookingOrder);
+
+        // 座位仍被占用（等待管理员确认），保持实时状态为使用中
+        updateSeatRealtimeStatus(bookingOrder.getSeatId(), SeatRealtimeStatus.IN_USE);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.yourname.studyroom.web.admin.vo.order;
 
+import com.yourname.studyroom.model.enums.BookingStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -27,5 +28,8 @@ public class OrderQueryVo {
 
     @Schema(description = "用户手机号码")
     private String phone;
+
+    @Schema(description = "订单状态筛选")
+    private BookingStatus status;
 
 }

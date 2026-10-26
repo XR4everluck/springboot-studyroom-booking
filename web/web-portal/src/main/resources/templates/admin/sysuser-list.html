@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('系统账号 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('sysuser')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title">系统账号</h2>
+        <a class="btn primary" th:href="@{/admin/sysuser/form}">新增账号</a>
+    </div>
+
+    <form class="filter-bar" method="get" th:action="@{/admin/sysuser}">
+        <label>账号 <input type="text" name="username" th:value="${username}"></label>
+        <button class="btn" type="submit">查询</button>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr><th>ID</th><th>账号</th><th>姓名</th><th>类型</th><th>手机号</th><th>状态</th><th>操作</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${page.records}">
+            <td th:text="${u.id}"></td>
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.name}"></td>
+            <td th:text="${u.type != null} ? ${u.type.name} : '-'"></td>
+            <td th:text="${u.phone} != null ? ${u.phone} : '-'"></td>
+            <td>
+                <span class="tag ok" th:if="${u.status.code} == 1" th:text="${u.status.name}"></span>
+                <span class="tag off" th:if="${u.status.code} == 0" th:text="${u.status.name}"></span>
+            </td>
+            <td class="actions">
+                <a class="btn small" th:href="@{'/admin/sysuser/form/' + ${u.id}}">编辑</a>
+                <a class="btn small danger" th:href="@{'/admin/sysuser/delete/' + ${u.id} + '/confirm'}">删除</a>
+            </td>
+        </tr>
+        <tr th:if="${page.records.isEmpty()}">
+            <td colspan="7" class="empty">暂无账号</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/admin/sysuser', '')}"></nav>
+</div>
+</body>
+</html>

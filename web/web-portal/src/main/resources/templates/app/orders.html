@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('我的订单 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('orders')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <h2 class="page-title">我的订单</h2>
+
+    <div class="order-list">
+        <div class="order-card" th:each="o : ${orders}">
+            <div class="order-head">
+                <span class="dim">订单 #<span th:text="${o.id}"></span></span>
+                <span class="tag" th:classappend="${o.bookingStatus.code == 1 or o.bookingStatus.code == 5 or o.bookingStatus.code == 7} ? 'pending' : (${o.bookingStatus.code == 2 or o.bookingStatus.code == 8} ? 'ok' : (${o.bookingStatus.code == 6} ? 'done' : 'off'))"
+                      th:text="${o.bookingStatus.name}"></span>
+            </div>
+            <div class="order-body">
+                <div>
+                    <strong th:text="${o.storeName}"></strong>
+                    <span class="dim" th:text="' · 座位 ' + ${o.seatCode}"></span>
+                </div>
+                <div class="dim">
+                    <span th:text="${#dates.format(o.bookingStartDate, 'MM-dd HH:mm')}"></span>
+                    ~
+                    <span th:text="${o.bookingEndDate != null} ? ${#dates.format(o.bookingEndDate, 'MM-dd HH:mm')} : '-'"></span>
+                </div>
+                <div class="price">¥<span th:text="${o.price}"></span></div>
+            </div>
+            <div class="order-actions">
+                <a class="btn small" th:href="@{'/app/orders/' + ${o.id}}">详情</a>
+                <form class="inline-form" th:if="${o.bookingStatus.code} == 2"
+                      th:action="@{'/app/orders/' + ${o.id} + '/checkIn'}" method="post">
+                    <button class="btn small primary" type="submit">签到</button>
+                </form>
+                <form class="inline-form" th:if="${o.bookingStatus.code} == 8"
+                      th:action="@{'/app/orders/' + ${o.id} + '/checkOut'}" method="post">
+                    <button class="btn small primary" type="submit">签退</button>
+                </form>
+                <form class="inline-form" th:if="${o.bookingStatus.code} == 8"
+                      th:action="@{'/app/orders/' + ${o.id} + '/earlyCheckout'}" method="post">
+                    <button class="btn small" type="submit">申请提前签退</button>
+                </form>
+            </div>
+        </div>
+        <div class="empty" th:if="${#lists.isEmpty(orders)}">还没有订单，去<a th:href="@{/app/home}">挑一个座位</a>开始学习吧</div>
+    </div>
+</div>
+</body>
+</html>

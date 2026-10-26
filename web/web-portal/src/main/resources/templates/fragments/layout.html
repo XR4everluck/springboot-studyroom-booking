@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">上岸自习室</title>
+    <link rel="stylesheet" th:href="@{/css/portal.css}">
+</head>
+<body>
+
+<!-- 管理端顶部导航 -->
+<nav th:fragment="adminNav(active)" class="topnav sidebar">
+    <a class="brand" th:href="@{/admin/index}">上岸自习室 · 管理端</a>
+    <a th:href="@{/admin/index}" th:classappend="${active == 'index'} ? 'active' : ''">数据看板</a>
+    <a th:href="@{/admin/store}" th:classappend="${active == 'store'} ? 'active' : ''">门店管理</a>
+    <a th:href="@{/admin/seat}" th:classappend="${active == 'seat'} ? 'active' : ''">座位管理</a>
+    <a th:href="@{/admin/ops}" th:classappend="${active == 'ops'} ? 'active' : ''">运营台</a>
+    <a th:href="@{/admin/report}" th:classappend="${active == 'report'} ? 'active' : ''">报表中心</a>
+    <a th:href="@{/admin/attr}" th:classappend="${active == 'attr'} ? 'active' : ''">属性管理</a>
+    <a th:href="@{/admin/order}" th:classappend="${active == 'order'} ? 'active' : ''">订单管理</a>
+    <a th:href="@{/admin/visit}" th:classappend="${active == 'visit'} ? 'active' : ''">体验预约</a>
+    <a th:href="@{/admin/user}" th:classappend="${active == 'user'} ? 'active' : ''">用户管理</a>
+    <a th:href="@{/admin/sysuser}" th:classappend="${active == 'sysuser'} ? 'active' : ''">系统账号</a>
+    <a th:href="@{/admin/post}" th:classappend="${active == 'post'} ? 'active' : ''">岗位管理</a>
+    <form th:action="@{/logout}" method="post" class="inline-form">
+        <button type="submit" class="btn-link">退出登录</button>
+    </form>
+</nav>
+
+<!-- 用户端顶部导航 -->
+<nav th:fragment="appNav(active)" class="topnav">
+    <a class="brand" th:href="@{/app/home}">上岸自习室</a>
+    <a th:href="@{/app/home}" th:classappend="${active == 'home'} ? 'active' : ''">找座自习</a>
+    <a th:href="@{/app/orders}" th:classappend="${active == 'orders'} ? 'active' : ''">我的订单</a>
+    <a th:href="@{/app/visit}" th:classappend="${active == 'visit'} ? 'active' : ''">体验预约</a>
+    <a th:href="@{/app/card}" th:classappend="${active == 'card'} ? 'active' : ''">会员卡</a>
+    <a th:href="@{/app/history}" th:classappend="${active == 'history'} ? 'active' : ''">浏览历史</a>
+    <a th:href="@{/app/profile}" th:classappend="${active == 'profile'} ? 'active' : ''">个人中心</a>
+    <form th:action="@{/logout}" method="post" class="inline-form">
+        <button type="submit" class="btn-link">退出登录</button>
+    </form>
+</nav>
+
+<!-- 操作结果提示 -->
+<div th:fragment="flash">
+    <div class="container" th:if="${msg}">
+        <div class="flash ok" th:text="${msg}">成功</div>
+    </div>
+    <div class="container" th:if="${error}">
+        <div class="flash err" th:text="${error}">失败</div>
+    </div>
+</div>
+
+<!-- 分页条：page 为 IPage，base 为页面地址，extra 为附加查询串（如 &status=6，可为空串） -->
+<nav th:fragment="pager(page, base, extra)" class="pager" th:if="${page.pages} > 1"
+     th:with="start=${page.current - 2 > 1 ? page.current - 2 : 1}, end=${page.current + 2 < page.pages ? page.current + 2 : page.pages}">
+    <a th:if="${page.current} > 1"
+       th:href="${base} + '?current=' + (${page.current} - 1) + ${extra}">上一页</a>
+    <a th:if="${start} > 1" th:href="${base} + '?current=1' + ${extra}">1</a>
+    <span th:if="${start} > 2" class="dim">…</span>
+    <a th:each="i : ${#numbers.sequence(start, end)}"
+       th:href="${base} + '?current=' + ${i} + ${extra}"
+       th:classappend="${i} == ${page.current} ? 'current' : ''"
+       th:text="${i}"></a>
+    <span th:if="${end} < ${page.pages - 1}" class="dim">…</span>
+    <a th:if="${end} < ${page.pages}"
+       th:href="${base} + '?current=' + ${page.pages} + ${extra}" th:text="${page.pages}"></a>
+    <a th:if="${page.current} < ${page.pages}"
+       th:href="${base} + '?current=' + (${page.current} + 1) + ${extra}">下一页</a>
+    <span class="dim" th:text="'共 ' + ${page.total} + ' 条'"></span>
+</nav>
+
+</body>
+</html>

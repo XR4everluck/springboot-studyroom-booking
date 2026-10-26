@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('找座自习 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('home')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <h2 class="page-title">找一家安静的自习室</h2>
+
+    <div class="section-head" th:if="${hotStores != null and !hotStores.isEmpty()}">
+        <h3 class="section-title">🔥 热门自习室</h3>
+    </div>
+    <div class="card-grid" th:if="${hotStores != null and !hotStores.isEmpty()}">
+        <a class="store-card" th:each="s : ${hotStores}" th:href="@{'/app/store/' + ${s.id}}">
+            <div class="store-name" th:text="${s.name}"></div>
+            <div class="dim" th:text="${s.cityName} + ' · ' + ${s.districtName}"></div>
+            <div class="store-meta">
+                <span class="price">¥<b th:text="${s.minPrice}"></b>/时起</span>
+                <span th:text="${s.businessHours}"></span>
+            </div>
+        </a>
+    </div>
+
+    <h3 class="section-title">全部自习室</h3>
+    <div class="card-grid">
+        <a class="store-card" th:each="s, st : ${page.records}" th:href="@{'/app/store/' + ${s.id}}">
+            <div class="cover cover-lg" th:classappend="'c' + (${st.count} % 3 + 1)" th:text="${s.name.substring(0,1)}"></div>
+            <div class="store-name" th:text="${s.name}"></div>
+            <div class="store-intro dim" th:text="${s.introduction}"></div>
+            <div class="dim" th:text="${s.cityName} + ' · ' + ${s.districtName} + ' · ' + ${s.addressDetail}"></div>
+            <div class="store-meta">
+                <span class="tag ok" th:if="${s.isRelease?.code} == 1">营业中</span>
+                <span th:text="'营业时间：' + ${s.businessHours}"></span>
+                <span th:text="'☎ ' + ${s.phone}"></span>
+            </div>
+        </a>
+        <div class="empty" th:if="${page.records.isEmpty()}">暂无门店</div>
+    </div>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/app/home', '')}"></nav>
+</div>
+</body>
+</html>

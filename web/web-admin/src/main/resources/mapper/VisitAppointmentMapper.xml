@@ -58,6 +58,9 @@
             <if test="queryVo.phone != null and queryVo.phone != ''">
                 and va.phone like concat('%',#{queryVo.phone},'%')
             </if>
+            <if test="queryVo.appointmentStatus != null">
+                and va.appointment_status = #{queryVo.appointmentStatus}
+            </if>
         </where>
     </select>
 </mapper>
