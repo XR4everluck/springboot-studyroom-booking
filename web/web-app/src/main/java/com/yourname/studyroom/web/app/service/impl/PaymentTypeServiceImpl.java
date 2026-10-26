@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.service.impl;
 
 import com.yourname.studyroom.model.entity.PaymentType;
-import com.yourname.studyroom.web.app.mapper.PaymentTypeMapper;
+import com.yourname.studyroom.web.app.mapper.AppPaymentTypeMapper;
 import com.yourname.studyroom.web.app.service.PaymentTypeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,11 @@ import java.util.List;
 * @createDate 2023-07-26 11:12:39
 */
 @Service
-public class PaymentTypeServiceImpl extends ServiceImpl<PaymentTypeMapper, PaymentType>
+public class PaymentTypeServiceImpl extends ServiceImpl<AppPaymentTypeMapper, PaymentType>
     implements PaymentTypeService{
 
     @Autowired
-    PaymentTypeMapper paymentTypeMapper;
+    AppPaymentTypeMapper paymentTypeMapper;
 
     @Override
     public List<PaymentType> listBySeatId(Long id) {

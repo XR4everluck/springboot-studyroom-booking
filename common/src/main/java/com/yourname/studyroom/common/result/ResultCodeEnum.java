@@ -56,6 +56,7 @@ public enum ResultCodeEnum {
     APP_OLD_PASSWORD_ERROR(514, "原密码不正确"),
     APP_CHANGE_PASSWORD_SAME(515, "新密码不能与原密码相同"),
     APP_PASSWORD_NOT_LOGIN(516, "登录状态已失效，请重新登录"),
+    APP_ORDER_STATUS_NOT_ALLOW(517, "仅支持对使用中的订单申请提前签退"),
 
 
     TOKEN_EXPIRED(601, "token过期"),

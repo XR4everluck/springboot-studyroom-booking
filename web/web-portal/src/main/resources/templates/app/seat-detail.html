@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('预订座位 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('home')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container narrow">
+    <div class="list-head">
+        <h2 class="page-title">座位 <span th:text="${seat.seatCode}"></span>
+            <span class="tag warn" th:if="${busy}">使用中</span>
+        </h2>
+        <a class="btn" th:href="@{'/app/store/' + ${seat.storeItemVo.id}}">返回门店</a>
+    </div>
+
+    <div class="form-card">
+        <table class="kv-table">
+            <tr><th>所属门店</th><td th:text="${seat.storeItemVo.name}"></td></tr>
+            <tr><th>单价</th><td>¥ <span th:text="${seat.price}"></span> / 小时</td></tr>
+            <tr><th>座位类型</th><td th:text="${seat.seatType != null ? seat.seatType : '标准座'}"></td></tr>
+            <tr><th>标签</th><td>
+                <span class="tag ok" th:each="l : ${seat.labelInfoList}" th:text="${l.name}"></span>
+                <span class="dim" th:if="${#lists.isEmpty(seat.labelInfoList)}">-</span>
+            </td></tr>
+            <tr><th>设施</th><td>
+                <span class="tag" th:each="f : ${seat.facilityInfoList}" th:text="${f.name}"></span>
+                <span class="dim" th:if="${#lists.isEmpty(seat.facilityInfoList)}">-</span>
+            </td></tr>
+            <tr><th>属性</th><td>
+                <span class="tag" th:each="a : ${seat.attrValueVoList}" th:text="${a.name}"></span>
+                <span class="dim" th:if="${#lists.isEmpty(seat.attrValueVoList)}">-</span>
+            </td></tr>
+        </table>
+    </div>
+
+    <h3 class="section-title">预订此座位</h3>
+    <form th:action="@{'/app/seat/' + ${seat.id} + '/book'}" method="post" class="form-card">
+        <div class="field-row">
+            <label class="field">
+                <span>开始时间 *</span>
+                <input type="datetime-local" name="startDate" required>
+            </label>
+            <label class="field">
+                <span>结束时间 *</span>
+                <input type="datetime-local" name="endDate" required>
+            </label>
+        </div>
+
+        <div class="field-row">
+            <label class="field">
+                <span>支付方式</span>
+                <select name="paymentTypeId">
+                    <option value="">未指定</option>
+                    <option th:each="p : ${seat.paymentTypeList}" th:value="${p.id}" th:text="${p.name}"></option>
+                </select>
+            </label>
+            <label class="field">
+                <span>会员卡抵扣</span>
+                <select name="memberCardId">
+                    <option value="">不使用会员卡</option>
+                    <option th:each="c : ${cards}"
+                            th:value="${c.id}"
+                            th:text="${c.cardType.name} + '（余 ' + ${c.remainingQuantity} + '）'"></option>
+                </select>
+            </label>
+        </div>
+
+        <label class="field">
+            <span>备注</span>
+            <input type="text" name="additionalInfo" maxlength="100" placeholder="选填">
+        </label>
+
+        <div class="form-actions">
+            <button type="submit" class="btn primary">提交预订</button>
+        </div>
+        <p class="auth-tip dim">金额按所选时段小时数 × 座位单价计算，预订需落在门店营业时间内且时段不冲突。</p>
+    </form>
+</div>
+</body>
+</html>

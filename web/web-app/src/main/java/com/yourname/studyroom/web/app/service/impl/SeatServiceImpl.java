@@ -34,32 +34,32 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
-public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat>
+public class SeatServiceImpl extends ServiceImpl<AppSeatMapper, Seat>
         implements SeatService {
 
     @Autowired
-    SeatMapper seatMapper;
+    AppSeatMapper seatMapper;
 
     @Autowired
-    GraphInfoMapper graphInfoMapper;
+    AppGraphInfoMapper graphInfoMapper;
 
     @Autowired
-    BookingTermMapper bookingTermMapper;
+    AppBookingTermMapper bookingTermMapper;
 
     @Autowired
-    FacilityInfoMapper facilityInfoMapper;
+    AppFacilityInfoMapper facilityInfoMapper;
 
     @Autowired
-    LabelInfoMapper labelInfoMapper;
+    AppLabelInfoMapper labelInfoMapper;
 
     @Autowired
-    PaymentTypeMapper paymentTypeMapper;
+    AppPaymentTypeMapper paymentTypeMapper;
 
     @Autowired
-    AttrValueMapper attrValueMapper;
+    AppAttrValueMapper attrValueMapper;
 
     @Autowired
-    FeeValueMapper feeValueMapper;
+    AppFeeValueMapper feeValueMapper;
 
     @Autowired
     StudyStoreService studyStoreService;

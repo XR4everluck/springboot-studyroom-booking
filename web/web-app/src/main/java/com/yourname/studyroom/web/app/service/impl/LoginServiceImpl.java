@@ -3,10 +3,11 @@ import com.yourname.studyroom.common.utils.JwtUtil;
 import com.yourname.studyroom.common.utils.PasswordUtil;
 import com.yourname.studyroom.model.enums.BaseStatus;
 import com.yourname.studyroom.common.constant.RedisConstant;
+import com.yourname.studyroom.common.login.LoginUserType;
 import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.model.entity.UserInfo;
-import com.yourname.studyroom.web.app.mapper.UserInfoMapper;
+import com.yourname.studyroom.web.app.mapper.AppUserInfoMapper;
 import com.yourname.studyroom.web.app.service.LoginService;
 import com.yourname.studyroom.web.app.vo.user.ChangePasswordVo;
 import com.yourname.studyroom.web.app.vo.user.LoginVo;
@@ -27,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
     StringRedisTemplate redisTemplate;
 
     @Autowired
-    UserInfoMapper userInfoMapper;
+    AppUserInfoMapper userInfoMapper;
 
     /**
      * 防账号枚举：账号不存在时也执行一次同代价的哈希校验，抹平响应时间差
@@ -78,7 +79,8 @@ public class LoginServiceImpl implements LoginService {
 
         redisTemplate.delete(failKey);
         // token 的 userName claim 沿用手机号，作为订单联系方式
-        return JwtUtil.createToken(userInfo.getId(), userInfo.getPhone() == null ? "" : userInfo.getPhone());
+        return JwtUtil.createToken(userInfo.getId(), userInfo.getPhone() == null ? "" : userInfo.getPhone(),
+                LoginUserType.APP);
     }
 
     /**

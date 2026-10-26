@@ -1,7 +1,7 @@
 package com.yourname.studyroom.web.app.service.impl;
 
 import com.yourname.studyroom.model.entity.BookingTerm;
-import com.yourname.studyroom.web.app.mapper.BookingTermMapper;
+import com.yourname.studyroom.web.app.mapper.AppBookingTermMapper;
 import com.yourname.studyroom.web.app.service.BookingTermService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,11 @@ import java.util.List;
  * @createDate 2023-07-26 11:12:39
  */
 @Service
-public class BookingTermServiceImpl extends ServiceImpl<BookingTermMapper, BookingTerm>
+public class BookingTermServiceImpl extends ServiceImpl<AppBookingTermMapper, BookingTerm>
         implements BookingTermService {
 
     @Autowired
-    BookingTermMapper bookingTermMapper;
+    AppBookingTermMapper bookingTermMapper;
 
     @Override
     public List<BookingTerm> listBySeatId(Long id) {

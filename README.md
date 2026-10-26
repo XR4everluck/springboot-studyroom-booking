@@ -4,7 +4,12 @@
 
 ### 业务概述
 
-上岸自习室预订系统是一个自习室门店预订平台项目，包含**用户端（桌面浏览器 Web）**和**后台管理系统**两端。用户端面向广大用户，提供自习室门店检索、座位预订、预约管理、订单与支付管理等功能；后台管理系统面向管理员，提供自习室门店管理、预订管理、用户管理等功能。下面分别介绍两端的具体业务功能。
+上岸自习室预订系统是一个自习室门店预订平台项目。系统为**单一 Java Web 应用（统一门户）**：启动后首先进入统一登录界面，用户登录后按角色进入对应界面——
+
+- **用户端**：自习室门店检索、热门推荐、座位预订（支持会员卡抵扣）、签到/签退/提前签退、到店体验预约、会员卡充值办卡、浏览历史、个人中心；
+- **管理端**：数据看板、门店管理、座位管理、属性管理、订单管理（预订确认/续期确认/提前签退审批）、体验预约管理、用户管理、系统账号与岗位管理。
+
+未登录时访问任何业务页面都会被重定向回登录页，不存在可直达的角色界面。
 
 ### 用户端（桌面浏览器 Web）
 
@@ -80,17 +85,15 @@
 
 ## 项目技术概述
 
-本项目的技术架构如下图所示。
+项目采用 **纯 Java 服务端渲染**（Thymeleaf）架构，全站无任何 JavaScript 与独立前端工程，涉及的全部实现语言仅 Java 一种（SQL 脚本仅用于建库，bat 仅用于一键启动）。各层技术如下：
 
-<img src="blob/技术架构.drawio.svg" style="zoom:50%;" />
+- **Web 层**
 
-项目采用前后端分离的模式，下面介绍各模块用到的技术。
+  - 模板引擎：Thymeleaf（服务端渲染，纯 HTML + CSS，无脚本）
 
-- **前端**
+  - 框架：Spring Boot + Spring MVC（页面控制器直接调用业务层）
 
-  - 框架：Vue3
-
-- **后端**
+- **业务层**
 
   - 框架：Spring Boot
 
@@ -98,21 +101,19 @@
 
     > MyBatis-Plus（简称 MP）是 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变，为简化开发、提高效率而生。
 
-  - Web：Spring MVC
-
 - **数据存储**
 
   - 关系型数据库：MySQL
 
   - 缓存：Redis
 
-  - 文件存储：本地磁盘（`studyroom.storage.local-dir`，默认 `uploads/`）
+  - 文件存储：本地磁盘（`storage.upload-dir`，默认 `./upload-data`）
 
-    > **文件存储**用于保存门店/座位图片等非结构化数据，上传后由后端返回可直接访问的 `/img/...` 相对路径并写入 `graph_info.url`。本项目以本地磁盘目录替代对象存储，省去额外部署依赖；如需切回 OSS/S3，只要替换 `FileService` 实现并保持返回 URL 的语义即可。
+    > **文件存储**用于保存门店/座位图片等非结构化数据。本项目以本地磁盘目录替代对象存储，省去额外部署依赖。
 
-- **部署**
+- **认证**：HttpSession 会话认证（`PageAuthInterceptor` 拦截 `/admin/**`、`/app/**`，未登录一律重定向统一登录页，角色不符则拒绝进入对应界面）
 
-  - 前端服务器：NginX
+- **部署**：单一 Spring Boot jar（8080 端口），`一键启动.bat` 一键拉起 MySQL/Redis/应用
 
 ## 模块结构
 
@@ -121,16 +122,19 @@ studyroom-booking                     父工程（聚合模块）
 ├── common        公共模块：常量、异常、登录、本地磁盘文件存储、MyBatis-Plus、Redis、工具类
 ├── model         实体模型模块：entity、enums
 └── web           Web 聚合模块
-    ├── web-admin 后台管理系统启动模块
-    └── web-app   用户端启动模块
+    ├── web-admin   后台业务库（订单/门店/座位/系统管理 Service、Mapper、VO，不可独立运行）
+    ├── web-app     用户端业务库（下单/会员卡/预约/历史 Service、Mapper、VO，不可独立运行）
+    └── web-portal  统一门户（唯一可执行模块）：登录页、管理员界面、用户界面（Thymeleaf）
 ```
+
+> 两个业务库的历史 REST 控制器与 JWT 拦截器已不再被门户组件扫描加载，仅业务 Service/Mapper 被复用；`web-portal` 的 `PortalApplication` 以全限定类名作为 Bean 名装配两库组件，避免同名类冲突。
 
 ## 技术坐标
 
 - groupId：`com.yourname.studyroom`
 - artifactId：`studyroom-booking`
 - 数据库：`studyroom_booking`
-- 启动类：`StudyroomAdminApplication`（后台管理端）、`StudyroomAppApplication`（用户端）
+- 启动类：`PortalApplication`（`web-portal`，唯一入口，端口 8080）
 
 ## 缓存设计
 
@@ -177,40 +181,46 @@ studyroom-booking                     父工程（聚合模块）
 
 `system_post`（岗位）、`system_user`（后台账号，密码 `md5Hex` 存储，唯一 `username`）、`user_info`（C 端用户，账号密码登录，PBKDF2 加盐哈希存储；手机号选填作订单联系方式）。
 
-## 接口清单
+## 页面清单
 
-> 完整交互式文档由 Knife4j 提供：后台 `http://<host>:<admin-port>/doc.html`、用户端 `http://<host>:<app-port>/doc.html`。下表为核心端点。
+全站为 Thymeleaf 服务端渲染页面，入口统一为 `http://<host>:8080/login`。
 
-### 后台管理端（`/admin`）
+### 公共页面
 
-| 分组 | 方法 | 路径 |
+| 页面 | 路径 | 说明 |
 | --- | --- | --- |
-| 登录 | GET | `/admin/login/captcha`、`/admin/login`、`/admin/login/info` |
-| 门店 | POST/GET | `/admin/store/saveOrUpdate`、`pageItem`、`getDetailById`、`removeById`、`updateReleaseStatusById`、`listInfoByDistrictId` |
-| 座位 | POST/GET | `/admin/seat/saveOrUpdate`、`pageItem`、`getDetailById`、`removeById`、`updateReleaseStatusById`、`listBasicByStoreId` |
-| 订单 | POST/GET | `/admin/order/saveOrUpdate`、`page`、`getById`、`removeById`、`updateStatusById`、`checkIn`、`checkOut` |
-| 预约 | GET/POST | `/admin/visit/page`、`updateStatusById` |
-| 预订时长 | GET/POST | `/admin/term/...` |
-| 支付方式 | GET/POST | `/admin/payment/...` |
-| 标签 / 设施 / 属性 / 杂费 | GET/POST | `/admin/label`、`/admin/facility`、`/admin/attr`、`/admin/fee` |
-| 区划 | GET | `/admin/region/...` |
-| 文件上传 | POST | `/admin/file/upload` |
-| 系统用户 / 岗位 | GET/POST | `/admin/system/user`、`/admin/system/post` |
-| C 端用户 | GET/POST | `/admin/user/page`、`updateStatusById` |
+| 统一登录 | `/login` | 单选「用户登录 / 管理员登录」，登录后按角色跳转对应界面 |
+| 用户注册 | `/register` | 自助注册用户端账号，注册成功自动回到登录页 |
 
-### 用户端（`/app`）
+### 管理员界面（登录后 `/admin/...`，仅管理员角色可访问）
 
-| 分组 | 方法 | 路径 |
+| 页面 | 路径 | 说明 |
 | --- | --- | --- |
-| 登录注册 | POST | `/app/login`（账密登录，失败 5 次锁定 10 分钟，失败提示剩余次数）、`/app/register`（注册）、`/app/password`（修改密码，需登录）；GET `/app/info` |
-| 门店 | GET | `/app/store/getDetailById`、`/app/store/getHotList`（新增热门门店） |
-| 座位 | GET | `/app/seat/pageItem`、`getDetailById`、`pageItemByStoreId`、`getHotList`（新增热门座位） |
-| 预订时长 / 支付方式 | GET | `/app/term/listBySeatId`、`/app/payment/listBySeatId`、`/app/payment/list` |
-| 预约 | GET/POST | `/app/visit/saveOrUpdate`、`listItem`、`getDetailById` |
-| 订单 | GET/POST | `/app/order/saveOrUpdate`、`listItem`、`getDetailById`、`updateStatusById`、`checkIn`、`checkOut` |
-| 会员卡 | GET/POST | `/app/card/listMine`、`/app/card/recharge` |
-| 区划 | GET | `/app/region/...` |
-| 浏览历史 | GET | `/app/history/pageItem` |
+| 数据看板 | `/admin/index` | 今日订单/营收/预约、有效会员卡、待处理订单、近 7 日趋势 |
+| 门店管理 | `/admin/store`、`/admin/store/form` | 列表、新增/编辑（区县/设施/标签/杂费/封面）、发布/下架、删除 |
+| 座位管理 | `/admin/seat`、`/admin/seat/form` | 按门店筛选、速览网格、新增/编辑（标签/支付/时长/设施/属性）、发布/下架、删除 |
+| 运营台 | `/admin/ops` | 双视图座位网格：实时状态（Redis 空闲/已预订/使用中）与热力分析（历史订单聚合的座位冷热五档） |
+| 报表中心 | `/admin/report` | 营收/订单/预约/会员卡汇总、门店排行、逐日明细，支持周期筛选与订单流水 CSV 导出（UTF-8 BOM） |
+| 经营大屏 | `/admin/board` | 全屏暗色投屏页：核心指标大字号展示 + 近 7 日趋势 + 热门门店 TOP5（数据与报表中心同源） |
+| 属性管理 | `/admin/attr` | 属性名/属性值增删 |
+| 订单管理 | `/admin/order`、`/admin/order/{id}` | 分页筛选、详情、确认预订/续期/签退、代签到签退、取消 |
+| 体验预约 | `/admin/visit` | 分页筛选、确认已体验、标记取消 |
+| 用户管理 | `/admin/user` | C 端用户分页、启用/禁用 |
+| 系统账号 | `/admin/sysuser` | 后台管理员增删改、重置密码（PBKDF2） |
+| 岗位管理 | `/admin/post` | 岗位增删改 |
+
+### 用户界面（登录后 `/app/...`，仅用户角色可访问）
+
+| 页面 | 路径 | 说明 |
+| --- | --- | --- |
+| 找座自习（首页） | `/app/home` | 热门门店 + 门店分页列表 |
+| 门店详情 | `/app/store/{id}` | 门店信息、标签设施、座位分页列表 |
+| 座位详情与预订 | `/app/seat/{id}` | 座位信息、提交起止时间下单（支持会员卡抵扣），浏览自动记入历史 |
+| 我的订单 | `/app/orders`、`/app/orders/{id}` | 列表/详情、签到、签退、申请提前签退（全部经归属校验） |
+| 体验预约 | `/app/visit` | 新建预约、我的预约列表、取消预约 |
+| 会员卡 | `/app/card` | 我的卡列表、充值、办理新卡 |
+| 浏览历史 | `/app/history` | 分页浏览记录 |
+| 个人中心 | `/app/profile` | 资料展示、修改密码（改后强制重新登录） |
 
 ## 订单状态流转
 
@@ -235,20 +245,29 @@ studyroom-booking                     父工程（聚合模块）
 
 - JDK 17+（`pom` 目标为 Java 17；若使用 JDK 23+，`maven-compiler-plugin` 已显式声明 Lombok 注解处理器路径，否则注解处理器不会从 classpath 隐式发现而报「找不到符号 getXxx」）
 - Maven 3.6+
-- MySQL 8.x、Redis 6.x（文件存储使用本地磁盘，目录由 `studyroom.storage.local-dir` 指定，默认 `uploads/`）
-- Node.js 16+（仅在需要重新构建内嵌前端时使用）
+- MySQL 8.x、Redis 6.x（文件存储使用本地磁盘，目录由 `storage.upload-dir` 指定，默认 `./upload-data`）
+
+### 环境变量
+
+敏感配置支持通过环境变量覆盖，未设置时回落到本地开发默认值：
+
+| 环境变量 | 作用 | 未设置时 |
+|---|---|---|
+| `MYSQL_USERNAME` / `MYSQL_PASSWORD` | 数据库账号密码（`application.yaml` 占位符） | `root` / `1234` |
 
 ### 一键启动（Windows）
 
 ```bat
-start-all.bat            检查 MySQL / 内置 Redis / 数据库，按需构建 jar，启动两端并打开浏览器
-start-all.bat build      先执行 mvn clean package -DskipTests 再启动
-stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停止 MySQL）
+一键启动.bat            检查 MySQL / 内置 Redis / 数据库，按需构建 jar，启动统一门户并打开浏览器
+一键启动.bat build      先执行 mvn clean package -DskipTests 再启动
 ```
 
+- 启动后自动打开 `http://localhost:8080/login` 统一登录页；停止应用直接关闭该 java 命令行窗口，或按 Ctrl+C。
 - 脚本假定本机 MySQL 服务名为 `MySQL`、账号 `root/1234`，可在脚本头部改 `MYSQL_USER / MYSQL_PWD` 等变量；数据库 `studyroom_booking` 不存在时会询问是否导入 `sql` 目录脚本。
-- Redis 使用项目内置免安装版 `tools\redis\redis-server.exe`（该目录不入库，需自行放置，或改用系统 Redis 服务）。
-- 两个脚本以 GBK(cp936) 保存，请勿另存为 UTF-8，否则 `cmd` 逐行解析中文会错位。
+- Redis 使用项目内置免安装版 `tools
+edis
+edis-server.exe`（该目录不入库，需自行放置，或改用系统 Redis 服务）。
+- 脚本以 GBK(cp936) 保存，请勿另存为 UTF-8，否则 `cmd` 逐行解析中文会错位。
 
 ### 手动启动
 
@@ -257,34 +276,32 @@ stop-all.bat             按端口关闭 8080、8081 与内置 Redis（不会停
    mysql -u root -p < sql/studyroom_booking.sql     # 建表 + 字典 + 公共初始化
    mysql -u root -p < sql/studyroom_init_data.sql   # 测试门店/座位/关联/账号/浏览数据
    ```
-2. 修改 `web-admin` / `web-app` 的 `application.yaml` 中 MySQL、Redis、本地存储连接参数。
-3. 构建并运行：
+2. 构建并运行（端口 8080，浏览器打开 `http://localhost:8080/login`）：
    ```bash
    mvn clean package -DskipTests
-   java -jar web/web-admin/target/studyroom-web-admin-1.0-SNAPSHOT.jar   # 后台管理端 8080
-   java -jar web/web-app/target/studyroom-web-app-1.0-SNAPSHOT.jar       # 用户端 8081
+   java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar
    ```
-
-### 前端
-
-前端（`studyroomAdmin`、`studyroomH5`）以 Spring 静态资源方式内嵌于后端模块。用户端为桌面浏览器 Web 应用（顶部导航 + 分页列表 + 弹层确认，支持 1280/720、1440/900、1920/1080 三档分辨率，内容区居中 1200px）：在对应目录 `npm install && npm run build`，把 `dist` 内容拷贝到模块的 `src/main/resources/static/` 根目录后重新打包 jar。也可独立构建后由 Nginx 托管，并将 `/admin`、`/app` 反向代理至对应后端服务。
+3. 可选：启动时灌入完整演示数据（覆盖业务表，日期自动对齐当天）：
+   ```bash
+   java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.reset=true
+   ```
 
 ### 测试账号
 
-- 后台管理：`admin / 123456`、`manager / 123456`（密码以 `md5Hex` 存储，密文 `e10adc3949ba59abbe56e057f20f883e`）。
+- 后台管理：`admin / 123456`、`manager / 123456`（密码以 PBKDF2 加盐哈希存储；存量 MD5 密文在登录成功后由后端自动升级为 PBKDF2）。
 - 用户端：账号密码登录，支持自助注册（注册成功自动登录）与登录后修改密码（个人中心 → 修改密码，改完强制重新登录）；预置测试账号 `demo001 / demo002 / demo003`，密码均为 `123456`。密码以 PBKDF2 加盐哈希存储；连续失败 5 次锁定 10 分钟，失败时提示剩余可尝试次数。
 
 ## 演示指南（对外演示专用）
 
 ### 演示数据
 
-项目内置一键重置脚本 `sql/studyroom_demo_data.sql`（可重复执行）：清空业务数据表后灌入精心设计的演示数据，覆盖全部业务状态，无测试痕迹。
+项目内置演示数据重置器 `DemoDataRunner`（Java 实现，可重复执行）：启动时携带 `--demo.reset=true` 即清空业务数据表并灌入精心设计的演示数据，覆盖全部业务状态，无测试痕迹。
 
 ```bash
-mysql -u root -p --default-character-set=utf8mb4 < sql/studyroom_demo_data.sql
+java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.reset=true
 ```
 
-演示数据规模（`tools/gen_demo_data.py` 生成，可调整后重新生成）：
+演示数据规模（`web-portal` 的 `DemoDataRunner` 内置常量，可调整后重新执行）：
 
 | 数据 | 规模 | 说明 |
 | --- | --- | --- |
@@ -300,28 +317,27 @@ mysql -u root -p --default-character-set=utf8mb4 < sql/studyroom_demo_data.sql
 
 | 端 | 账号 | 密码 | 用途 |
 | --- | --- | --- | --- |
-| 用户端 H5 | `demo001` | `123456` | 主演示账号：有「使用中」订单（可演示续期/签退）+ 7 天周卡待确认订单 + 次卡会员 |
-| 用户端 H5 | `demo002` / `demo003` 等 | `123456` | 多用户数据视角 |
+| 用户端 | `demo001` | `123456` | 主演示账号：有「使用中」订单（可演示续期/签退）+ 7 天周卡待确认订单 + 次卡会员 |
+| 用户端 | `demo002` / `demo003` 等 | `123456` | 多用户数据视角 |
 | 后台管理 | `admin` | `123456` | 管理员：订单审批/门店管理/数据看板 |
 
-> 用户端登录页已内置「演示账号一键填入」卡片。
+> 登录页底部标注了演示账号。
 
 ### 推荐演示动线
 
-1. **后台管理端（8080）**：登录 → 数据看板（今日订单/营收/预约/会员 + 近 7 日趋势）→ 订单管理（状态筛选，处理「签退待确认/续期待确认」）→ 门店管理（门店/座位/属性字典）→ 用户管理。
-2. **用户端 H5（8081）**：`demo001` 一键填入登录 → 首页找座位（城市/标签筛选）→ 门店详情（地图 + 座位列表）→ 座位详情下单（选时长/支付方式）→ 我的订单（签到 → 续期 → 提前签退）→ 到店体验预约 → 个人中心（会员卡/浏览历史/修改密码）。
+1. **管理员界面**：`admin` 登录（选「管理员登录」）→ 数据看板（今日订单/营收/预约/会员 + 近 7 日趋势）→ 订单管理（处理「签退待确认/续期待确认」）→ 门店管理 → 座位管理 → 属性管理 → 用户管理 → 系统账号/岗位。
+2. **用户界面**：`demo001` 登录（选「用户登录」）→ 首页找自习室（热门推荐）→ 门店详情 → 座位详情下单（选时段/支付方式/会员卡抵扣）→ 我的订单（签到 → 签退 / 申请提前签退）→ 体验预约 → 会员卡 → 浏览历史 → 个人中心（修改密码）。
 
 ### 演示前重置
 
 ```bash
-# 1. 重置演示数据（保留字典与后台账号，时间自动对齐当天）
-mysql -u root -p --default-character-set=utf8mb4 < sql/studyroom_demo_data.sql
-# 2. 重启后端（或不清 Redis 缓存也可，座位实时状态缺省为空闲）
+# 重置演示数据（保留字典与后台账号，时间自动对齐当天）
+java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.reset=true
 ```
 
-## 测试用例清单（阶段七联调校验）
+## 测试用例清单（阶段七联调校验，历史记录）
 
-> 说明：以下用例已在本机（MySQL 8 + 内置 Redis + 本地磁盘存储）以两端 jar 实跑通过；`mvn` 构建需 JDK 17+，Lombok 处理器配置见上文环境要求。
+> 说明：以下用例为早期前后端分离架构下以两端 jar 实跑通过的历史记录，保留备查；当前版本已改为统一门户（Thymeleaf），图形验证码、JWT、Node 构建等条目已不适用，核心业务链路（登录鉴权、下单、签到签退、会员卡、预约）在门户中对应完成。
 
 ### A. 后台管理全流程
 
@@ -376,7 +392,7 @@ mysql -u root -p --default-character-set=utf8mb4 < sql/studyroom_demo_data.sql
 2. **注释**：已统一清理 `@ClassName/@Description TODO/@Author` 模板注释为业务化说明；建议后续对新类沿用「一行说明」风格。
 3. **命名**：领域命名（自习室/座位/订单/预订时长）已在前序阶段全量对齐前后端与 DB；保持 VO/实体/列名一致。
 4. **可观测性**：关键校验（营业时间、时段冲突）与状态流转建议补充结构化日志，便于联调定位。
-5. **前端联调**：热门榜单接口已就绪，用户端首页可对接 `/app/store/getHotList`、`/app/seat/getHotList`。
+5. **热门榜单**：用户端首页已复用热门门店列表（Redis 缓存 1h）。
 
 ## 启动性能与联调修复记录（本轮）
 
@@ -406,4 +422,4 @@ mysql -u root -p --default-character-set=utf8mb4 < sql/studyroom_demo_data.sql
 
 ## 最终项目说明
 
-本系统已由原公寓租赁模板完整改造为「上岸自习室预订系统」，在**保留全部原始技术逻辑**（分页、状态流转、Redis 缓存、定时任务、参数校验、CRUD、前端布局与表单校验）的前提下，完成业务语义、字段、接口、文案与数据库的全量对齐，并扩展了自习室专属能力：时段冲突校验、签到/签退、座位实时状态、营业时间校验、会员卡体系，以及本阶段新增的首页热门门店 / 热门座位缓存、测试初始化数据与完整文档。项目可在使用 JDK 17 + Maven + MySQL + Redis 的环境下按「部署说明」构建运行。
+本系统已由原公寓租赁模板完整改造为「上岸自习室预订系统」，在**保留全部原始技术逻辑**（分页、状态流转、Redis 缓存、定时任务、参数校验、CRUD、前端布局与表单校验）的前提下，完成业务语义、字段、接口、文案与数据库的全量对齐，并扩展了自习室专属能力：时段冲突校验、签到/签退、座位实时状态、营业时间校验、会员卡体系，以及首页热门门店缓存、测试初始化数据与完整文档。当前版本进一步将全站收敛为 **纯 Java 服务端渲染单体应用**（Thymeleaf 统一门户，双端 Vue 前端已移除），涉及实现语言仅 Java 一种。项目可在使用 JDK 17 + Maven + MySQL + Redis 的环境下按「部署说明」构建运行。

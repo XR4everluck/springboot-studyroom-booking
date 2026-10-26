@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('体验预约 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('visit')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <h2 class="page-title">到店体验预约</h2>
+
+    <form class="filter-bar" method="get" th:action="@{/admin/visit}">
+        <label>联系人 <input type="text" name="name" th:value="${name}"></label>
+        <label>手机号 <input type="text" name="phone" th:value="${phone}"></label>
+        <label>状态
+            <select name="status">
+                <option value="">全部状态</option>
+                <option th:each="s : ${T(com.yourname.studyroom.model.enums.AppointmentStatus).values()}"
+                        th:value="${s.code}" th:text="${s.name}"
+                        th:selected="${status != null and status.code == s.code}"></option>
+            </select>
+        </label>
+        <button class="btn" type="submit">查询</button>
+        <a class="btn" th:href="@{/admin/visit}">重置</a>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>联系人</th><th>手机号</th><th>门店</th><th>预约时间</th><th>备注</th><th>状态</th><th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${page.records}">
+            <td th:text="${a.name}"></td>
+            <td th:text="${a.phone}"></td>
+            <td th:text="${a.studyStore != null ? a.studyStore.name : '-'}"></td>
+            <td th:text="${#dates.format(a.appointmentTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td th:text="${a.additionalInfo != null ? a.additionalInfo : '-'}"></td>
+            <td>
+                <span class="tag"
+                      th:classappend="${a.appointmentStatus.code} == 1 ? 'pending' : (${a.appointmentStatus.code} == 3 ? 'done' : 'off')"
+                      th:text="${a.appointmentStatus.name}"></span>
+            </td>
+            <td class="actions">
+                <form class="inline-form" th:if="${a.appointmentStatus.code} == 1"
+                      th:action="@{'/admin/visit/status/' + ${a.id}}" method="post">
+                    <input type="hidden" name="status" value="3">
+                    <button class="btn small primary" type="submit">确认已体验</button>
+                </form>
+                <form class="inline-form" th:if="${a.appointmentStatus.code} == 1"
+                      th:action="@{'/admin/visit/status/' + ${a.id}}" method="post">
+                    <input type="hidden" name="status" value="2">
+                    <button class="btn small" type="submit">标记取消</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${page.records.isEmpty()}">
+            <td colspan="7" class="empty">
+                <div class="empty-icon">📅</div>
+                没有符合条件的预约
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/admin/visit',
+        ${'&name=' + (name ?: '') + '&phone=' + (phone ?: '') + (status != null ? '&status=' + status.code : '')})}"></nav>
+</div>
+</body>
+</html>

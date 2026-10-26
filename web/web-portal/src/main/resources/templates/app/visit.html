@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('体验预约 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('visit')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <h2 class="page-title">到店体验预约</h2>
+
+    <form th:action="@{/app/visit/save}" method="post" class="form-card">
+        <div class="field-row">
+            <label class="field">
+                <span>选择门店 *</span>
+                <select name="storeId" required>
+                    <option value="">请选择门店</option>
+                    <option th:each="s : ${stores}" th:value="${s.id}" th:text="${s.name}"></option>
+                </select>
+            </label>
+            <label class="field">
+                <span>到店时间 *</span>
+                <input type="datetime-local" name="appointmentTime" required>
+            </label>
+        </div>
+        <label class="field">
+            <span>备注</span>
+            <input type="text" name="additionalInfo" maxlength="100" placeholder="想了解什么，选填">
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="btn primary">提交预约</button>
+        </div>
+    </form>
+
+    <h3 class="section-title">我的预约</h3>
+    <table class="table">
+        <thead>
+        <tr><th>门店</th><th>预约时间</th><th>状态</th><th>操作</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${appointments}">
+            <td th:text="${a.storeName}"></td>
+            <td th:text="${#dates.format(a.appointmentTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <span class="tag ok" th:if="${a.appointmentStatus.code} == 1" th:text="${a.appointmentStatus.name}"></span>
+                <span class="tag off" th:if="${a.appointmentStatus.code} == 2" th:text="${a.appointmentStatus.name}"></span>
+                <span class="tag" th:if="${a.appointmentStatus.code} == 3" th:text="${a.appointmentStatus.name}"></span>
+            </td>
+            <td class="actions">
+                <form class="inline-form" th:if="${a.appointmentStatus.code} == 1"
+                      th:action="@{'/app/visit/cancel/' + ${a.id}}" method="post">
+                    <button class="btn small danger" type="submit">取消预约</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(appointments)}">
+            <td colspan="4" class="empty">暂无预约记录</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

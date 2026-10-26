@@ -161,6 +161,20 @@ public class BookingOrderServiceImpl extends ServiceImpl<BookingOrderMapper, Boo
         return SeatRealtimeStatus.FREE;
     }
 
+    /**
+     * 管理端订单状态确认：更新状态并同步座位实时状态缓存（确认签退后座位释放为空闲）
+     */
+    @Override
+    public void confirmStatus(Long id, BookingStatus target) {
+        BookingOrder bookingOrder = bookingOrderMapper.selectById(id);
+        if (bookingOrder == null) {
+            throw new BookingException(ResultCodeEnum.BOOKING_ORDER_NOT_EXIST);
+        }
+        bookingOrder.setStatus(target);
+        this.updateById(bookingOrder);
+        updateSeatRealtimeStatus(bookingOrder.getSeatId(), toSeatRealtimeStatus(target));
+    }
+
     private void updateSeatRealtimeStatus(Long seatId, SeatRealtimeStatus status) {
         String key = RedisConstant.APP_SEAT_STATUS_PREFIX + seatId;
         redisTemplate.opsForValue().set(key, status.getCode(), RedisConstant.APP_SEAT_STATUS_TTL_SEC, TimeUnit.SECONDS);

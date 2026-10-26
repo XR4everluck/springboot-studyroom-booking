@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('登录 - 上岸自习室')}"></head>
+<body class="auth-page">
+<div class="auth-card">
+    <h1>上岸自习室</h1>
+    <p class="auth-sub">预订座位，专注上岸</p>
+
+    <div class="flash err" th:if="${error}" th:text="${error}">错误</div>
+    <div class="flash ok" th:if="${registered}">注册成功，请登录</div>
+
+    <form th:action="@{/login}" method="post" class="auth-form">
+        <div class="role-switch">
+            <label class="role">
+                <input type="radio" name="role" value="user" th:checked="${role == 'user'}">
+                <span>用户登录</span>
+            </label>
+            <label class="role">
+                <input type="radio" name="role" value="admin" th:checked="${role == 'admin'}">
+                <span>管理员登录</span>
+            </label>
+        </div>
+        <label class="field">
+            <span>账号</span>
+            <input type="text" name="username" required maxlength="20" placeholder="请输入账号"
+                   th:value="${username}" autofocus>
+        </label>
+        <label class="field">
+            <span>密码</span>
+            <input type="password" name="password" required maxlength="20" placeholder="请输入密码">
+        </label>
+        <button type="submit" class="btn primary block">登 录</button>
+    </form>
+
+    <p class="auth-tip">还没有账号？<a th:href="@{/register}">注册用户账号</a></p>
+    <p class="auth-tip dim">演示账号：用户 demo001 / 123456 · 管理员 admin / 123456</p>
+</div>
+</body>
+</html>

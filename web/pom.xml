@@ -16,6 +16,7 @@
     <modules>
         <module>web-admin</module>
         <module>web-app</module>
+        <module>web-portal</module>
     </modules>
 
     <properties>
@@ -58,13 +59,10 @@
         </dependency>
     </dependencies>
 
-    <!-- Spring Boot Maven插件，用于打包可执行的JAR文件 -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <!--
+      说明：子模块分工——
+        web-admin / web-app：纯业务库（Service/Mapper/VO），不含启动类、不打包静态资源；
+        web-portal：唯一可执行应用（Thymeleaf 服务端渲染），依赖上述两个业务库。
+      spring-boot-maven-plugin 仅在 web-portal 中声明，避免业务库被重打包成不可依赖的 fat jar。
+    -->
 </project>

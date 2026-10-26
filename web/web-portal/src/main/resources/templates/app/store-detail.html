@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${store.name} + ' - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('home')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title" th:text="${store.name}"></h2>
+        <a class="btn" th:href="@{/app/home}">返回列表</a>
+    </div>
+
+    <div class="cover cover-hero" th:text="${store.name.substring(0,1)}"></div>
+    <div class="form-card">
+        <p th:text="${store.introduction}"></p>
+        <table class="kv-table">
+            <tr><th>地址</th><td th:text="${store.provinceName} + ' ' + ${store.cityName} + ' ' + ${store.districtName} + ' ' + ${store.addressDetail}"></td></tr>
+            <tr><th>营业时间</th><td th:text="${store.businessHours}"></td></tr>
+            <tr><th>联系电话</th><td th:text="${store.phone}"></td></tr>
+            <tr><th>座位起价</th><td>¥ <span th:text="${store.minPrice}"></span> / 小时</td></tr>
+            <tr><th>标签</th><td>
+                <span class="tag ok" th:each="l : ${store.labelInfoList}" th:text="${l.name}"></span>
+                <span class="dim" th:if="${#lists.isEmpty(store.labelInfoList)}">-</span>
+            </td></tr>
+            <tr><th>设施</th><td>
+                <span class="tag" th:each="f : ${store.facilityInfoList}" th:text="${f.name}"></span>
+                <span class="dim" th:if="${#lists.isEmpty(store.facilityInfoList)}">-</span>
+            </td></tr>
+        </table>
+    </div>
+
+    <h3 class="section-title">选择座位</h3>
+    <div class="seat-grid">
+        <a class="seat-card" th:each="seat : ${page.records}" th:href="@{'/app/seat/' + ${seat.id}}">
+            <div class="seat-code" th:text="${seat.seatCode}"></div>
+            <div class="dim" th:text="'¥' + ${seat.price} + ' / 时 · 可预订'"></div>
+            <div class="store-meta">
+                <span class="price">¥<b th:text="${seat.price}"></b>/时</span>
+                <span class="tag ok">可预订</span>
+            </div>
+        </a>
+        <div class="empty" th:if="${page.records.isEmpty()}">该门店暂无座位</div>
+    </div>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/app/store/' + ${store.id}, '')}"></nav>
+</div>
+</body>
+</html>

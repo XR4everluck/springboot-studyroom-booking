@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('我的会员卡 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('card')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <h2 class="page-title">我的会员卡</h2>
+
+    <div class="card-grid">
+        <div class="member-card" th:each="c : ${cards}">
+            <div class="store-name" th:text="${c.cardType.name}"></div>
+            <div class="dim" th:text="${c.cardNo}"></div>
+            <div class="store-meta">
+                <span>剩余 <b th:text="${c.remainingQuantity}"></b> / <span th:text="${c.totalQuantity}"></span></span>
+                <span class="dim" th:if="${c.validUntil} != null"
+                      th:text="'有效期至 ' + ${#dates.format(c.validUntil, 'yyyy-MM-dd')}"></span>
+            </div>
+        </div>
+        <div class="empty" th:if="${#lists.isEmpty(cards)}">还没有会员卡，下方即可办理</div>
+    </div>
+
+    <h3 class="section-title">给已有卡充值</h3>
+    <form th:action="@{/app/card/recharge}" method="post" class="form-card">
+        <div class="field-row">
+            <label class="field">
+                <span>选择会员卡 *</span>
+                <select name="cardId" required>
+                    <option th:each="c : ${cards}" th:value="${c.id}"
+                            th:text="${c.cardType.name} + ' ' + ${c.cardNo} + '（余 ' + ${c.remainingQuantity} + '）'"></option>
+                    <option th:if="${#lists.isEmpty(cards)}" value="" disabled>暂无可充值的卡</option>
+                </select>
+            </label>
+            <label class="field">
+                <span>充值额度 *</span>
+                <input type="number" name="quantity" min="1" required placeholder="次数 / 小时数">
+            </label>
+            <label class="field">
+                <span>支付金额（元）*</span>
+                <input type="number" name="amount" step="0.01" min="0" required>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn primary">确认充值</button>
+        </div>
+    </form>
+
+    <h3 class="section-title">办理新卡</h3>
+    <form th:action="@{/app/card/recharge}" method="post" class="form-card">
+        <div class="field-row">
+            <label class="field">
+                <span>卡类型 *</span>
+                <select name="cardType" required>
+                    <option value="1">次卡（按次扣）</option>
+                    <option value="2">小时卡（按小时扣）</option>
+                    <option value="3">月卡（按天扣）</option>
+                </select>
+            </label>
+            <label class="field">
+                <span>限定门店</span>
+                <select name="storeId">
+                    <option value="">通用（不限定门店）</option>
+                    <option th:each="s : ${stores}" th:value="${s.id}" th:text="${s.name}"></option>
+                </select>
+            </label>
+            <label class="field">
+                <span>初始额度 *</span>
+                <input type="number" name="quantity" min="1" required>
+            </label>
+            <label class="field">
+                <span>支付金额（元）*</span>
+                <input type="number" name="amount" step="0.01" min="0" required>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn primary">办理新卡</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('报表中心 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('report')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title">报表中心</h2>
+        <a class="btn primary" th:href="@{/admin/report/export.csv(range=${range})}">导出订单流水 CSV</a>
+    </div>
+
+    <form class="filter-bar" method="get" th:action="@{/admin/report}">
+        <label>统计周期
+            <select name="range">
+                <option value="7" th:selected="${range} == 7">近 7 日</option>
+                <option value="30" th:selected="${range} == 30">近 30 日</option>
+                <option value="90" th:selected="${range} == 90">近 90 日</option>
+            </select>
+        </label>
+        <button class="btn" type="submit">切换</button>
+    </form>
+
+    <div class="stat-grid">
+        <div class="stat-card"><span class="stat-num" th:text="${totalOrders}">0</span><span>订单量</span></div>
+        <div class="stat-card"><span class="stat-num">¥ <span th:text="${totalRevenue}">0</span></span><span>总营收</span></div>
+        <div class="stat-card"><span class="stat-num">¥ <span th:text="${avgPrice}">0</span></span><span>平均客单价</span></div>
+        <div class="stat-card"><span class="stat-num" th:text="${totalAppointments}">0</span><span>体验预约</span></div>
+        <div class="stat-card">
+            <span class="stat-num" th:text="${member['cardCount']}">0</span>
+            <span>有效会员卡 · 累计充值 ¥<span th:text="${member['rechargeAmount']}"></span></span>
+        </div>
+        <div class="stat-card"><span class="stat-num" th:text="${member['userCount']}">0</span><span>注册用户</span></div>
+    </div>
+
+    <h3 class="section-title">门店营收排行</h3>
+    <div class="dist-grid">
+        <div class="dist-row" th:each="r : ${storeRank}">
+            <span class="dist-name" th:text="${r['storeName']}"></span>
+            <span class="dist-bar-wrap">
+                <span class="dist-bar" th:style="'width:' + ${r['percent']} + '%'"></span>
+            </span>
+            <span class="dist-count" th:text="'¥' + ${r['revenue']}"></span>
+            <span class="dim" th:text="${r['orderCount']} + ' 单'"></span>
+        </div>
+        <div class="empty" th:if="${#lists.isEmpty(storeRank)}">所选周期内暂无订单</div>
+    </div>
+
+    <h3 class="section-title">逐日明细</h3>
+    <table class="table">
+        <thead>
+        <tr><th>日期</th><th>订单量</th><th>营收</th><th>体验预约</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="line : ${dailyRows}">
+            <td th:text="${line['date']}"></td>
+            <td th:text="${line['orders']}"></td>
+            <td>¥ <span th:text="${line['revenue']}"></span></td>
+            <td th:text="${line['appointments']}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p class="auth-tip dim">导出的 CSV 采用 UTF-8（带 BOM），Excel 可直接打开；导出范围与当前统计周期一致。</p>
+</div>
+</body>
+</html>

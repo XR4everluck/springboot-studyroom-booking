@@ -9,7 +9,7 @@ import com.yourname.studyroom.model.entity.CardRechargeRecord;
 import com.yourname.studyroom.model.entity.MemberCard;
 import com.yourname.studyroom.model.enums.CardType;
 import com.yourname.studyroom.web.app.mapper.CardRechargeRecordMapper;
-import com.yourname.studyroom.web.app.mapper.MemberCardMapper;
+import com.yourname.studyroom.web.app.mapper.AppMemberCardMapper;
 import com.yourname.studyroom.web.app.service.MemberCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,13 +22,13 @@ import java.util.List;
  * 会员卡 Service 实现
  */
 @Service
-public class MemberCardServiceImpl extends ServiceImpl<MemberCardMapper, MemberCard>
+public class MemberCardServiceImpl extends ServiceImpl<AppMemberCardMapper, MemberCard>
         implements MemberCardService {
 
     private static final long ONE_DAY_MILLIS = 24L * 60 * 60 * 1000;
 
     @Autowired
-    MemberCardMapper memberCardMapper;
+    AppMemberCardMapper memberCardMapper;
 
     @Autowired
     CardRechargeRecordMapper cardRechargeRecordMapper;

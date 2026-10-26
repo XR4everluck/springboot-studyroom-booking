@@ -2,7 +2,7 @@ package com.yourname.studyroom.web.app.controller.bookingterm;
 
 import com.yourname.studyroom.common.result.Result;
 import com.yourname.studyroom.model.entity.BookingTerm;
-import com.yourname.studyroom.web.app.mapper.BookingTermMapper;
+import com.yourname.studyroom.web.app.mapper.AppBookingTermMapper;
 import com.yourname.studyroom.web.app.service.BookingTermService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

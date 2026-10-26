@@ -3,7 +3,7 @@ package com.yourname.studyroom.web.app.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yourname.studyroom.model.entity.StoreLabel;
 import com.yourname.studyroom.web.app.service.StoreLabelService;
-import com.yourname.studyroom.web.app.mapper.StoreLabelMapper;
+import com.yourname.studyroom.web.app.mapper.AppStoreLabelMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-07-26 11:12:39
 */
 @Service
-public class StoreLabelServiceImpl extends ServiceImpl<StoreLabelMapper, StoreLabel>
+public class StoreLabelServiceImpl extends ServiceImpl<AppStoreLabelMapper, StoreLabel>
     implements StoreLabelService{
 }

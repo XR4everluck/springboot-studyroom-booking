@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('运营台 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('ops')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container wide">
+    <div class="list-head">
+        <h2 class="page-title">运营台</h2>
+        <div class="view-switch">
+            <a th:href="@{/admin/ops(view='live')}" th:classappend="${!heatView} ? 'active' : ''">实时状态</a>
+            <a th:href="@{/admin/ops(view='heat')}" th:classappend="${heatView} ? 'active' : ''">热力分析</a>
+        </div>
+    </div>
+
+    <!-- 图例 -->
+    <div class="ops-legend" th:if="${!heatView}">
+        <span class="ops-cell mini st-free"><span>空闲</span></span>
+        <span class="ops-cell mini st-booked"><span>已预订</span></span>
+        <span class="ops-cell mini st-inuse"><span>使用中</span></span>
+        <span class="dim">数据来自 Redis 实时状态缓存，随用户端下单/签到/签退即时变化</span>
+    </div>
+    <div class="ops-legend" th:if="${heatView}">
+        <span class="ops-cell mini heat-0"><span>无订单</span></span>
+        <span class="ops-cell mini heat-1"><span>Ⅰ</span></span>
+        <span class="ops-cell mini heat-2"><span>Ⅱ</span></span>
+        <span class="ops-cell mini heat-3"><span>Ⅲ</span></span>
+        <span class="ops-cell mini heat-4"><span>Ⅳ</span></span>
+        <span class="ops-cell mini heat-5"><span>Ⅴ 最热</span></span>
+        <span class="dim">按门店内座位累计预订时长的相对档位着色（不含已取消订单）</span>
+    </div>
+
+    <div class="ops-store" th:each="os : ${storeOpsList}">
+        <div class="ops-head">
+            <b th:text="${os.store.name}"></b>
+            <span class="dim" th:if="${!heatView}"
+                  th:text="'空闲 ' + ${os.free} + ' · 已预订 ' + ${os.booked} + ' · 使用中 ' + ${os.inUse} + '（共 ' + ${#lists.size(os.seats)} + ' 座）'"></span>
+            <span class="dim" th:if="${heatView}"
+                  th:text="'累计 ' + ${os.totalOrders} + ' 单 · ' + ${os.totalHours} + ' 小时（共 ' + ${#lists.size(os.seats)} + ' 座）'"></span>
+        </div>
+        <div class="ops-grid">
+            <a class="ops-cell"
+               th:each="cell : ${os.seats}"
+               th:classappend="${heatView} ? ('heat-' + ${cell.heatTier}) : (${cell.realtime} == 3 ? 'st-inuse' : (${cell.realtime} == 2 ? 'st-booked' : 'st-free'))"
+               th:href="@{'/admin/seat/form/' + ${cell.seatId}}"
+               th:title="${heatView} ? (${cell.seatCode} + '：' + ${cell.orderCount} + ' 单 / 累计 ' + ${cell.totalHours} + ' 小时') : (${cell.seatCode} + '：' + (${cell.realtime} == 3 ? '使用中' : (${cell.realtime} == 2 ? '已预订' : '空闲')))">
+                <b th:text="${cell.seatCode}"></b>
+                <span th:if="${heatView}" th:text="${cell.totalHours} + 'h'"></span>
+                <span th:if="${!heatView}"
+                      th:text="${cell.realtime} == 3 ? '使用中' : (${cell.realtime} == 2 ? '已预订' : '空闲')"></span>
+            </a>
+        </div>
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(storeOpsList)}">暂无已发布门店</div>
+</div>
+</body>
+</html>

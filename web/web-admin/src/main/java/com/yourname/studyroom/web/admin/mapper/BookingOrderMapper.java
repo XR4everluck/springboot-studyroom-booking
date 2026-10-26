@@ -20,6 +20,11 @@ public interface BookingOrderMapper extends BaseMapper<BookingOrder> {
     IPage<OrderVo> pageOrderByQuery(IPage<OrderVo> page, OrderQueryVo queryVo);
 
     /**
+     * 座位使用热力统计：按座位聚合订单数与累计预订小时（不含已取消订单），供运营台热力视图使用
+     */
+    java.util.List<com.yourname.studyroom.web.admin.vo.seat.SeatUsageStatVo> selectSeatUsage();
+
+    /**
      * 统计同一座位在指定时段内的有效预订冲突数量
      *
      * @param seatId    座位id

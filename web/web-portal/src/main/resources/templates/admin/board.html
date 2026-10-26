@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>经营大屏 - 上岸自习室</title>
+    <link rel="stylesheet" th:href="@{/css/portal.css}">
+</head>
+<body class="board-page">
+<div class="board-head">
+    <h1>上岸自习室 · 经营大屏</h1>
+    <span class="board-live"></span>
+    <span class="board-date" th:text="${#dates.format(new java.util.Date(), 'yyyy年MM月dd日')}"></span>
+    <a class="board-back" th:href="@{/admin/index}">返回管理端</a>
+</div>
+
+<div class="board-grid">
+    <div class="board-tile">
+        <span class="board-label">今日营收</span>
+        <span class="board-num accent">¥ <span th:text="${todayRevenue}">0</span></span>
+    </div>
+    <div class="board-tile">
+        <span class="board-label">今日订单</span>
+        <span class="board-num" th:text="${todayOrders}">0</span>
+    </div>
+    <div class="board-tile">
+        <span class="board-label">正在自习</span>
+        <span class="board-num accent" th:text="${inUseCount}">0</span>
+    </div>
+    <div class="board-tile">
+        <span class="board-label">今日体验预约</span>
+        <span class="board-num" th:text="${todayAppointments}">0</span>
+    </div>
+    <div class="board-tile">
+        <span class="board-label">累计营收</span>
+        <span class="board-num">¥ <span th:text="${totalRevenue}">0</span></span>
+    </div>
+    <div class="board-tile">
+        <span class="board-label">累计订单</span>
+        <span class="board-num" th:text="${totalOrders}">0</span>
+    </div>
+    <div class="board-tile">
+        <span class="board-label">有效会员卡</span>
+        <span class="board-num" th:text="${memberCount}">0</span>
+    </div>
+    <div class="board-tile">
+        <span class="board-label">注册用户</span>
+        <span class="board-num" th:text="${userCount}">0</span>
+    </div>
+</div>
+
+<div class="board-row">
+    <div class="board-panel">
+        <h2>近 7 日订单趋势</h2>
+        <div class="board-trend">
+            <div class="board-trend-col" th:each="p : ${weekTrend}">
+                <div class="board-trend-bar" th:style="'height:' + (${p.percent} * 1.4 + 4) + 'px'"
+                     th:title="${p.orders} + ' 单 / ¥' + ${p.revenue}"></div>
+                <span th:text="${p['date']}"></span>
+                <b th:text="${p.orders} + '单'"></b>
+            </div>
+        </div>
+    </div>
+    <div class="board-panel">
+        <h2>热门门店 TOP5</h2>
+        <div class="board-hot">
+            <div class="board-hot-row" th:each="s, st : ${hotStores}">
+                <span class="board-rank" th:classappend="'top' + (${st.count})" th:text="${st.count}"></span>
+                <span class="board-hot-name" th:text="${s.name}"></span>
+                <span class="board-hot-price" th:text="'¥' + ${s.minPrice} + '/时起'"></span>
+            </div>
+            <div class="board-empty" th:if="${#lists.isEmpty(hotStores)}">暂无门店数据</div>
+        </div>
+    </div>
+</div>
+
+<p class="board-foot">上岸自习室预订系统 · 数据与报表中心同源 · <span th:text="${#dates.format(new java.util.Date(), 'HH:mm')}"></span> 更新</p>
+</body>
+</html>

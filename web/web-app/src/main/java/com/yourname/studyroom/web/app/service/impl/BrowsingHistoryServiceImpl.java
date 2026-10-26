@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yourname.studyroom.model.entity.BrowsingHistory;
-import com.yourname.studyroom.web.app.mapper.BrowsingHistoryMapper;
+import com.yourname.studyroom.web.app.mapper.AppBrowsingHistoryMapper;
 import com.yourname.studyroom.web.app.service.BrowsingHistoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yourname.studyroom.web.app.vo.history.HistoryItemVo;
@@ -21,11 +21,11 @@ import java.util.Date;
  * @createDate 2023-07-26 11:12:39
  */
 @Service
-public class BrowsingHistoryServiceImpl extends ServiceImpl<BrowsingHistoryMapper, BrowsingHistory>
+public class BrowsingHistoryServiceImpl extends ServiceImpl<AppBrowsingHistoryMapper, BrowsingHistory>
         implements BrowsingHistoryService {
 
     @Autowired
-    private BrowsingHistoryMapper browsingHistoryMapper;
+    private AppBrowsingHistoryMapper browsingHistoryMapper;
 
     @Override
     public IPage<HistoryItemVo> pageItemByUserId(Page<HistoryItemVo> page, Long userId) {

@@ -85,6 +85,9 @@
             <if test="queryVo.phone != null and queryVo.phone != ''">
                 and la.phone like concat('%',#{queryVo.phone},'%')
             </if>
+            <if test="queryVo.status != null">
+                and la.status = #{queryVo.status}
+            </if>
         </where>
     </select>
 
@@ -100,5 +103,19 @@
         <if test="excludeId != null">
             and bo.id != #{excludeId}
         </if>
+    </select>
+    <select id="selectSeatUsage" resultType="com.yourname.studyroom.web.admin.vo.seat.SeatUsageStatVo">
+        select bo.seat_id       seatId,
+               ri.seat_code     seatCode,
+               ri.store_id      storeId,
+               ai.name          storeName,
+               count(*)         orderCount,
+               ifnull(sum(timestampdiff(hour, bo.start_date, bo.end_date)), 0) totalHours
+        from booking_order bo
+        join seat ri on ri.id = bo.seat_id and ri.is_deleted = 0
+        join study_store ai on ai.id = ri.store_id and ai.is_deleted = 0
+        where bo.is_deleted = 0
+          and bo.status != 3
+        group by bo.seat_id, ri.seat_code, ri.store_id, ai.name
     </select>
 </mapper>

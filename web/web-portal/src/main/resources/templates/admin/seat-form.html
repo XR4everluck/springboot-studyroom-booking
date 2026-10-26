@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('座位编辑 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('seat')}"></nav>
+
+<div class="container narrow">
+    <h2 class="page-title" th:text="${seat.id} != null ? '编辑座位' : '新增座位'">座位编辑</h2>
+
+    <form th:action="@{/admin/seat/save}" method="post" class="form-card">
+        <input type="hidden" name="id" th:if="${seat.id} != null" th:value="${seat.id}">
+
+        <div class="field-row">
+            <label class="field">
+                <span>所属门店 *</span>
+                <select name="storeId" required>
+                    <option value="">请选择门店</option>
+                    <option th:each="s : ${stores}" th:value="${s.id}" th:text="${s.name}"
+                            th:selected="${seat.storeId != null and seat.storeId == s.id}"></option>
+                </select>
+            </label>
+            <label class="field">
+                <span>座位编号 *</span>
+                <input type="text" name="seatCode" required maxlength="20" th:value="${seat.seatCode}" placeholder="如 A-01">
+            </label>
+        </div>
+
+        <div class="field-row">
+            <label class="field">
+                <span>单价（元/小时）*</span>
+                <input type="number" name="price" step="0.01" min="0" required th:value="${seat.price}">
+            </label>
+            <label class="field">
+                <span>座位类型</span>
+                <input type="text" name="seatType" maxlength="20" th:value="${seat.seatType}" placeholder="如 普通座 / 包间">
+            </label>
+        </div>
+
+        <div class="field">
+            <span class="field-label">座位配置</span>
+            <div class="checks">
+                <label class="check"><input type="checkbox" name="hasPower" value="true" th:checked="${seat.hasPower}"><span>有电源</span></label>
+                <label class="check"><input type="checkbox" name="hasLight" value="true" th:checked="${seat.hasLight}"><span>有台灯</span></label>
+                <label class="check"><input type="checkbox" name="isQuiet" value="true" th:checked="${seat.isQuiet}"><span>静音区</span></label>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">座位标签</span>
+            <div class="checks">
+                <label class="check" th:each="l : ${labels}">
+                    <input type="checkbox" name="labelIds" th:value="${l.id}"
+                           th:checked="${labelIds.contains(l.id)}">
+                    <span th:text="${l.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">支持的支付方式</span>
+            <div class="checks">
+                <label class="check" th:each="p : ${paymentTypes}">
+                    <input type="checkbox" name="paymentTypeIds" th:value="${p.id}"
+                           th:checked="${paymentTypeIds.contains(p.id)}">
+                    <span th:text="${p.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">支持的预订时长</span>
+            <div class="checks">
+                <label class="check" th:each="t : ${bookingTerms}">
+                    <input type="checkbox" name="bookingTermIds" th:value="${t.id}"
+                           th:checked="${bookingTermIds.contains(t.id)}">
+                    <span th:text="${t.monthCount} + ${t.unit}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">座位设施</span>
+            <div class="checks">
+                <label class="check" th:each="f : ${facilities}">
+                    <input type="checkbox" name="facilityIds" th:value="${f.id}"
+                           th:checked="${facilityIds.contains(f.id)}">
+                    <span th:text="${f.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <span class="field-label">座位属性</span>
+            <div class="checks">
+                <label class="check" th:each="a : ${attrValues}">
+                    <input type="checkbox" name="attrValueIds" th:value="${a.id}"
+                           th:checked="${attrValueIds.contains(a.id)}">
+                    <span th:text="${a.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn primary">保 存</button>
+            <a class="btn" th:href="@{/admin/seat}">返 回</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -37,4 +37,21 @@ public interface BookingOrderService extends IService<BookingOrder> {
      * @param id 订单id
      */
     void checkOut(Long id);
+
+    /**
+     * 校验订单存在且属于当前登录用户，不满足时抛"订单不存在"（不暴露他人订单的存在性）
+     *
+     * @param userId 当前登录用户id
+     * @param id     订单id
+     * @return 校验通过的订单
+     */
+    BookingOrder getOwnedOrder(Long userId, Long id);
+
+    /**
+     * 申请提前签退：仅订单本人、仅"使用中"状态可发起，状态流转为"签退待确认"
+     *
+     * @param userId 当前登录用户id
+     * @param id     订单id
+     */
+    void requestEarlyCheckout(Long userId, Long id);
 }

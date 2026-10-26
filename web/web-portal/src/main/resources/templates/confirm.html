@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('确认操作 - 管理端')}"></head>
+<body class="auth-page">
+<div class="auth-card">
+    <h1 th:text="${confirmTitle}">确认操作</h1>
+    <p class="auth-sub">该操作不可恢复，请再次确认</p>
+
+    <div class="flash err" th:text="${confirmMessage}">确认信息</div>
+
+    <form th:action="${confirmAction}" method="post" class="auth-form">
+        <button type="submit" class="btn danger block" th:text="${confirmButtonText}">确认删除</button>
+    </form>
+
+    <p class="auth-tip"><a th:href="${cancelUrl}">取消，返回列表</a></p>
+</div>
+</body>
+</html>

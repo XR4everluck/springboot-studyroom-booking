@@ -3,7 +3,7 @@ package com.yourname.studyroom.web.app.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yourname.studyroom.model.entity.FeeValue;
 import com.yourname.studyroom.web.app.service.FeeValueService;
-import com.yourname.studyroom.web.app.mapper.FeeValueMapper;
+import com.yourname.studyroom.web.app.mapper.AppFeeValueMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-07-26 11:12:39
 */
 @Service
-public class FeeValueServiceImpl extends ServiceImpl<FeeValueMapper, FeeValue>
+public class FeeValueServiceImpl extends ServiceImpl<AppFeeValueMapper, FeeValue>
     implements FeeValueService{
 
 }

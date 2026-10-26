@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('用户管理 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('user')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <h2 class="page-title">用户管理</h2>
+
+    <form class="filter-bar" method="get" th:action="@{/admin/user}">
+        <label>手机号 <input type="text" name="phone" th:value="${phone}"></label>
+        <label>状态
+            <select name="status">
+                <option value="">全部</option>
+                <option value="1" th:selected="${status != null and status.code == 1}">正常</option>
+                <option value="0" th:selected="${status != null and status.code == 0}">停用</option>
+            </select>
+        </label>
+        <button class="btn" type="submit">查询</button>
+        <a class="btn" th:href="@{/admin/user}">重置</a>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr><th>ID</th><th>账号</th><th>昵称</th><th>手机号</th><th>注册时间</th><th>状态</th><th>操作</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${page.records}">
+            <td th:text="${u.id}"></td>
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.nickname}"></td>
+            <td th:text="${u.phone != null ? u.phone : '-'}"></td>
+            <td th:text="${#dates.format(u.createTime, 'yyyy-MM-dd')}"></td>
+            <td>
+                <span class="tag"
+                      th:classappend="${u.status.code} == 1 ? 'ok' : 'off'"
+                      th:text="${u.status.name}"></span>
+            </td>
+            <td class="actions">
+                <form class="inline-form" th:action="@{'/admin/user/status/' + ${u.id}}" method="post">
+                    <input type="hidden" name="enable" th:value="${u.status.code == 1 ? 'false' : 'true'}">
+                    <button class="btn small" th:classappend="${u.status.code == 1 ? 'danger' : 'primary'}"
+                            type="submit" th:text="${u.status.code == 1 ? '禁用' : '启用'}"></button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${page.records.isEmpty()}">
+            <td colspan="7" class="empty">
+                <div class="empty-icon">👥</div>
+                没有符合条件的用户
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/admin/user',
+        ${'&phone=' + (phone ?: '') + (status != null ? '&status=' + status.code : '')})}"></nav>
+</div>
+</body>
+</html>

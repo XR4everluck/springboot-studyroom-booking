@@ -1,9 +1,11 @@
 package com.yourname.studyroom.web.admin.service.impl;
 
 import com.yourname.studyroom.common.constant.RedisConstant;
+import com.yourname.studyroom.common.login.LoginUserType;
 import com.yourname.studyroom.common.exception.BookingException;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.JwtUtil;
+import com.yourname.studyroom.common.utils.PasswordUtil;
 import com.yourname.studyroom.model.entity.SystemUser;
 import com.yourname.studyroom.model.enums.BaseStatus;
 import com.yourname.studyroom.web.admin.mapper.SystemUserMapper;
@@ -65,11 +67,29 @@ public class LoginServiceImpl implements LoginService {
 
         // 只导入建表脚本而未导入初始化数据时，账号密码字段可能为空，此处按密码错误处理而不是抛空指针
         if (systemUser.getPassword() == null
-                || !systemUser.getPassword().equals(DigestUtils.md5Hex(loginVo.getPassword()))){
+                || !matchesAndUpgrade(systemUser, loginVo.getPassword())){
             throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
         }
 
-        return JwtUtil.createToken(systemUser.getId(),systemUser.getUsername());
+        return JwtUtil.createToken(systemUser.getId(), systemUser.getUsername(), LoginUserType.ADMIN);
+    }
+
+    /**
+     * 密码校验：优先 PBKDF2；存量 MD5 哈希校验通过后自动升级为 PBKDF2 落库
+     */
+    private boolean matchesAndUpgrade(SystemUser systemUser, String rawPassword) {
+        String stored = systemUser.getPassword();
+        if (stored.startsWith("pbkdf2$")) {
+            return PasswordUtil.matches(rawPassword, stored);
+        }
+        if (stored.equals(DigestUtils.md5Hex(rawPassword))) {
+            SystemUser upgrade = new SystemUser();
+            upgrade.setId(systemUser.getId());
+            upgrade.setPassword(PasswordUtil.encode(rawPassword));
+            systemUserMapper.updateById(upgrade);
+            return true;
+        }
+        return false;
     }
 
     @Override

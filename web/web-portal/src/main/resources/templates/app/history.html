@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('浏览历史 - 上岸自习室')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: appNav('history')}"></nav>
+
+<div class="container">
+    <h2 class="page-title">浏览历史</h2>
+
+    <table class="table">
+        <thead>
+        <tr><th>座位</th><th>门店</th><th>区域</th><th>单价</th><th>浏览时间</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="h : ${page.records}">
+            <td><a th:href="@{'/app/seat/' + ${h.seatId}}" th:text="${h.seatCode}"></a></td>
+            <td th:text="${h.storeName}"></td>
+            <td th:text="${h.cityName} + ' ' + ${h.districtName}"></td>
+            <td th:text="${h.price} != null ? '¥' + ${h.price} + '/时' : '-'"></td>
+            <td th:text="${#dates.format(h.browseTime, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        <tr th:if="${page.records.isEmpty()}">
+            <td colspan="5" class="empty">暂无浏览记录</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav th:replace="~{fragments/layout :: pager(${page}, '/app/history', '')}"></nav>
+</div>
+</body>
+</html>

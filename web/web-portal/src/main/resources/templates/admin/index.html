@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('数据看板 - 管理端')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: adminNav('index')}"></nav>
+<div th:replace="~{fragments/layout :: flash}"></div>
+
+<div class="container">
+    <div class="list-head">
+        <h2 class="page-title">数据看板</h2>
+        <a class="btn" th:href="@{/admin/board}" target="_blank">投屏演示大屏 ↗</a>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card"><span class="stat-num" th:text="${todayOrders}">0</span><span>今日新增订单</span></div>
+        <div class="stat-card"><span class="stat-num">¥ <span th:text="${todayRevenue}">0</span></span><span>今日营收</span></div>
+        <div class="stat-card"><span class="stat-num" th:text="${todayAppointments}">0</span><span>今日体验预约</span></div>
+        <div class="stat-card"><span class="stat-num" th:text="${memberCardCount}">0</span><span>有效会员卡</span></div>
+        <a class="stat-card warn stat-link" th:href="@{/admin/order}">
+            <span class="stat-num" th:text="${pendingOrders}">0</span><span>待处理订单 → 去处理</span>
+        </a>
+    </div>
+
+    <h3 class="section-title">订单状态分布 <span class="dim" th:text="'（共 ' + ${totalOrders} + ' 单，点击柱条查看明细）'"></span></h3>
+    <div class="dist-grid">
+        <a class="dist-row" th:each="d : ${distribution}" th:href="@{/admin/order(status=${d.status.code})}">
+            <span class="dist-name" th:text="${d.status.name}"></span>
+            <span class="dist-bar-wrap">
+                <span class="dist-bar" th:classappend="${d.status.code <= 4 ? 'muted' : ''}"
+                      th:style="'width:' + ${d.percent} + '%'"></span>
+            </span>
+            <span class="dist-count" th:text="${d.count}"></span>
+        </a>
+    </div>
+
+    <h3 class="section-title">近 7 日订单与营收趋势</h3>
+    <div class="trend">
+        <div class="trend-col" th:each="p : ${weekTrend}">
+            <div class="trend-bar-wrap">
+                <div class="trend-bar" th:style="'height:' + (${p.orderCount} > 5 ? 140 : ${p.orderCount * 24 + 4}) + 'px'"
+                     th:title="${p.orderCount} + ' 单 / ¥' + ${p.revenue}"></div>
+            </div>
+            <span class="trend-count" th:text="${p.orderCount} + ' 单'"></span>
+            <span class="trend-revenue" th:text="'¥' + ${p.revenue}"></span>
+            <span class="trend-date" th:text="${p.date}"></span>
+        </div>
+    </div>
+
+    <div class="dash-bottom">
+        <div class="dash-login">
+            <h3 class="section-title">最近管理员登录</h3>
+            <table class="table">
+                <thead><tr><th>时间</th><th>账号</th><th>结果</th><th>IP</th></tr></thead>
+                <tbody>
+                <tr th:each="l : ${recentLogins}">
+                    <td th:text="${l.time}"></td>
+                    <td th:text="${l.username}"></td>
+                    <td>
+                        <span class="tag" th:classappend="${l.result} == '成功' ? 'ok' : 'pending'"
+                              th:text="${l.result}"></span>
+                    </td>
+                    <td th:text="${l.ip}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentLogins)}">
+                    <td colspan="4" class="empty">暂无登录记录</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
