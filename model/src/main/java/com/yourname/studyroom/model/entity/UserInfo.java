@@ -27,6 +27,10 @@ public class UserInfo extends BaseEntity {
     @TableField(value = "password",select = false) //SQL中禁止查询password
     private String password;
 
+    @Schema(description = "是否需强制改密 0否 1是（管理员重置密码后置1，用户改密后清零）")
+    @TableField(value = "must_change_pwd")
+    private Integer mustChangePwd;
+
     @Schema(description = "头像url")
     @TableField(value = "avatar_url")
     private String avatarUrl;

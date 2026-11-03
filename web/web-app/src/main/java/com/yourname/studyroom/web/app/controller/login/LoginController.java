@@ -37,7 +37,7 @@ public class LoginController {
     /**
      * 注册接口
      *
-     * @param registerVo 注册信息对象，包含账号、密码、昵称与选填手机号
+     * @param registerVo 注册信息对象，包含账号与密码
      * @return 操作结果
      */
     @PostMapping("register")

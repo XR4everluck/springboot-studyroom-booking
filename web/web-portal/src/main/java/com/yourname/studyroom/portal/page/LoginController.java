@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 统一登录/注册/登出：
- * 同一个登录界面按所选角色分别校验后台管理账号（system_user）与用户端账号（user_info），
- * 登录成功后写入 Session 并按角色跳转对应界面；未登录访问任何业务页面都会被拦截回登录页。
+ * 登录无需选择角色，按账号自动识别归属端（后台管理账号 system_user 与用户端账号 user_info），
+ * 登录成功后写入 Session 并按账号归属跳转对应界面；未登录访问任何业务页面都会被拦截回登录页。
  */
 @Controller
 public class LoginController {
@@ -53,12 +53,10 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String loginPage(@RequestParam(defaultValue = "user") String role,
-                            @RequestParam(required = false) String error,
+    public String loginPage(@RequestParam(required = false) String error,
                             @RequestParam(required = false) String registered,
                             @RequestParam(required = false) String username,
                             Model model) {
-        model.addAttribute("role", "admin".equals(role) ? "admin" : "user");
         model.addAttribute("username", username == null ? "" : username);
         if ("auth".equals(error)) {
             model.addAttribute("error", "请先登录后再访问");
@@ -69,16 +67,20 @@ public class LoginController {
         return "login";
     }
 
+    /**
+     * 统一登录：无需选择角色，按账号自动识别归属端——
+     * 后台账号（system_user）走管理端校验并进入管理界面，
+     * 其余情况走用户端校验（含防枚举时间抹平）并进入用户界面。
+     */
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
-                        @RequestParam(defaultValue = "user") String role,
                         HttpSession session,
                         HttpServletRequest request,
                         RedirectAttributes ra) {
         try {
-            if ("admin".equals(role)) {
-                SystemUser systemUser = loginAsAdmin(username, password, request);
+            SystemUser systemUser = tryLoginAdmin(username, password, request);
+            if (systemUser != null) {
                 session.setAttribute(SessionUser.SESSION_KEY,
                         new SessionUser(systemUser.getId(), systemUser.getUsername(), LoginUserType.ADMIN));
                 recordAdminLogin(username, "成功", request);
@@ -89,12 +91,8 @@ public class LoginController {
                     new SessionUser(userInfo.getId(), userInfo.getUsername(), LoginUserType.APP));
             return "redirect:/app/home";
         } catch (BookingException e) {
-            // 错误提示走 flash；所选角色随 URL 回传，保证失败后页签停留在用户所选角色上
-            if ("admin".equals(role)) {
-                recordAdminLogin(username, "失败", request);
-            }
+            // 错误提示走 flash，保证失败后回到登录页仍可见
             ra.addFlashAttribute("error", e.getMessage());
-            ra.addAttribute("role", role);
             ra.addAttribute("username", username == null ? "" : username);
             return "redirect:/login";
         }
@@ -125,9 +123,11 @@ public class LoginController {
     }
 
     /**
-     * 后台管理账号校验：失败计数锁定（与用户端同机制）→ PBKDF2 优先，存量 MD5 哈希校验通过后自动升级
+     * 管理端账号尝试登录（自动识别入口）：
+     * 账号不存在返回 null，交由用户端校验兜底；密码错误记录失败计数与流水后同样返回 null；
+     * 账号被禁用或失败次数达到锁定阈值时直接抛出，不再回落用户端。
      */
-    private SystemUser loginAsAdmin(String username, String password, HttpServletRequest request) {
+    private SystemUser tryLoginAdmin(String username, String password, HttpServletRequest request) {
         String failKey = RedisConstant.ADMIN_LOGIN_FAIL_PREFIX + username;
         String count = redisTemplate.opsForValue().get(failKey);
         if (count != null && Long.parseLong(count) >= RedisConstant.ADMIN_LOGIN_FAIL_MAX) {
@@ -135,15 +135,14 @@ public class LoginController {
         }
         SystemUser systemUser = systemUserMapper.selectOneByUsername(username);
         if (systemUser == null) {
-            recordAdminFailure(failKey, username);
-            throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
+            return null;
         }
         if (systemUser.getStatus() == BaseStatus.DISABLE) {
             throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_DISABLED_ERROR);
         }
         String stored = systemUser.getPassword();
         boolean matched;
-        if (stored != null && stored.startsWith("pbkdf2$")) {
+        if (PasswordUtil.isHashFormat(stored)) {
             matched = PasswordUtil.matches(password, stored);
         } else {
             matched = stored != null && stored.equals(DigestUtils.md5Hex(password));
@@ -156,10 +155,11 @@ public class LoginController {
         }
         if (!matched) {
             long remain = recordAdminFailure(failKey, username);
+            recordAdminLogin(username, "失败", request);
             if (remain <= 0) {
                 throw new BookingException(ResultCodeEnum.APP_LOGIN_LOCKED);
             }
-            throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
+            return null;
         }
         redisTemplate.delete(failKey);
         return systemUser;

@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${title}">上岸自习室</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/logo.svg}">
     <link rel="stylesheet" th:href="@{/css/portal.css}">
 </head>
 <body>
 
 <!-- 管理端顶部导航 -->
 <nav th:fragment="adminNav(active)" class="topnav sidebar">
-    <a class="brand" th:href="@{/admin/index}">上岸自习室 · 管理端</a>
+    <a class="brand" th:href="@{/admin/index}"><img class="brand-logo" th:src="@{/logo.svg}" alt="">上岸自习室 · 管理端</a>
     <a th:href="@{/admin/index}" th:classappend="${active == 'index'} ? 'active' : ''">数据看板</a>
     <a th:href="@{/admin/store}" th:classappend="${active == 'store'} ? 'active' : ''">门店管理</a>
     <a th:href="@{/admin/seat}" th:classappend="${active == 'seat'} ? 'active' : ''">座位管理</a>
@@ -29,7 +30,7 @@
 
 <!-- 用户端顶部导航 -->
 <nav th:fragment="appNav(active)" class="topnav">
-    <a class="brand" th:href="@{/app/home}">上岸自习室</a>
+    <a class="brand" th:href="@{/app/home}"><img class="brand-logo" th:src="@{/logo.svg}" alt="">上岸自习室</a>
     <a th:href="@{/app/home}" th:classappend="${active == 'home'} ? 'active' : ''">找座自习</a>
     <a th:href="@{/app/orders}" th:classappend="${active == 'orders'} ? 'active' : ''">我的订单</a>
     <a th:href="@{/app/visit}" th:classappend="${active == 'visit'} ? 'active' : ''">体验预约</a>

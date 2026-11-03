@@ -15,4 +15,7 @@ public class UserInfoVo {
     @Schema(description = "用户头像")
     private String avatarUrl;
 
+    @Schema(description = "是否需强制修改密码 0否 1是（管理员重置密码后为1）")
+    private Integer mustChangePwd;
+
 }

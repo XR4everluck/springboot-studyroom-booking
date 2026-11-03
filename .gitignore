@@ -45,13 +45,15 @@ tools/redis/
 
 ### 编辑器/工具目录 ###
 .qoder/
+.mimosa/
+.workbuddy/
 dump.rdb
 uploads/
 
 ### 本地私有环境变量（密钥不入库，参考前端 .env.example） ###
 **/.env.local
 
-### 前端构建产物（vite build 后拷入 static 根，由 start-all.bat 重新生成）###
+### 前端构建产物（独立部署形态：vite build 后拷入各模块 static 根，由「一键启动.bat」重新生成；单端口形态构建产物在 web-uni 的 uni-static/，随库提交）###
 web/web-admin/src/main/resources/static/assets/
 web/web-admin/src/main/resources/static/index.html
 web/web-admin/src/main/resources/static/logo.png

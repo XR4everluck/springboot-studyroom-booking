@@ -1,5 +1,6 @@
 server:
-  port: 8080
+  # 增强管理端独立端口（8080 为管理端 Vue 应用、8081 为用户端 Vue 应用）
+  port: 8090
   compression:
     enabled: true
     mime-types: text/html,text/css,text/plain,application/json

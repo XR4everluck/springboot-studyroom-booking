@@ -13,7 +13,6 @@ import com.yourname.studyroom.web.app.vo.user.ChangePasswordVo;
 import com.yourname.studyroom.web.app.vo.user.LoginVo;
 import com.yourname.studyroom.web.app.vo.user.RegisterVo;
 import com.yourname.studyroom.web.app.vo.user.UserInfoVo;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -37,10 +36,9 @@ public class LoginServiceImpl implements LoginService {
 
     private static final String USERNAME_PATTERN = "^[a-zA-Z0-9_]{4,20}$";
     private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d).{8,20}$";
-    private static final String PHONE_PATTERN = "^1[3-9]\\d{9}$";
 
     /**
-     * 账号密码登录：失败计数锁定 → 密码校验（防枚举）→ 状态检查
+     * 账号密码登录：失败计数锁定 → 密码校验（防枚举）→ 状态检查 → 存量旧哈希渐进升级
      *
      * @param loginVo 登录信息对象，包含账号与密码
      * @return 登录成功后返回的JWT令牌
@@ -77,6 +75,14 @@ public class LoginServiceImpl implements LoginService {
             throw new BookingException(ResultCodeEnum.APP_ACCOUNT_DISABLED_ERROR);
         }
 
+        // 存量 PBKDF2 哈希在登录成功后用 BCrypt 重编码落库，渐进升级、存量用户无感知
+        if (PasswordUtil.needsRehash(userInfo.getPassword())) {
+            UserInfo upgrade = new UserInfo();
+            upgrade.setId(userInfo.getId());
+            upgrade.setPassword(PasswordUtil.encode(loginVo.getPassword()));
+            userInfoMapper.updateById(upgrade);
+        }
+
         redisTemplate.delete(failKey);
         // token 的 userName claim 沿用手机号，作为订单联系方式
         return JwtUtil.createToken(userInfo.getId(), userInfo.getPhone() == null ? "" : userInfo.getPhone(),
@@ -102,9 +108,10 @@ public class LoginServiceImpl implements LoginService {
     }
 
     /**
-     * 账号注册：与前端一致的校验规则，密码加盐哈希后存储
+     * 账号注册：与前端一致的校验规则，密码加盐哈希后存储；
+     * 昵称不再单独收集，未传时默认使用登录账号
      *
-     * @param registerVo 注册信息对象，包含账号、密码、昵称与选填手机号
+     * @param registerVo 注册信息对象，包含账号与密码
      */
     @Override
     public void register(RegisterVo registerVo) {
@@ -116,33 +123,24 @@ public class LoginServiceImpl implements LoginService {
             throw new BookingException(ResultCodeEnum.APP_REGISTER_PASSWORD_INVALID);
         }
         String nickname = trimToNull(registerVo.getNickname());
-        if (nickname == null || nickname.length() > 12) {
+        if (nickname != null && nickname.length() > 12) {
             throw new BookingException(ResultCodeEnum.APP_REGISTER_NICKNAME_INVALID);
-        }
-        String phone = trimToNull(registerVo.getPhone());
-        if (phone != null && !phone.matches(PHONE_PATTERN)) {
-            throw new BookingException(ResultCodeEnum.APP_REGISTER_PHONE_INVALID);
         }
 
         if (userInfoMapper.selectByUsername(username) != null) {
             throw new BookingException(ResultCodeEnum.APP_REGISTER_USERNAME_EXISTS);
         }
-        if (phone != null && userInfoMapper.selectCount(
-                new LambdaQueryWrapper<UserInfo>().eq(UserInfo::getPhone, phone)) > 0) {
-            throw new BookingException(ResultCodeEnum.APP_REGISTER_PHONE_EXISTS);
-        }
 
         UserInfo userInfo = new UserInfo();
         userInfo.setUsername(username);
         userInfo.setPassword(PasswordUtil.encode(registerVo.getPassword()));
-        userInfo.setNickname(nickname);
-        userInfo.setPhone(phone);
+        userInfo.setNickname(nickname == null ? username : nickname);
         userInfo.setStatus(BaseStatus.ENABLE);
         userInfoMapper.insert(userInfo);
     }
 
     /**
-     * 修改密码：校验原密码 → 校验新密码强度与一致性 → 落库（PBKDF2 加盐哈希）
+     * 修改密码：校验原密码 → 校验新密码强度与一致性 → 落库（BCrypt 加盐哈希）
      *
      * @param userId           当前登录用户ID
      * @param changePasswordVo 修改密码信息对象
@@ -179,7 +177,14 @@ public class LoginServiceImpl implements LoginService {
         UserInfo update = new UserInfo();
         update.setId(userId);
         update.setPassword(PasswordUtil.encode(newPassword));
+        // 自助改密同时清除管理员重置密码后的强制改密标记
+        update.setMustChangePwd(0);
         userInfoMapper.updateById(update);
+        // 记录改密时间，使改密前签发的令牌（含可能已泄露的令牌）立即失效
+        redisTemplate.opsForValue().set(
+                RedisConstant.APP_PASSWORD_CHANGED_PREFIX + userId,
+                String.valueOf(System.currentTimeMillis() / 1000),
+                RedisConstant.APP_PASSWORD_CHANGED_TTL_SEC, TimeUnit.SECONDS);
     }
 
     /**
@@ -191,7 +196,8 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public UserInfoVo getLogInUserById(Long userId) {
         UserInfo userInfo = userInfoMapper.selectById(userId);
-        UserInfoVo userInfoVo = new UserInfoVo(userInfo.getNickname(), userInfo.getAvatarUrl());
+        UserInfoVo userInfoVo = new UserInfoVo(userInfo.getNickname(), userInfo.getAvatarUrl(),
+                userInfo.getMustChangePwd() == null ? 0 : userInfo.getMustChangePwd());
         return userInfoVo;
     }
 

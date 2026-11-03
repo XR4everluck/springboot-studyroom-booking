@@ -1,8 +1,7 @@
 package com.yourname.studyroom.web.admin.service.impl;
 
-import com.yourname.studyroom.common.constant.RedisConstant;
-import com.yourname.studyroom.common.login.LoginUserType;
 import com.yourname.studyroom.common.exception.BookingException;
+import com.yourname.studyroom.common.login.LoginUserType;
 import com.yourname.studyroom.common.result.ResultCodeEnum;
 import com.yourname.studyroom.common.utils.JwtUtil;
 import com.yourname.studyroom.common.utils.PasswordUtil;
@@ -10,54 +9,25 @@ import com.yourname.studyroom.model.entity.SystemUser;
 import com.yourname.studyroom.model.enums.BaseStatus;
 import com.yourname.studyroom.web.admin.mapper.SystemUserMapper;
 import com.yourname.studyroom.web.admin.service.LoginService;
-import com.yourname.studyroom.web.admin.vo.login.CaptchaVo;
 import com.yourname.studyroom.web.admin.vo.login.LoginVo;
 import com.yourname.studyroom.web.admin.vo.system.user.SystemUserInfoVo;
-import com.wf.captcha.SpecCaptcha;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class LoginServiceImpl implements LoginService {
 
     @Autowired
-    StringRedisTemplate redisTemplate;
-
-    @Autowired
     SystemUserMapper systemUserMapper;
 
     @Override
-    public CaptchaVo getCaptcha() {
-        SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, 4);
-
-        String code = specCaptcha.text().toLowerCase();
-        String key = RedisConstant.ADMIN_LOGIN_PREFIX + UUID.randomUUID();
-
-        redisTemplate.opsForValue().set(key, code, RedisConstant.ADMIN_LOGIN_CAPTCHA_TTL_SEC, TimeUnit.SECONDS);
-        return new CaptchaVo(specCaptcha.toBase64(), key);
-    }
-
-    @Override
     public String login(LoginVo loginVo) {
-        if (loginVo.getCaptchaCode() == null) {
-            throw new BookingException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_NOT_FOUND);
-        }
-
-        String code = redisTemplate.opsForValue().get(loginVo.getCaptchaKey());
-        if (code == null) {
-            throw new BookingException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_EXPIRED);
-        }
-        if (!code.equals(loginVo.getCaptchaCode().toLowerCase())) {
-            throw new BookingException(ResultCodeEnum.ADMIN_CAPTCHA_CODE_ERROR);
-        }
-
         SystemUser systemUser = systemUserMapper.selectOneByUsername(loginVo.getUsername());
 
         if (systemUser == null) {
+            // 管理端无此账号：若凭证恰好匹配用户端账号，引导其到用户端登录
+            hintIfValidAppUser(loginVo.getUsername(), loginVo.getPassword());
             throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_NOT_EXIST_ERROR);
         }
 
@@ -68,6 +38,7 @@ public class LoginServiceImpl implements LoginService {
         // 只导入建表脚本而未导入初始化数据时，账号密码字段可能为空，此处按密码错误处理而不是抛空指针
         if (systemUser.getPassword() == null
                 || !matchesAndUpgrade(systemUser, loginVo.getPassword())){
+            hintIfValidAppUser(loginVo.getUsername(), loginVo.getPassword());
             throw new BookingException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
         }
 
@@ -75,11 +46,22 @@ public class LoginServiceImpl implements LoginService {
     }
 
     /**
-     * 密码校验：优先 PBKDF2；存量 MD5 哈希校验通过后自动升级为 PBKDF2 落库
+     * 账号不存在或密码错误时，若该账号实为用户端账号（user_info）且密码正确，
+     * 抛出专用提示引导用户前往用户端登录；仅在凭证完全正确时提示，不泄露账号归属
+     */
+    private void hintIfValidAppUser(String username, String rawPassword) {
+        String storedHash = systemUserMapper.selectAppUserPasswordByUsername(username);
+        if (storedHash != null && PasswordUtil.matches(rawPassword, storedHash)) {
+            throw new BookingException(ResultCodeEnum.ADMIN_LOGIN_IS_APP_USER);
+        }
+    }
+
+    /**
+     * 密码校验：BCrypt/PBKDF2 哈希优先；存量 MD5 哈希校验通过后自动升级为 BCrypt 落库
      */
     private boolean matchesAndUpgrade(SystemUser systemUser, String rawPassword) {
         String stored = systemUser.getPassword();
-        if (stored.startsWith("pbkdf2$")) {
+        if (PasswordUtil.isHashFormat(stored)) {
             return PasswordUtil.matches(rawPassword, stored);
         }
         if (stored.equals(DigestUtils.md5Hex(rawPassword))) {

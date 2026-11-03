@@ -1,0 +1,164 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 左侧品牌展示区：深绿品牌底 + logo + 功能亮点 */
+.login-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 44%;
+  min-width: 420px;
+  padding: 0 5vw;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(155deg, #35854e 0%, #2a6b3e 55%, #215530 100%);
+
+  .brand-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 76px;
+    margin-bottom: 24px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  .brand-name {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 2px;
+  }
+
+  .brand-slogan {
+    margin-top: 10px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .brand-features {
+    margin: 40px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.88);
+
+    li {
+      position: relative;
+      padding-left: 18px;
+      line-height: 2.4;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        transform: translateY(-50%);
+      }
+    }
+  }
+
+  .brand-blob {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+
+    &--1 {
+      width: 340px;
+      height: 340px;
+      top: -140px;
+      right: -120px;
+    }
+
+    &--2 {
+      width: 260px;
+      height: 260px;
+      bottom: -120px;
+      left: -100px;
+    }
+  }
+}
+
+/* 右侧表单区 */
+.login-panel {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #f6faf7;
+}
+
+.login-box {
+  width: 380px;
+  max-width: 100%;
+}
+
+.form-header {
+  margin-bottom: 28px;
+
+  .title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #1f2d26;
+  }
+
+  .title-tips {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #86909c;
+  }
+}
+
+.login-form {
+  .login-btn {
+    width: 100%;
+    height: 44px;
+    margin-top: 4px;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  .form-demo {
+    font-size: 12px;
+    color: #a1a7ae;
+    text-align: center;
+  }
+}
+
+/* 窄屏折叠为居中单卡 */
+@media (max-width: 900px) {
+  .login-brand {
+    display: none;
+  }
+
+  .login-panel {
+    background: linear-gradient(160deg, #e8f3ee 0%, #f4f9f6 60%, #eef4f1 100%);
+  }
+
+  .login-box {
+    box-sizing: border-box;
+    padding: 36px 32px 28px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(24, 34, 28, 0.08);
+  }
+}

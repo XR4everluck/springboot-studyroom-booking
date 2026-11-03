@@ -16,6 +16,7 @@
     <modules>
         <module>web-admin</module>
         <module>web-app</module>
+        <module>web-uni</module>
         <module>web-portal</module>
     </modules>
 
@@ -61,8 +62,17 @@
 
     <!--
       说明：子模块分工——
-        web-admin / web-app：纯业务库（Service/Mapper/VO），不含启动类、不打包静态资源；
-        web-portal：唯一可执行应用（Thymeleaf 服务端渲染），依赖上述两个业务库。
-      spring-boot-maven-plugin 仅在 web-portal 中声明，避免业务库被重打包成不可依赖的 fat jar。
+        web-admin：管理端应用（内嵌 studyroomAdmin Vue 构建产物 + /admin REST + JWT），端口 8080；
+        web-app：用户端应用（内嵌 studyroomH5 Vue 构建产物 + /app REST + JWT），端口 8081；
+        web-portal：增强管理端（Thymeleaf 服务端渲染：统一登录/运营台/报表/大屏），端口 8090，可选运行。
+      三个模块均为可执行应用，spring-boot-maven-plugin 对全部子模块生效。
     -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

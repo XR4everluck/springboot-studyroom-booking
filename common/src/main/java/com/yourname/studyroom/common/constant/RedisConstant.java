@@ -4,8 +4,6 @@ package com.yourname.studyroom.common.constant;
  * Redis 缓存 key 前缀与过期时间常量
  */
 public class RedisConstant {
-    public static final String ADMIN_LOGIN_PREFIX = "admin:login:";
-    public static final Integer ADMIN_LOGIN_CAPTCHA_TTL_SEC = 60;
     /** 管理端登录失败计数 key 前缀（值为累计失败次数），与 C 端防爆破同机制 */
     public static final String ADMIN_LOGIN_FAIL_PREFIX = "admin:login:fail:";
     /** 管理端登录失败次数上限，达到后锁定 */
@@ -22,6 +20,10 @@ public class RedisConstant {
     public static final Integer APP_LOGIN_FAIL_MAX = 5;
     /** C 端登录失败计数过期时间（秒），10 分钟 */
     public static final Integer APP_LOGIN_FAIL_TTL_SEC = 60 * 10;
+    /** C 端密码最近变更时间 key 前缀（值为秒级时间戳），用于让改密前签发的令牌立即失效 */
+    public static final String APP_PASSWORD_CHANGED_PREFIX = "app:password:changed:";
+    /** 密码变更标记过期时间（秒），与令牌有效期一致，7 天 */
+    public static final Integer APP_PASSWORD_CHANGED_TTL_SEC = 60 * 60 * 24 * 7;
     public static final String APP_SEAT_PREFIX = "app:seat:";
     /** 座位实时状态缓存前缀，值为 SeatRealtimeStatus 的 code */
     public static final String APP_SEAT_STATUS_PREFIX = "app:seat:status:";

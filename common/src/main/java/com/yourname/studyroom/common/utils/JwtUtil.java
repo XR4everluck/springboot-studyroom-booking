@@ -50,6 +50,8 @@ public class JwtUtil {
     public static String createToken(Long userId, String userName, LoginUserType userType) {
         return Jwts.builder().
                 setExpiration(new Date(System.currentTimeMillis() + TOKEN_TTL_MILLIS)).
+                // 记录签发时间，供「改密后旧令牌立即失效」比对
+                setIssuedAt(new Date()).
                 setSubject("USER_INFO").
                 claim("userId", userId).
                 claim("userName", userName).

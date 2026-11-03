@@ -12,10 +12,4 @@ public class LoginVo {
 
     @Schema(description="密码")
     private String password;
-
-    @Schema(description="验证码key")
-    private String captchaKey;
-
-    @Schema(description="验证码code")
-    private String captchaCode;
 }

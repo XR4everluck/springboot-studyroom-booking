@@ -6,7 +6,6 @@ import com.yourname.studyroom.common.login.LoginUserHolder;
 import com.yourname.studyroom.common.result.Result;
 import com.yourname.studyroom.common.utils.JwtUtil;
 import com.yourname.studyroom.web.admin.service.LoginService;
-import com.yourname.studyroom.web.admin.vo.login.CaptchaVo;
 import com.yourname.studyroom.web.admin.vo.login.LoginVo;
 import com.yourname.studyroom.web.admin.vo.system.user.SystemUserInfoVo;
 import io.jsonwebtoken.Claims;
@@ -22,18 +21,6 @@ public class LoginController {
 
     @Autowired
     LoginService loginService;
-
-    /**
-     * 获取图形验证码
-     *
-     * @return 包含图形验证码信息的Result对象
-     */
-    @Operation(summary = "获取图形验证码")
-    @GetMapping("login/captcha")
-    public Result<CaptchaVo> getCaptcha() {
-        CaptchaVo result = loginService.getCaptcha();
-        return Result.ok(result);
-    }
 
     /**
      * 登录接口

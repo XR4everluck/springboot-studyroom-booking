@@ -3,6 +3,7 @@
 <head th:replace="~{fragments/layout :: head('注册 - 上岸自习室')}"></head>
 <body class="auth-page">
 <div class="auth-card">
+    <img class="auth-logo" th:src="@{/logo.svg}" alt="logo">
     <h1>注册用户账号</h1>
 
     <div class="flash err" th:if="${error}" th:text="${error}">错误</div>
@@ -16,16 +17,6 @@
         <label class="field">
             <span>密码</span>
             <input type="password" name="password" required maxlength="20" placeholder="8-20位，且同时包含字母和数字">
-        </label>
-        <label class="field">
-            <span>昵称</span>
-            <input type="text" name="nickname" required maxlength="12" placeholder="1-12个字符"
-                   th:value="${form != null} ? ${form.nickname} : ''">
-        </label>
-        <label class="field">
-            <span>手机号（选填，作为订单联系方式）</span>
-            <input type="text" name="phone" maxlength="11" placeholder="11位手机号"
-                   th:value="${form != null} ? ${form.phone} : ''">
         </label>
         <button type="submit" class="btn primary block">注 册</button>
     </form>

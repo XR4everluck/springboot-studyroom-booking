@@ -4,12 +4,14 @@
 
 ### 业务概述
 
-上岸自习室预订系统是一个自习室门店预订平台项目。系统为**单一 Java Web 应用（统一门户）**：启动后首先进入统一登录界面，用户登录后按角色进入对应界面——
+上岸自习室预订系统是一个自习室门店预订平台项目，采用**前后端分离（单端口聚合）+ 增强门户**形态。默认只需运行一个 Spring Boot 应用（8080）：
 
-- **用户端**：自习室门店检索、热门推荐、座位预订（支持会员卡抵扣）、签到/签退/提前签退、到店体验预约、会员卡充值办卡、浏览历史、个人中心；
-- **管理端**：数据看板、门店管理、座位管理、属性管理、订单管理（预订确认/续期确认/提前签退审批）、体验预约管理、用户管理、系统账号与岗位管理。
+- **统一入口（`/`）**：入口页，按身份选择进入管理端或用户端；
+- **管理端（`/console/`）**：数据看板、门店/座位/属性管理、订单管理（预订确认/续期确认/提前签退审批）、体验预约管理、用户管理、系统账号与岗位管理；账号密码 + JWT 登录（REST 前缀 `/admin`）；
+- **用户端（`/h5/`）**：门店检索、热门推荐、座位预订（会员卡抵扣）、签到/签退/提前签退、体验预约、会员卡、浏览历史、个人中心；自助注册 + 账号密码 + JWT 登录（REST 前缀 `/app`）；
+- **增强管理端门户（8090，可选运行）**：Thymeleaf 服务端渲染的补充管理端——统一登录、运营台（座位实时状态/热力分析）、报表中心（CSV 导出）、经营大屏投屏页。
 
-未登录时访问任何业务页面都会被重定向回登录页，不存在可直达的角色界面。
+未登录时访问任何业务页面/接口都会被拦截（Vue 路由守卫 + JWT 接口拦截；门户为会话拦截），不存在可直达的角色界面。
 
 ### 用户端（桌面浏览器 Web）
 
@@ -85,9 +87,15 @@
 
 ## 项目技术概述
 
-项目采用 **纯 Java 服务端渲染**（Thymeleaf）架构，全站无任何 JavaScript 与独立前端工程，涉及的全部实现语言仅 Java 一种（SQL 脚本仅用于建库，bat 仅用于一键启动）。各层技术如下：
+项目采用**前后端分离（单端口聚合）+ 增强门户**形态。各层技术如下：
 
-- **Web 层**
+- **前端（双端 Vue 应用）**
+
+  - 管理端：Vue 3 + TypeScript + Vite + Element Plus + ECharts + Pinia + 高德地图
+
+  - 用户端：Vue 3 + Vite + Vant 4 + Tailwind（桌面浏览器 Web 布局）
+
+- **门户（增强管理端，可选）**
 
   - 模板引擎：Thymeleaf（服务端渲染，纯 HTML + CSS，无脚本）
 
@@ -111,9 +119,10 @@
 
     > **文件存储**用于保存门店/座位图片等非结构化数据。本项目以本地磁盘目录替代对象存储，省去额外部署依赖。
 
-- **认证**：HttpSession 会话认证（`PageAuthInterceptor` 拦截 `/admin/**`、`/app/**`，未登录一律重定向统一登录页，角色不符则拒绝进入对应界面）
+- **认证**：双应用为 Vue 路由守卫 + JWT 接口拦截（`access-token` 请求头，管理端/用户端令牌分型互不通用）；门户为 HttpSession 会话拦截（未登录一律重定向登录页）
+- **统一登录体验**：三端登录均无需手动选择身份——门户 `/login` 单表单按账号自动识别归属端并跳转对应界面；管理端输入用户端账号（凭证校验通过）返回 `311` 提示并弹窗引导一键跳转用户端
 
-- **部署**：单一 Spring Boot jar（8080 端口），`一键启动.bat` 一键拉起 MySQL/Redis/应用
+- **部署**：默认仅运行单端口统一应用 jar（8080，内嵌 `/console` 与 `/h5` 两套前端构建产物与 `/admin`、`/app` 两套 REST）；`一键启动.bat` 一键拉起 MySQL/Redis/应用（门户默认不启动，加 `portal` 参数）
 
 ## 模块结构
 
@@ -122,19 +131,21 @@ studyroom-booking                     父工程（聚合模块）
 ├── common        公共模块：常量、异常、登录、本地磁盘文件存储、MyBatis-Plus、Redis、工具类
 ├── model         实体模型模块：entity、enums
 └── web           Web 聚合模块
-    ├── web-admin   后台业务库（订单/门店/座位/系统管理 Service、Mapper、VO，不可独立运行）
-    ├── web-app     用户端业务库（下单/会员卡/预约/历史 Service、Mapper、VO，不可独立运行）
-    └── web-portal  统一门户（唯一可执行模块）：登录页、管理员界面、用户界面（Thymeleaf）
+    ├── web-admin   后台业务库（订单/门店/座位/系统管理 Controller/Service/Mapper/拦截器；主 jar 供聚合依赖）
+    ├── web-app     用户端业务库（下单/会员卡/预约/历史 Controller/Service/Mapper/拦截器；主 jar 供聚合依赖）
+    ├── web-uni     单端口统一应用（8080：/ 入口页 + /console 管理端前端 + /h5 用户端前端 + 两套 REST）
+    └── web-portal  增强管理端门户（Thymeleaf：统一登录/运营台/报表/大屏，8090，可选）
 ```
 
-> 两个业务库的历史 REST 控制器与 JWT 拦截器已不再被门户组件扫描加载，仅业务 Service/Mapper 被复用；`web-portal` 的 `PortalApplication` 以全限定类名作为 Bean 名装配两库组件，避免同名类冲突。
+> 门户的 `PortalApplication` 以全限定类名作为 Bean 名装配两库组件并排除两库的 REST 控制器与 JWT 拦截器，避免同名类与多套认证冲突；app 侧 Mapper 带 `App` 前缀。
+> 单端口统一应用的 `StudyroomUniApplication` 同样以全限定类名作 Bean 名装配两库**全部**组件（含两套 REST 控制器与 JWT 拦截器，两套拦截器分别限定 `/admin/**`、`/app/**`），仅排除两库旧启动类与各自 Knife4j 配置（文档分组合并为 `web.uni.config.Knife4jConfiguration`）。
 
 ## 技术坐标
 
 - groupId：`com.yourname.studyroom`
 - artifactId：`studyroom-booking`
 - 数据库：`studyroom_booking`
-- 启动类：`PortalApplication`（`web-portal`，唯一入口，端口 8080）
+- 启动类：`StudyroomUniApplication`（8080，默认入口）、`StudyroomAdminApplication`（8080，可选独立）、`StudyroomAppApplication`（8081，可选独立）、`PortalApplication`（8090，可选）
 
 ## 缓存设计
 
@@ -142,7 +153,6 @@ studyroom-booking                     父工程（聚合模块）
 
 | 缓存项 | Key 前缀 / 常量 | 值 | 过期时间 |
 | --- | --- | --- | --- |
-| 后台登录验证码 | `admin:login:` + UUID | 图形验证码文本 | `ADMIN_LOGIN_CAPTCHA_TTL_SEC` = 60s |
 | 用户端登录失败计数 | `app:login:fail:` + username | 累计失败次数 | 5 次锁定 10 分钟（`APP_LOGIN_FAIL_*`） |
 | 座位详情 | `app:seat:` + seatId | `SeatDetailVo` | 常驻（命中后回填实时状态） |
 | 座位实时状态 | `app:seat:status:` + seatId | `SeatRealtimeStatus.code`（1空闲/2已预订/3使用中） | `APP_SEAT_STATUS_TTL_SEC` = 1 天 |
@@ -179,18 +189,18 @@ studyroom-booking                     父工程（聚合模块）
 
 ### 系统与用户表
 
-`system_post`（岗位）、`system_user`（后台账号，密码 `md5Hex` 存储，唯一 `username`）、`user_info`（C 端用户，账号密码登录，PBKDF2 加盐哈希存储；手机号选填作订单联系方式）。
+`system_post`（岗位）、`system_user`（后台账号，密码 BCrypt 加盐哈希存储，唯一 `username`）、`user_info`（C 端用户，账号密码登录，BCrypt 加盐哈希存储；手机号选填作订单联系方式）。存量 PBKDF2/MD5 密文由后端兼容校验，登录成功后自动升级为 BCrypt。
 
 ## 页面清单
 
-全站为 Thymeleaf 服务端渲染页面，入口统一为 `http://<host>:8080/login`。
+以下为**增强管理端门户（8090）**的 Thymeleaf 页面清单；管理端/用户端的 Vue 页面见各自工程（单端口部署时入口分别为 `http://<host>:8080/console/` 与 `http://<host>:8080/h5/`）。
 
 ### 公共页面
 
 | 页面 | 路径 | 说明 |
 | --- | --- | --- |
-| 统一登录 | `/login` | 单选「用户登录 / 管理员登录」，登录后按角色跳转对应界面 |
-| 用户注册 | `/register` | 自助注册用户端账号，注册成功自动回到登录页 |
+| 统一登录 | `/login` | 单表单自动识别账号类型（后台账号/用户端账号），登录后按归属跳转对应界面 |
+| 用户注册 | `/register` | 自助注册用户端账号（账号/密码，昵称默认取登录账号），注册成功自动登录并进入首页 |
 
 ### 管理员界面（登录后 `/admin/...`，仅管理员角色可访问）
 
@@ -206,7 +216,7 @@ studyroom-booking                     父工程（聚合模块）
 | 订单管理 | `/admin/order`、`/admin/order/{id}` | 分页筛选、详情、确认预订/续期/签退、代签到签退、取消 |
 | 体验预约 | `/admin/visit` | 分页筛选、确认已体验、标记取消 |
 | 用户管理 | `/admin/user` | C 端用户分页、启用/禁用 |
-| 系统账号 | `/admin/sysuser` | 后台管理员增删改、重置密码（PBKDF2） |
+| 系统账号 | `/admin/sysuser` | 后台管理员增删改、重置密码（BCrypt） |
 | 岗位管理 | `/admin/post` | 岗位增删改 |
 
 ### 用户界面（登录后 `/app/...`，仅用户角色可访问）
@@ -258,11 +268,15 @@ studyroom-booking                     父工程（聚合模块）
 ### 一键启动（Windows）
 
 ```bat
-一键启动.bat            检查 MySQL / 内置 Redis / 数据库，按需构建 jar，启动统一门户并打开浏览器
-一键启动.bat build      先执行 mvn clean package -DskipTests 再启动
+一键启动.bat              检查 MySQL / 内置 Redis / 数据库，按需构建 jar，启动单端口统一应用(8080)，打开管理端与用户端页面
+一键启动.bat h5|console   同上，浏览器只打开用户端或管理端页面
+一键启动.bat restart      先停止应用（保留 Redis）再启动
+一键启动.bat build        先执行 mvn clean package -DskipTests 再启动
+一键启动.bat portal       额外启动增强管理端门户（8090）
+stop.bat                  停止统一应用(8080)与门户(8090，若在运行)及项目内置 Redis；stop.bat app 保留 Redis
 ```
 
-- 启动后自动打开 `http://localhost:8080/login` 统一登录页；停止应用直接关闭该 java 命令行窗口，或按 Ctrl+C。
+- 启动后自动打开两个页面：管理端 `http://localhost:8080/console/` 与用户端 `http://localhost:8080/h5/`（浏览器延迟到接口就绪后再打开；若端口已被占用则视为应用已在运行，跳过启动、仅打开页面）；统一入口 `/` 与接口文档 `/doc.html`；停止用 `stop.bat`。
 - 脚本假定本机 MySQL 服务名为 `MySQL`、账号 `root/1234`，可在脚本头部改 `MYSQL_USER / MYSQL_PWD` 等变量；数据库 `studyroom_booking` 不存在时会询问是否导入 `sql` 目录脚本。
 - Redis 使用项目内置免安装版 `tools\redis\redis-server.exe`（该目录不入库，需自行放置，或改用系统 Redis 服务）。
 - 脚本以 GBK(cp936) 保存，请勿另存为 UTF-8，否则 `cmd` 逐行解析中文会错位。
@@ -274,20 +288,25 @@ studyroom-booking                     父工程（聚合模块）
    mysql -u root -p < sql/studyroom_booking.sql     # 建表 + 字典 + 公共初始化
    mysql -u root -p < sql/studyroom_init_data.sql   # 测试门店/座位/关联/账号/浏览数据
    ```
-2. 构建并运行（端口 8080，浏览器打开 `http://localhost:8080/login`）：
+2. 构建并运行（默认单端口统一应用）：
    ```bash
    mvn clean package -DskipTests
-   java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar
+   java -jar web/web-uni/target/studyroom-web-uni-1.0-SNAPSHOT.jar            # 统一应用 8080（/ 入口页 + /console + /h5）
+   # 可选：按旧形态单独运行某一端
+   java -jar web/web-admin/target/studyroom-web-admin-1.0-SNAPSHOT-exec.jar   # 仅管理端 8080
+   java -jar web/web-app/target/studyroom-web-app-1.0-SNAPSHOT-exec.jar       # 仅用户端 8081
+   java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar      # 增强门户 8090（可选）
    ```
-3. 可选：启动时灌入完整演示数据（覆盖业务表，日期自动对齐当天）：
+3. 前端构建（改动 Vue 后或首次使用）：在 `studyroomAdmin` / `studyroomH5` 目录 `npm install && npm run build`，把 `dist` 内容分别拷入 `web/web-uni/src/main/resources/uni-static/console/`、`uni-static/h5/` 后重新打包统一应用（两个工程的 vite `base` 已分别设为 `/console/`、`/h5/`，产物资源路径自带前缀；改回独立部署时把对应 base 恢复为 `/` 重新构建拷入各自模块 static 根即可）。
+4. 可选：门户启动时灌入完整演示数据（覆盖业务表，日期自动对齐当天，并自动补齐属性字典）：
    ```bash
-   java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.reset=true
+   java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.reset=true --server.port=8090
    ```
 
 ### 测试账号
 
-- 后台管理：`admin / 123456`、`manager / 123456`（密码以 PBKDF2 加盐哈希存储；存量 MD5 密文在登录成功后由后端自动升级为 PBKDF2）。
-- 用户端：账号密码登录，支持自助注册（注册成功自动登录）与登录后修改密码（个人中心 → 修改密码，改完强制重新登录）；预置测试账号 `demo001 / demo002 / demo003`，密码均为 `123456`。密码以 PBKDF2 加盐哈希存储；连续失败 5 次锁定 10 分钟，失败时提示剩余可尝试次数。
+- 后台管理：`admin / 123456`、`manager / 123456`（密码以 BCrypt 加盐哈希存储；存量 PBKDF2/MD5 密文由后端兼容校验，登录成功后自动升级为 BCrypt）。
+- 用户端：账号密码登录，支持自助注册（注册成功自动登录）与登录后修改密码（个人中心 → 修改密码，改完强制重新登录）；预置测试账号 `demo001 / demo002 / demo003`，密码均为 `123456`。密码以 BCrypt 加盐哈希存储（存量 PBKDF2 密文登录成功后自动升级）；连续失败 5 次锁定 10 分钟，失败时提示剩余可尝试次数；改密后此前签发的令牌立即失效（按签发时间与改密时间比对）。忘记密码由管理员在后台「用户管理」页核验身份后一键重置为临时密码（旧登录立即失效），用户以临时密码登录后会被强制引导修改密码。
 
 ## 演示指南（对外演示专用）
 
@@ -335,15 +354,15 @@ java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.res
 
 ## 测试用例清单（阶段七联调校验，历史记录）
 
-> 说明：以下用例为早期前后端分离架构下以两端 jar 实跑通过的历史记录，保留备查；当前版本已改为统一门户（Thymeleaf），图形验证码、JWT、Node 构建等条目已不适用，核心业务链路（登录鉴权、下单、签到签退、会员卡、预约）在门户中对应完成。
+> 说明：以下用例为前后端分离架构下以两端 jar 实跑通过的记录；恢复双端 Vue 后再次适用（JWT、Node 构建均有效），门户侧核心业务链路亦有对应实现。
 
 ### A. 后台管理全流程
 
 | 编号 | 场景 | 步骤 | 预期 |
 | --- | --- | --- | --- |
-| A1 | 登录鉴权 | 获取图形验证码→输入 `admin/123456` 登录 | 验证码存 Redis 60s；密码 md5 比对通过返回 JWT |
-| C0 | 登录注册 | `demo001/123456` 登录；注册新账号并自动登录；错误密码连续 5 次被锁定 | 密码 PBKDF2 校验；失败计数存 Redis 10 分钟；失败提示「还可尝试 N 次」 |
-| C1 | 修改密码 | 登录后进入个人中心 →「修改密码」，输入原密码 + 新密码 + 确认密码 | 原密码错误/新密码不符合规则/两次不一致均被拦截；成功后密码以 PBKDF2 重新哈希入库并强制重新登录 |
+| A1 | 登录鉴权 | 输入 `admin/123456` 登录 | 密码 md5 比对通过返回 JWT |
+| C0 | 登录注册 | `demo001/123456` 登录；注册新账号并自动登录；错误密码连续 5 次被锁定 | 密码 BCrypt 校验（兼容存量 PBKDF2）；失败计数存 Redis 10 分钟；失败提示「还可尝试 N 次」 |
+| C1 | 修改密码 | 登录后进入个人中心 →「修改密码」，输入原密码 + 新密码 + 确认密码 | 原密码错误/新密码不符合规则/两次不一致均被拦截；成功后以 BCrypt 重新哈希入库、强制重新登录，旧令牌立即失效 |
 | A2 | 门店增删改 | 新增门店（营业时间/区划/上架）→编辑→上架/下架→删除 | `saveOrUpdate` 生效，`is_release` 变更，`removeById` 逻辑删除 |
 | A3 | 座位增删改 | 在门店下新增座位（编号/单价/类型）→编辑→删除 | 座位落库且关联 `store_id`，逻辑删除 |
 | A4 | 订单审核 | 订单列表分页→查看详情→`updateStatusById` 流转 | 状态按 `BookingStatus` 正确迁移 |
@@ -378,7 +397,7 @@ java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.res
 
 | 编号 | 场景 | 预期 |
 | --- | --- | --- |
-| D1 | 验证码 | 图形验证码写入 Redis 且 TTL 生效；用户端登录失败锁定 10 分钟 |
+| D1 | 登录防爆破 | 用户端登录失败锁定 10 分钟 | 失败计数存 Redis，5 次锁定并提示剩余次数 |
 | D2 | 缓存 | 座位详情、实时状态、热门门店/座位列表命中与过期重算 |
 | D3 | 图片上传 | 本地磁盘存取正常，URL 可访问 |
 | D4 | 定时任务 | `checkBookingStatus` 每日 00:00 到期处理 |
@@ -420,4 +439,4 @@ java -jar web/web-portal/target/studyroom-web-portal-1.0-SNAPSHOT.jar --demo.res
 
 ## 最终项目说明
 
-本系统已由原公寓租赁模板完整改造为「上岸自习室预订系统」，在**保留全部原始技术逻辑**（分页、状态流转、Redis 缓存、定时任务、参数校验、CRUD、前端布局与表单校验）的前提下，完成业务语义、字段、接口、文案与数据库的全量对齐，并扩展了自习室专属能力：时段冲突校验、签到/签退、座位实时状态、营业时间校验、会员卡体系，以及首页热门门店缓存、测试初始化数据与完整文档。当前版本进一步将全站收敛为 **纯 Java 服务端渲染单体应用**（Thymeleaf 统一门户，双端 Vue 前端已移除），涉及实现语言仅 Java 一种。项目可在使用 JDK 17 + Maven + MySQL + Redis 的环境下按「部署说明」构建运行。
+本系统已由原公寓租赁模板完整改造为「上岸自习室预订系统」，在**保留全部原始技术逻辑**（分页、状态流转、Redis 缓存、定时任务、参数校验、CRUD、前端布局与表单校验）的前提下，完成业务语义、字段、接口、文案与数据库的全量对齐，并扩展了自习室专属能力：时段冲突校验、签到/签退、座位实时状态、营业时间校验、会员卡体系，以及首页热门门店缓存、测试初始化数据与完整文档。当前版本以**单端口统一应用**（8080：`/` 统一入口 + `/console` 管理端 + `/h5` 用户端，`/admin`、`/app` 两套 REST 共存）为默认形态，同时保留按旧形态独立运行双端 Vue 应用（8080/8081）与纯 Java 服务端渲染的**增强管理端门户**（8090：运营台/报表/大屏）的能力，后端脚本已全部 Java 化。项目可在使用 JDK 17 + Maven + MySQL + Redis 的环境下按「部署说明」构建运行。

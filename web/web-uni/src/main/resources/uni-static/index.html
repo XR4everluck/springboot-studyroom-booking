@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>上岸自习室 · 统一入口</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #e8f3ec 0%, #f2f7f1 45%, #e6f0ea 100%);
+        color: #24352c;
+        padding: 32px 16px;
+      }
+      .portal {
+        width: 100%;
+        max-width: 760px;
+        text-align: center;
+      }
+      .brand img {
+        width: 64px;
+        height: 64px;
+      }
+      .brand h1 {
+        margin-top: 12px;
+        font-size: 26px;
+        letter-spacing: 2px;
+      }
+      .brand p {
+        margin-top: 6px;
+        font-size: 14px;
+        color: #6b7f74;
+      }
+      .entries {
+        display: flex;
+        gap: 24px;
+        margin-top: 36px;
+      }
+      .entry {
+        flex: 1;
+        display: block;
+        padding: 28px 20px 24px;
+        background: #ffffff;
+        border: 1px solid #dce8df;
+        border-radius: 14px;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 1px 2px rgba(24, 34, 28, 0.03), 0 8px 24px rgba(24, 34, 28, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .entry:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 2px 4px rgba(24, 34, 28, 0.05), 0 14px 32px rgba(24, 34, 28, 0.09);
+      }
+      .entry-icon {
+        font-size: 34px;
+      }
+      .entry h2 {
+        margin-top: 12px;
+        font-size: 18px;
+      }
+      .entry p {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #6b7f74;
+        line-height: 1.7;
+      }
+      .entry-go {
+        display: inline-block;
+        margin-top: 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1f8a5a;
+      }
+      .tips {
+        margin-top: 28px;
+        font-size: 12px;
+        color: #8a9a90;
+        line-height: 1.8;
+      }
+      @media (max-width: 560px) {
+        .entries {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="portal">
+      <header class="brand">
+        <img src="/logo.svg" alt="上岸自习室" />
+        <h1>上岸自习室</h1>
+        <p>预订座位，专注上岸</p>
+      </header>
+      <section class="entries">
+        <a class="entry" href="/console/">
+          <div class="entry-icon">🖥️</div>
+          <h2>管理后台</h2>
+          <p>门店 / 座位 / 订单与续期审批 / 会员卡 / 用户管理</p>
+          <span class="entry-go">管理员登录 →</span>
+        </a>
+        <a class="entry" href="/h5/">
+          <div class="entry-icon">📚</div>
+          <h2>用户端</h2>
+          <p>找门店 / 选座位 / 预下单 / 体验预约 / 我的订单</p>
+          <span class="entry-go">注册 / 登录 →</span>
+        </a>
+      </section>
+      <footer class="tips">
+        <p>演示账号：管理端 admin / 123456 · 用户端 demo001 / 123456（也支持自助注册）</p>
+        <p>接口文档：/doc.html</p>
+      </footer>
+    </main>
+  </body>
+</html>

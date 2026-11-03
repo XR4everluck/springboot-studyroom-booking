@@ -59,4 +59,16 @@ public class UserInfoController {
         userInfoService.update(updateWrapper);
         return Result.ok();
     }
+
+    /**
+     * 管理员核验用户身份后重置密码：生成临时密码返回给管理员，用户下次登录后须修改
+     *
+     * @param id 用户ID
+     * @return 临时明文密码
+     */
+    @Operation(summary = "重置用户密码", description = "生成随机临时密码并置强制改密标记，重置前签发的用户令牌立即失效")
+    @PostMapping("resetPasswordById")
+    public Result<String> resetPasswordById(@RequestParam Long id) {
+        return Result.ok(userInfoService.resetPasswordById(id));
+    }
 }

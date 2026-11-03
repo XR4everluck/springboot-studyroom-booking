@@ -10,4 +10,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserInfoService extends IService<UserInfo> {
 
+    /**
+     * 管理员核验用户身份后重置密码：生成临时密码、置强制改密标记并使旧令牌立即失效
+     *
+     * @param id 用户ID
+     * @return 临时明文密码（仅本次响应返回，由管理员当场告知用户）
+     */
+    String resetPasswordById(Long id);
 }

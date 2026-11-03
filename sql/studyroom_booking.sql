@@ -468,7 +468,8 @@ CREATE TABLE `user_info` (
     `id`          BIGINT      NOT NULL AUTO_INCREMENT COMMENT '主键',
     `username`    VARCHAR(30) NOT NULL COMMENT '登录账号',
     `phone`       VARCHAR(20)          DEFAULT NULL COMMENT '手机号码（订单联系方式，选填）',
-    `password`    VARCHAR(100)         DEFAULT NULL COMMENT '登录密码（PBKDF2 加盐哈希）',
+    `password`    VARCHAR(100)         DEFAULT NULL COMMENT '登录密码（BCrypt 加盐哈希）',
+    `must_change_pwd` TINYINT NOT NULL DEFAULT 0 COMMENT '是否需强制改密 0否 1是（管理员重置密码后置1，用户改密后清零）',
     `avatar_url`  VARCHAR(255)         DEFAULT NULL COMMENT '头像地址',
     `nickname`    VARCHAR(50)          DEFAULT NULL COMMENT '昵称',
     `status`      TINYINT     NOT NULL DEFAULT 1 COMMENT '状态 0禁用 1正常',
@@ -500,6 +501,6 @@ INSERT INTO `system_post` (`id`, `code`, `name`, `description`, `status`) VALUES
 (1, 'admin', '超级管理员', '拥有全部权限', 1),
 (2, 'store_manager', '门店管理员', '管理本店座位与订单', 1);
 
--- 后台登录账号：admin / 123456（password 需按项目加密方式写入实际密文）
+-- 后台登录账号：admin / 123456（password 需按项目加密方式写入实际密文；type 0=管理员）
 INSERT INTO `system_user` (`username`, `name`, `type`, `phone`, `post_id`, `status`) VALUES
-('admin', '系统管理员', 1, '13800000000', 1, 1);
+('admin', '系统管理员', 0, '13800000000', 1, 1);

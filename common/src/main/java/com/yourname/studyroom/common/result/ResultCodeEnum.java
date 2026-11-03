@@ -18,10 +18,6 @@ public enum ResultCodeEnum {
     DELETE_ERROR(207, "请先删除子集"),
 
     ADMIN_ACCOUNT_EXIST_ERROR(301, "账号已存在"),
-    ADMIN_CAPTCHA_CODE_ERROR(302, "验证码错误"),
-    ADMIN_CAPTCHA_CODE_EXPIRED(303, "验证码已过期"),
-    ADMIN_CAPTCHA_CODE_NOT_FOUND(304, "未输入验证码"),
-
 
     ADMIN_LOGIN_AUTH(305, "未登陆"),
     ADMIN_ACCOUNT_NOT_EXIST_ERROR(306, "账号不存在"),
@@ -30,6 +26,7 @@ public enum ResultCodeEnum {
     ADMIN_ACCESS_FORBIDDEN(309, "无访问权限"),
 
     ADMIN_STORE_DELETE_ERROR(310,"请先删除座位"),
+    ADMIN_LOGIN_IS_APP_USER(311, "该账号为用户端账号，请前往用户端登录"),
 
     // 自习室预订相关
     SEAT_TIME_CONFLICT(401, "该座位所选时段已被预订，请选择其他时段"),
@@ -50,9 +47,7 @@ public enum ResultCodeEnum {
     APP_ACCOUNT_DISABLED_ERROR(507, "该用户已被禁用"),
     APP_REGISTER_USERNAME_EXISTS(509, "该账号已被注册"),
     APP_REGISTER_PASSWORD_INVALID(510, "密码需为8-20位，且同时包含字母和数字"),
-    APP_REGISTER_PHONE_INVALID(511, "手机号格式不正确"),
     APP_REGISTER_NICKNAME_INVALID(512, "昵称需为1-12个字符"),
-    APP_REGISTER_PHONE_EXISTS(513, "该手机号已被其他账号使用"),
     APP_OLD_PASSWORD_ERROR(514, "原密码不正确"),
     APP_CHANGE_PASSWORD_SAME(515, "新密码不能与原密码相同"),
     APP_PASSWORD_NOT_LOGIN(516, "登录状态已失效，请重新登录"),

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="上岸自习室">
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#35854e"/>
+      <stop offset="1" stop-color="#245636"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#lg)"/>
+  <text x="32" y="37" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="'Microsoft YaHei','PingFang SC',sans-serif" letter-spacing="1">上岸</text>
+  <path d="M18 45 q3.5 -3 7 0 t7 0 t7 0 t7 0" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" role="img" aria-label="图书馆打卡">
+  <defs>
+    <linearGradient id="lbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbe4ff"/><stop offset="100%" stop-color="#5b6ec9"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="240" fill="url(#lbg)"/>
+  <circle cx="54" cy="200" r="54" fill="#ffffff" opacity="0.16"/>
+  <circle cx="270" cy="52" r="42" fill="#ffffff" opacity="0.22"/>
+  <g fill="none" stroke="#333f88" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="92" y="58" width="136" height="124" rx="8" fill="#eef2ff"/>
+    <path d="M92 120 h136"/>
+    <path d="M92 92 h136"/>
+    <path d="M116 92 v-34 h14 v34" fill="#c9d4ff"/>
+    <path d="M138 92 v-34 h12 v34" fill="#c9d4ff"/>
+    <path d="M164 120 v-28 h14 v28" fill="#c9d4ff"/>
+    <path d="M188 120 v-28 h12 v28" fill="#c9d4ff"/>
+    <path d="M116 158 v-38 h14 v38" fill="#c9d4ff"/>
+    <path d="M138 158 v-38 h12 v38" fill="#c9d4ff"/>
+    <path d="M164 158 v-38 h14 v38" fill="#c9d4ff"/>
+  </g>
+  <text x="160" y="220" text-anchor="middle" font-family="Microsoft YaHei,PingFang SC,sans-serif" font-size="20" font-weight="bold" fill="#333f88">图书馆打卡</text>
+</svg>

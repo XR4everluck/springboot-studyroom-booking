@@ -9,26 +9,26 @@ USE `studyroom_booking`;
 
 -- ------------------------------------------------------------
 -- 一、后台管理账号
---   登录密码采用 PBKDF2WithHmacSHA256 加盐哈希存储（common 模块 PasswordUtil）
+--   登录密码采用 BCrypt 加盐哈希存储（common 模块 PasswordUtil）
 --   admin / 123456
 --   manager / 123456
---   旧 MD5 哈希在登录成功后由后端自动升级为 PBKDF2
+--   存量 PBKDF2/MD5 哈希由后端兼容校验，登录成功后自动升级为 BCrypt
 -- ------------------------------------------------------------
 UPDATE `system_user`
-SET `password` = 'pbkdf2$100000$CFytx6xxNMjLqBeroOpwKA==$d5vKxEm8ShuTevJE1C7HpTvICgQNobdQ/80TyK0bvTQ='
+SET `password` = '$2a$10$o/y47TAYB5hkjGc6Zf0D/.MY6D3lxqprUuTWKRDWAq5ibS.6C7HTG'
 WHERE `username` = 'admin';
 
 INSERT INTO `system_user` (`id`, `username`, `password`, `name`, `type`, `phone`, `post_id`, `status`) VALUES
-(2, 'manager', 'pbkdf2$100000$dtFXnXmWsM/uJrnYeLGjDQ==$HUOROdQl4aoF1jyR7D9wxw94ZJce7uyXbPgVLGqXmwk=', '门店管理员', 1, '13800000002', 2, 1)
+(2, 'manager', '$2a$10$wK9j5q2iGTc1qSqi.g3Wx.8GujlI2l/QpGPJd4tYRRP1TcIyGmr4.', '门店管理员', 1, '13800000002', 2, 1)
 ON DUPLICATE KEY UPDATE `password` = VALUES(`password`);
 
 -- ------------------------------------------------------------
 -- 二、C端测试用户（账号密码登录，密码均为 123456；手机号为订单联系方式，选填）
 -- ------------------------------------------------------------
 INSERT INTO `user_info` (`id`, `username`, `password`, `phone`, `nickname`, `status`) VALUES
-(1, 'demo001', 'pbkdf2$100000$sVhfu/ejn14wtOF5Lo7/Aw==$TekJIGspdzLzFJNu35bprwTphtTpOtgQCFsZN5CM+EM=', '13900000001', '测试用户-001', 1),
-(2, 'demo002', 'pbkdf2$100000$sVhfu/ejn14wtOF5Lo7/Aw==$TekJIGspdzLzFJNu35bprwTphtTpOtgQCFsZN5CM+EM=', '13900000002', '测试用户-002', 1),
-(3, 'demo003', 'pbkdf2$100000$sVhfu/ejn14wtOF5Lo7/Aw==$TekJIGspdzLzFJNu35bprwTphtTpOtgQCFsZN5CM+EM=', '13900000003', '测试用户-003', 1)
+(1, 'demo001', '$2a$10$PlrcW0nu9YHBmb4CLmgfa.MVex8N8oILOAoAes9.R0HqHsdsPpVka', '13900000001', '测试用户-001', 1),
+(2, 'demo002', '$2a$10$GU9WG3XgW1MYaNDe./eL0OV2hkrqwh8LIoetJf8t1qn5pBlud6om.', '13900000002', '测试用户-002', 1),
+(3, 'demo003', '$2a$10$Z9g.qBXnKNx8c359Cul7p.eAlWfLIdzQ2ms50I70GZ3uINvyAyPG.', '13900000003', '测试用户-003', 1)
 ON DUPLICATE KEY UPDATE `username` = VALUES(`username`), `password` = VALUES(`password`);
 
 -- ------------------------------------------------------------
